@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>对日软件需求定义与分析设计场景智能研习平台 | Japanese Learning Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="main-app-container">
+    <!-- 顶部固定导航 Header -->
+    <header class="app-header">
+      <div class="header-inner">
+        <div class="brand-area">
+          <div class="brand-icon">対日</div>
+          <div>
+            <h1 class="brand-title">Japanese Learning Hub</h1>
+            <div class="brand-subtitle">
+              <span>对日软件需求定义与分析设计</span> · <span>智能场景精进</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <div style="position: relative;">
+            <input 
+              type="text" 
+              id="search-input" 
+              placeholder="搜索语法 / 假名 / 词汇..." 
+              style="padding: 0.4rem 0.85rem; border-radius: 9999px; border: 1px solid var(--border); font-size: 0.85rem; outline: none; width: 190px;"
+            />
+          </div>
+
+          <button id="toggle-furigana-btn" class="toggle-chip active" title="开启或隐藏汉字上方的平假名注音">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 12h20M12 2v20"></path>
+            </svg>
+            <span>假名注音：已开启</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 场景选择器 (Scene Selector) -->
+    <div class="scene-nav-wrapper">
+      <div class="scene-nav-inner">
+        <div class="scene-label-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          <span>当前学习场景：</span>
+        </div>
+        <div id="scene-pills-container" class="scene-pills-list">
+          <!-- 由 JS 动态渲染场景 1, 2, 11, 12, 21 切换药丸 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 主体内容 -->
+    <main class="main-layout">
+      <!-- 场景 Hero 简介横幅 -->
+      <section class="hero-card" id="scene-hero-banner">
+        <div class="hero-badge" id="hero-badge-tag">
+          <span>💼 需求定义领域</span>
+        </div>
+        <h2 class="hero-title" id="hero-title-text">场景加载中...</h2>
+        <p class="hero-desc" id="hero-desc-text">
+          正在加载该场景的背景与业务目标...
+        </p>
+      </section>
+
+      <!-- 模块筛选标签栏 -->
+      <nav class="nav-tabs" aria-label="学习模块切换">
+        <button class="tab-btn active" data-tab="all">
+          <span>全部综合全览</span>
+        </button>
+        <button class="tab-btn" data-tab="textbook">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          <span>📘 教材核心课文</span>
+        </button>
+        <button class="tab-btn" data-tab="practice">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>📝 配套练习·5篇短文</span>
+          <span class="counter-pill">5篇</span>
+        </button>
+        <button class="tab-btn" data-tab="grammar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          <span>📚 深度语法图鉴</span>
+        </button>
+        <button class="tab-btn" data-tab="clinic">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+          <span>💼 职场实战诊所</span>
+        </button>
+        <button class="tab-btn" data-tab="vocab">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+          <span>🗂️ 智能 3D 词汇闪卡</span>
+        </button>
+        <button class="tab-btn" data-tab="quiz">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          <span>🎯 随堂自测</span>
+        </button>
+      </nav>
+
+      <!-- 模块 1：教材核心课文精读区 -->
+      <section id="section-textbook" style="margin-bottom: 2.5rem;">
+        <div class="section-header">
+          <h3 class="section-title">📘 教材核心课文：全景商务研讨</h3>
+          <button id="play-full-textbook-btn" class="play-full-btn" title="朗读教材完整课文">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <span>朗读整篇对话</span>
+          </button>
+        </div>
+
+        <div class="sentence-container" style="padding: 1.5rem;">
+          <!-- 逐角色对话流 -->
+          <div id="textbook-dialogue-flow"></div>
+
+          <!-- 分词词性切片 -->
+          <div style="margin-top: 1.75rem;">
+            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
+              课文语法词性逐词切片（蓝边为重点要件定义成分）
+            </div>
+            <div id="token-chips-container" class="token-chip-cloud"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 模块 2：配套练习·5篇短文精读区 -->
+      <section id="section-practice" style="margin-bottom: 2.5rem;">
+        <div class="section-header">
+          <h3 class="section-title">📝 配套练习：5篇短文拓展闯关</h3>
+        </div>
+
+        <div class="practice-container-card">
+          <div class="passage-selector-header">
+            <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.4rem;">
+              <span>练习短文选择：</span>
+            </div>
+            <div id="passage-tabs-container" class="passage-tabs">
+              <!-- 动态生成 短文 1 ～ 短文 5 按钮 -->
+            </div>
+          </div>
+
+          <div class="passage-body">
+            <div class="passage-meta-banner">
+              <div>
+                <div class="passage-title-text" id="current-passage-title">短文标题</div>
+                <div class="passage-focus-text" id="current-passage-focus">学习目标与重点</div>
+              </div>
+              <button id="play-passage-btn" class="play-full-btn" title="朗读该篇短文">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span>朗读本篇短文</span>
+              </button>
+            </div>
+
+            <!-- 短文对话列表 -->
+            <div id="passage-dialogue-flow"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 模块 3：深度语法知识图鉴 -->
+      <section id="section-grammar" style="margin-bottom: 2.5rem;">
+        <div class="section-header">
+          <h3 class="section-title">📚 核心语法与句型图鉴</h3>
+        </div>
+        <div id="grammar-cards-container"></div>
+      </section>
+
+      <!-- 模块 4：职场实战诊所 -->
+      <section id="section-clinic" style="margin-bottom: 2.5rem;">
+        <div class="section-header">
+          <h3 class="section-title">💼 职场实战诊所：及格口语 vs 高阶顾问级表达</h3>
+        </div>
+        <div id="clinic-container"></div>
+      </section>
+
+      <!-- 模块 5：智能 3D 词汇闪卡 -->
+      <section id="section-vocab" style="margin-bottom: 2.5rem;">
+        <div class="section-header">
+          <h3 class="section-title">🗂️ 智能 3D 词汇闪卡（点击卡片翻转查看释义与例句）</h3>
+        </div>
+        <div id="vocab-cards-container" class="flashcards-grid"></div>
+      </section>
+
+      <!-- 模块 6：互动随堂自测 -->
+      <section id="section-quiz" style="margin-bottom: 2.5rem;">
+        <div class="section-header">
+          <h3 class="section-title">🎯 随堂互动自测（检验与巩固）</h3>
+        </div>
+        <div class="quiz-container">
+          <div id="quiz-list-container"></div>
+        </div>
+      </section>
+
+      <!-- 模块 7：数据驱动扩展说明 -->
+      <section class="extensibility-card">
+        <div class="extensibility-header">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          <span>多场景数据驱动架构与后续扩充指南</span>
+        </div>
+        <p class="extensibility-desc">
+          本学习平台已完美适配你们的课程体系：<b>每个场景由 1 篇教材核心课文 ＋ 5 篇配套练习短文构成</b>。目前已录入你们已学完的 <b>场景 1、场景 2、场景 11、场景 12、场景 21</b>。
+          未来只要你们学完了新场景（如场景 3、13、22 等），你只需告诉我，我便会把新场景的课文与短文一键沉淀进系统，新的场景选择按钮将自动在上方呈现！
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <!-- 引入数据层与交互逻辑 -->
+  <script src="data/knowledge-data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

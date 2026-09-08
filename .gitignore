@@ -1,0 +1,6 @@
+.DS_Store
+.swift-cache/
+materials/
+dist/
+__pycache__/
+*.pyc
