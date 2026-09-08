@@ -154,11 +154,13 @@ document.addEventListener("DOMContentLoaded", () => {
       card.innerHTML = `
         <div class="speaker-col">
           <div class="speaker-avatar-circle ${spkMeta.className}">${spkMeta.avatar}</div>
-          <div class="speaker-label-name">${turn.speaker}</div>
-          <div class="speaker-label-role">${spkMeta.roleLabel}</div>
+          <div class="speaker-meta-wrap">
+            <div class="speaker-label-name">${turn.speaker}</div>
+            <div class="speaker-label-role">${spkMeta.roleLabel}</div>
+          </div>
         </div>
         <div class="dialogue-bubble-col">
-          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem;">
+          <div class="dialogue-top-line">
             <div class="turn-jp">${turn.jpWithRuby}</div>
             <button class="btn-speak-clause" title="点击朗读" data-text="${turn.jpWithRuby.replace(/<[^>]+>/g, '')}">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -254,11 +256,13 @@ document.addEventListener("DOMContentLoaded", () => {
       card.innerHTML = `
         <div class="speaker-col">
           <div class="speaker-avatar-circle ${spkMeta.className}">${spkMeta.avatar}</div>
-          <div class="speaker-label-name">${d.speaker}</div>
-          <div class="speaker-label-role">${spkMeta.roleLabel}</div>
+          <div class="speaker-meta-wrap">
+            <div class="speaker-label-name">${d.speaker}</div>
+            <div class="speaker-label-role">${spkMeta.roleLabel}</div>
+          </div>
         </div>
         <div class="dialogue-bubble-col">
-          <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem;">
+          <div class="dialogue-top-line">
             <div class="turn-jp">${d.jpWithRuby || d.jp}</div>
             <button class="btn-speak-clause" title="朗读" data-text="${d.jp}">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

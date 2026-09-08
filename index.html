@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>对日软件需求定义与分析设计场景智能研习平台 | Japanese Learning Hub</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -13,7 +13,7 @@
       <div class="header-inner">
         <div class="brand-area">
           <div class="brand-icon">対日</div>
-          <div>
+          <div class="brand-text-group">
             <h1 class="brand-title">Japanese Learning Hub</h1>
             <div class="brand-subtitle">
               <span>对日软件需求定义与分析设计</span> · <span>智能场景精进</span>
@@ -22,12 +22,12 @@
         </div>
 
         <div class="header-actions">
-          <div style="position: relative;">
+          <div class="search-box-wrapper">
             <input 
               type="text" 
               id="search-input" 
               placeholder="搜索语法 / 假名 / 词汇..." 
-              style="padding: 0.4rem 0.85rem; border-radius: 9999px; border: 1px solid var(--border); font-size: 0.85rem; outline: none; width: 190px;"
+              class="header-search-input"
             />
           </div>
 
@@ -100,7 +100,7 @@
       </nav>
 
       <!-- 模块 1：教材核心课文精读区 -->
-      <section id="section-textbook" style="margin-bottom: 2.5rem;">
+      <section id="section-textbook" class="module-section">
         <div class="section-header">
           <h3 class="section-title">📘 教材核心课文：全景商务研讨</h3>
           <button id="play-full-textbook-btn" class="play-full-btn" title="朗读教材完整课文">
@@ -111,13 +111,13 @@
           </button>
         </div>
 
-        <div class="sentence-container" style="padding: 1.5rem;">
+        <div class="sentence-container">
           <!-- 逐角色对话流 -->
           <div id="textbook-dialogue-flow"></div>
 
           <!-- 分词词性切片 -->
-          <div style="margin-top: 1.75rem;">
-            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+          <div class="token-section-wrapper">
+            <div class="token-section-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
               课文语法词性逐词切片（蓝边为重点要件定义成分）
             </div>
@@ -127,14 +127,14 @@
       </section>
 
       <!-- 模块 2：配套练习·5篇短文精读区 -->
-      <section id="section-practice" style="margin-bottom: 2.5rem;">
+      <section id="section-practice" class="module-section">
         <div class="section-header">
           <h3 class="section-title">📝 配套练习：5篇短文拓展闯关</h3>
         </div>
 
         <div class="practice-container-card">
           <div class="passage-selector-header">
-            <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.4rem;">
+            <div class="passage-selector-label">
               <span>练习短文选择：</span>
             </div>
             <div id="passage-tabs-container" class="passage-tabs">
@@ -163,7 +163,7 @@
       </section>
 
       <!-- 模块 3：深度语法知识图鉴 -->
-      <section id="section-grammar" style="margin-bottom: 2.5rem;">
+      <section id="section-grammar" class="module-section">
         <div class="section-header">
           <h3 class="section-title">📚 核心语法与句型图鉴</h3>
         </div>
@@ -171,7 +171,7 @@
       </section>
 
       <!-- 模块 4：职场实战诊所 -->
-      <section id="section-clinic" style="margin-bottom: 2.5rem;">
+      <section id="section-clinic" class="module-section">
         <div class="section-header">
           <h3 class="section-title">💼 职场实战诊所：及格口语 vs 高阶顾问级表达</h3>
         </div>
@@ -179,7 +179,7 @@
       </section>
 
       <!-- 模块 5：智能 3D 词汇闪卡 -->
-      <section id="section-vocab" style="margin-bottom: 2.5rem;">
+      <section id="section-vocab" class="module-section">
         <div class="section-header">
           <h3 class="section-title">🗂️ 智能 3D 词汇闪卡（点击卡片翻转查看释义与例句）</h3>
         </div>
@@ -187,7 +187,7 @@
       </section>
 
       <!-- 模块 6：互动随堂自测 -->
-      <section id="section-quiz" style="margin-bottom: 2.5rem;">
+      <section id="section-quiz" class="module-section">
         <div class="section-header">
           <h3 class="section-title">🎯 随堂互动自测（检验与巩固）</h3>
         </div>

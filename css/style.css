@@ -39,6 +39,12 @@
   padding: 0;
 }
 
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
   background-color: var(--bg-main);
@@ -46,6 +52,7 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* 顶部导航 Header */
@@ -108,6 +115,28 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+}
+
+.search-box-wrapper {
+  position: relative;
+}
+
+.header-search-input {
+  padding: 0.42rem 0.85rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  outline: none;
+  width: 190px;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+  color: var(--text-main);
+}
+
+.header-search-input:focus {
+  border-color: var(--primary-light);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 /* 切换与控制组件 */
@@ -1064,29 +1093,39 @@ mark.hl-koto:hover {
   margin-bottom: 1rem;
 }
 
-/* 响应式微调 */
-@media (max-width: 768px) {
-  .app-header {
-    padding: 0.75rem 1rem;
-  }
-  .main-layout {
-    padding: 1rem 1rem 4rem 1rem;
-  }
-  .hero-card {
-    padding: 1.5rem 1.25rem;
-  }
-  .hero-title {
-    font-size: 1.35rem;
-  }
-  .clause-jp {
-    font-size: 1.1rem;
-  }
-  .rules-grid, .clinic-grid {
-    grid-template-columns: 1fr;
-  }
-  .grammar-card, .clinic-card, .quiz-container {
-    padding: 1.25rem;
-  }
+.module-section {
+  margin-bottom: 2.5rem;
+}
+
+.sentence-container {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.token-section-wrapper {
+  margin-top: 1.75rem;
+}
+
+.token-section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.passage-selector-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 /* ===================================================================
@@ -1239,8 +1278,22 @@ mark.hl-koto:hover {
   margin-top: 0.15rem;
 }
 
+.speaker-meta-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .dialogue-bubble-col {
   flex: 1;
+  min-width: 0;
+}
+
+.dialogue-top-line {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
 }
 
 .turn-jp {
@@ -1445,4 +1498,407 @@ mark.hl-koto:hover {
   color: #991b1b;
 }
 .btn-review:hover { background: #fecaca; }
+
+/* ===================================================================
+   Mobile First Responsive Overhaul (Smartphones & Tablets <= 768px)
+   =================================================================== */
+@media (max-width: 768px) {
+  /* 1. 顶部 Header 优雅两行自适应 */
+  .app-header {
+    padding: 0.65rem 0.85rem;
+    padding-top: calc(0.65rem + env(safe-area-inset-top, 0px));
+  }
+
+  .header-inner {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .brand-area {
+    flex: 1;
+    min-width: 0;
+    gap: 0.6rem;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .brand-title {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .brand-subtitle {
+    display: none; /* 移动端隐藏过长副标题，避免顶栏竖向爆仓 */
+  }
+
+  .header-actions {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .search-box-wrapper {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .header-search-input {
+    width: 100%;
+    padding: 0.42rem 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  .toggle-chip {
+    padding: 0.42rem 0.75rem;
+    font-size: 0.78rem;
+    flex-shrink: 0;
+    white-space: nowrap;
+    gap: 0.35rem;
+  }
+
+  /* 2. 主容器与 Hero 横幅 */
+  .main-layout {
+    padding: 0.75rem 0.85rem 4rem 0.85rem;
+  }
+
+  .hero-card {
+    padding: 1.25rem 1rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-card::after {
+    display: none; /* 移除巨型绝对定位背景字，防止移动端横向溢出 */
+  }
+
+  .hero-title {
+    font-size: 1.25rem;
+    line-height: 1.35;
+    margin-bottom: 0.45rem;
+  }
+
+  .hero-desc {
+    font-size: 0.85rem;
+    line-height: 1.55;
+  }
+
+  /* 3. 场景选择器药丸导航 (原生触摸水平滚动带) */
+  .scene-nav-wrapper {
+    padding: 0.6rem 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .scene-nav-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+  }
+
+  .scene-label-title {
+    font-size: 0.82rem;
+  }
+
+  .scene-pills-list {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.4rem;
+    padding: 2px 0 4px 0;
+  }
+
+  .scene-pills-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scene-pill-btn {
+    padding: 0.38rem 0.75rem;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  /* 4. 模块切换标签栏 (水平平滑滑动) */
+  .nav-tabs {
+    gap: 0.35rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.4rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-btn {
+    padding: 0.42rem 0.75rem;
+    font-size: 0.82rem;
+    flex-shrink: 0;
+  }
+
+  /* 5. 分区标题与整篇朗读按钮 */
+  .module-section {
+    margin-bottom: 1.75rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .section-title {
+    font-size: 1.15rem;
+  }
+
+  .play-full-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  /* 6. 核心对话流（卡片流化：头像与角色置顶同行，日文振假名全宽舒适阅读） */
+  .sentence-container {
+    padding: 0.85rem 0.75rem;
+    border-radius: var(--radius-md);
+  }
+
+  .dialogue-turn {
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.85rem 0.9rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 0.75rem;
+  }
+
+  .speaker-col {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.55rem;
+    text-align: left;
+  }
+
+  .speaker-avatar-circle {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    margin-bottom: 0;
+    flex-shrink: 0;
+  }
+
+  .speaker-meta-wrap {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .speaker-label-name {
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  .speaker-label-role {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0;
+  }
+
+  .speaker-label-role::before {
+    content: "· ";
+    margin-right: 0.15rem;
+  }
+
+  .dialogue-bubble-col {
+    width: 100%;
+  }
+
+  .dialogue-top-line {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .turn-jp {
+    font-size: 1.06rem;
+    line-height: 2.1; /* 保证平假名 ruby 注音有充裕行高不挤压 */
+    word-break: break-word;
+    margin-bottom: 0.35rem;
+  }
+
+  .turn-jp rt {
+    font-size: 0.6em;
+  }
+
+  .turn-zh {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    margin-bottom: 0.45rem;
+  }
+
+  .turn-note {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.65rem;
+  }
+
+  .btn-speak-clause {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  /* 7. 配套练习短文组件 */
+  .practice-container-card {
+    border-radius: var(--radius-md);
+    margin-bottom: 1.75rem;
+  }
+
+  .passage-selector-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.75rem 0.85rem;
+  }
+
+  .passage-selector-label {
+    font-size: 0.82rem;
+  }
+
+  .passage-tabs {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.35rem;
+    padding-bottom: 2px;
+  }
+
+  .passage-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .passage-tab-btn {
+    padding: 0.38rem 0.7rem;
+    font-size: 0.78rem;
+    flex-shrink: 0;
+  }
+
+  .passage-body {
+    padding: 0.85rem 0.75rem;
+  }
+
+  .passage-meta-banner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+    padding: 0.75rem 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .passage-meta-banner .play-full-btn {
+    width: 100%;
+  }
+
+  .passage-title-text {
+    font-size: 0.98rem;
+  }
+
+  .passage-focus-text {
+    font-size: 0.78rem;
+  }
+
+  /* 8. 语法、诊所、闪卡、自测响应式 */
+  .grammar-card, .clinic-card, .quiz-container {
+    padding: 1.1rem 0.9rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+  }
+
+  .grammar-title {
+    font-size: 1.25rem;
+  }
+
+  .formula-box {
+    padding: 0.75rem 0.9rem;
+  }
+
+  .formula-text {
+    font-size: 0.95rem;
+    word-break: break-word;
+  }
+
+  .rules-grid, .clinic-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .clinic-comparison {
+    padding: 0.75rem;
+    gap: 0.6rem;
+  }
+
+  .flashcards-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .flashcard-3d {
+    height: 225px;
+  }
+
+  .flashcard-front, .flashcard-back {
+    padding: 1.15rem;
+  }
+
+  .vocab-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .contrast-table-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  .contrast-table th, .contrast-table td {
+    padding: 0.65rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .quiz-option-btn {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.85rem;
+  }
+
+  .extensibility-card {
+    padding: 1.1rem 0.9rem;
+    margin-top: 2rem;
+  }
+
+  .token-chip-cloud {
+    gap: 0.4rem;
+  }
+
+  .token-chip {
+    padding: 0.3rem 0.55rem;
+    font-size: 0.75rem;
+  }
+}
 
