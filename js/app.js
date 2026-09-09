@@ -108,18 +108,19 @@ document.addEventListener("DOMContentLoaded", () => {
           handleRoundFinished();
         };
 
-        dynamicAudio.onerror = () => {
-          // 若在本地未挂载 Worker 或网络离线，自动无缝降级到浏览器 Web Speech
+        let cfFallbackDone = false;
+        const doCfFallback = () => {
+          if (cfFallbackDone) return;
+          cfFallbackDone = true;
           this.currentAudio = null;
           this.speakTTS(cleanText, handleRoundFinished, "ja-JP");
         };
 
+        dynamicAudio.onerror = doCfFallback;
+
         const cfPromise = dynamicAudio.play();
         if (cfPromise !== undefined) {
-          cfPromise.catch(() => {
-            this.currentAudio = null;
-            this.speakTTS(cleanText, handleRoundFinished, "ja-JP");
-          });
+          cfPromise.catch(doCfFallback);
         }
       };
 
@@ -134,17 +135,19 @@ document.addEventListener("DOMContentLoaded", () => {
             handleRoundFinished();
           };
 
-          audio.onerror = () => {
+          let fallbackDone = false;
+          const doFallback = () => {
+            if (fallbackDone) return;
+            fallbackDone = true;
             this.currentAudio = null;
             tryCloudflareTtsOrFallback();
           };
 
+          audio.onerror = doFallback;
+
           const playPromise = audio.play();
           if (playPromise !== undefined) {
-            playPromise.catch(() => {
-              this.currentAudio = null;
-              tryCloudflareTtsOrFallback();
-            });
+            playPromise.catch(doFallback);
           }
         } else {
           tryCloudflareTtsOrFallback();
