@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (fallbackDone) return;
             fallbackDone = true;
             this.currentAudio = null;
-            tryCloudflareTtsOrFallback();
+            this.speakTTS(cleanText, handleRoundFinished, "ja-JP");
           };
 
           audio.onerror = doFallback;
@@ -150,7 +150,8 @@ document.addEventListener("DOMContentLoaded", () => {
             playPromise.catch(doFallback);
           }
         } else {
-          tryCloudflareTtsOrFallback();
+          // 没有预制静态音频时，在用户点击手势内同步调用原生语音发音（确保移动端不被安全策略拦截）
+          this.speakTTS(cleanText, handleRoundFinished, "ja-JP");
         }
       };
 
@@ -164,16 +165,19 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
+      // 强制取消可能残留的阻塞状态
+      window.speechSynthesis.cancel();
+
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = lang;
       utterance.rate = (lang === "zh-CN") ? 1.0 : (0.92 * this.playbackRate);
 
       const voices = window.speechSynthesis.getVoices();
       if (lang === "ja-JP") {
-        const jpVoice = voices.find(v => v.lang === "ja-JP" || v.lang.startsWith("ja")) || null;
+        const jpVoice = voices.find(v => v.lang === "ja-JP" || v.lang === "ja_JP" || (v.lang && v.lang.toLowerCase().startsWith("ja"))) || null;
         if (jpVoice) utterance.voice = jpVoice;
       } else if (lang === "zh-CN") {
-        const zhVoice = voices.find(v => v.lang === "zh-CN" || v.lang.startsWith("zh")) || null;
+        const zhVoice = voices.find(v => v.lang === "zh-CN" || v.lang === "zh_CN" || (v.lang && v.lang.toLowerCase().startsWith("zh"))) || null;
         if (zhVoice) utterance.voice = zhVoice;
       }
 
@@ -615,6 +619,46 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // 知识点预制原声 MP3 映射表
+  const TERM_AUDIO_MAP = {
+    "自然言語処理": "audio/terms/38bfa4204013.mp3",
+    "第1フェーズ": "audio/terms/0d8983a23ea6.mp3",
+    "ばらつきがある": "audio/terms/edc495805d94.mp3",
+    "あたり": "audio/terms/fe6770b44136.mp3",
+    "一元化": "audio/terms/96db16ec69eb.mp3",
+    "振り分け": "audio/terms/a0672469864c.mp3",
+    "配車": "audio/terms/5c4beffe8292.mp3",
+    "検討させていただきます": "audio/terms/7bb55d89b242.mp3",
+    "フェーズ": "audio/terms/ca2e4d459d76.mp3",
+    "1件あたり": "audio/terms/d8bf2cc4b289.mp3",
+    "スコープ": "audio/terms/57b6ca0c5185.mp3",
+    "可視化": "audio/terms/70d66e57c7fd.mp3",
+    "頼っている": "audio/terms/3c08181583de.mp3",
+    "見積もり": "audio/terms/7c13dcd4e523.mp3",
+    "伺わせていただきます": "audio/terms/d591c7c206bd.mp3",
+    "期間を要する": "audio/terms/d4b346ab568b.mp3",
+    "初回回答": "audio/terms/ea566b1ab91e.mp3",
+    "頻出質問": "audio/terms/f170b1bd13f8.mp3",
+    "想定しています": "audio/terms/02bf33a99e70.mp3",
+    "商談履歴": "audio/terms/bf67b425b860.mp3",
+    "〜というのは、〜ということですか": "audio/terms/4c11ebdb59b4.mp3",
+    "できず": "audio/terms/da310c028b93.mp3",
+    "プロトタイプ": "audio/terms/7a8eb05e7a11.mp3",
+    "〜に基づき": "audio/terms/b5ae77613b41.mp3",
+    "属人化": "audio/terms/951534d1bf76.mp3",
+    "代替案": "audio/terms/b3c0149e767a.mp3",
+    "できておらず": "audio/terms/92b1e34cf8a4.mp3",
+    "改めてお伺いします": "audio/terms/7329cb359577.mp3",
+    "ばらつき": "audio/terms/1b8731175cc5.mp3",
+    "一元管理": "audio/terms/d69f015c704d.mp3",
+    "整備されておらず": "audio/terms/21735ec7ebb2.mp3",
+    "ボトルネック": "audio/terms/a7e38ac73dca.mp3",
+    "要件定義": "audio/terms/da708fd88ba1.mp3",
+    "棚卸し": "audio/terms/9b88e9664388.mp3",
+    "ことです": "audio/terms/5bc8a83771f4.mp3",
+    "〜ではないかと見ています": "audio/terms/0da90dbc6e75.mp3"
+  };
+
   // 打开知识点底部抽屉 (Bottom Sheet Drawer)
   function openKnowledgeDrawer(termKey, scene) {
     let cardData = IT_KNOWLEDGE_DICT[termKey];
@@ -699,8 +743,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const cleanAudioText = cardData.term.replace(/（[^）]+）/g, '').trim();
+    const termAudioUrl = TERM_AUDIO_MAP[cleanAudioText] || TERM_AUDIO_MAP[termKey] || null;
     drawerSpeakBtn.onclick = () => {
-      AudioController.speak(cleanAudioText, drawerSpeakBtn, null, null, "ja-JP-NanamiNeural");
+      AudioController.speak(cleanAudioText, drawerSpeakBtn, termAudioUrl, null, "ja-JP-NanamiNeural");
     };
 
     drawerOverlay.classList.add("active");
@@ -2145,9 +2190,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // 朗读
       const speakBtn = card.querySelector(".btn-speak-clause");
+      const vocabAudioUrl = `audio/scene-${scene.sceneNumber}/vocab-${vIndex}.mp3`;
       speakBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        AudioController.speak(speakBtn.getAttribute("data-text"), speakBtn);
+        AudioController.speak(speakBtn.getAttribute("data-text"), speakBtn, vocabAudioUrl);
       });
 
       // 掌握度标记
