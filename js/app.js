@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const grammarCardsContainer = document.getElementById("grammar-cards-container");
   const clinicContainer = document.getElementById("clinic-container");
   const vocabCardsContainer = document.getElementById("vocab-cards-container");
-  const quizListContainer = document.getElementById("quiz-list-container");
+  const quizListContainer = document.getElementById("quiz-list-container") || document.getElementById("arena-question-container");
 
   const toggleFuriganaBtn = document.getElementById("toggle-furigana-btn");
   const tabButtons = document.querySelectorAll(".tab-btn");
@@ -333,6 +333,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const drawerExamplesSection = document.getElementById("drawer-examples-section");
   const drawerSpeakBtn = document.getElementById("drawer-speak-btn");
   const drawerCloseBtn = document.getElementById("drawer-close-btn");
+
+  // 🎓 单句名师精讲与记忆锦囊抽屉 DOM 引用
+  const pedagogyOverlay = document.getElementById("pedagogy-drawer-overlay");
+  const pedagogyCloseBtn = document.getElementById("pedagogy-drawer-close-btn");
+  const pedagogySpeakerBadge = document.getElementById("pedagogy-speaker-badge");
+  const pedagogySentenceJp = document.getElementById("pedagogy-sentence-jp");
+  const pedagogySentenceZh = document.getElementById("pedagogy-sentence-zh");
+  const pedagogySpeakBtn = document.getElementById("pedagogy-speak-btn");
+  const pedagogyPatternFormula = document.getElementById("pedagogy-pattern-formula");
+  const pedagogyPatternMeaning = document.getElementById("pedagogy-pattern-meaning");
+  const pedagogyGrammarList = document.getElementById("pedagogy-grammar-list");
+  const pedagogyVocabList = document.getElementById("pedagogy-vocab-list");
+  const pedagogyMnemonic = document.getElementById("pedagogy-mnemonic");
+  const pedagogyRhythm = document.getElementById("pedagogy-rhythm");
+  const pedagogyAssociation = document.getElementById("pedagogy-association");
+  const pedagogyNuance = document.getElementById("pedagogy-nuance");
+  const pedagogyPitfall = document.getElementById("pedagogy-pitfall");
+  const pedagogyAlternative = document.getElementById("pedagogy-alternative");
 
   // 轻量级全局 Toast 提醒
   function showToast(message, duration = 2200) {
@@ -765,6 +783,100 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Escape") closeKnowledgeDrawer();
   });
 
+  // 🎓 单句名师精讲与记忆锦囊抽屉逻辑
+  function openPedagogyDrawer(turn, scene, audioUrl, spkMeta) {
+    if (!pedagogyOverlay || !turn) return;
+
+    // 填充发言角色与原句
+    if (pedagogySpeakerBadge) {
+      pedagogySpeakerBadge.textContent = `${turn.speaker}（${spkMeta ? spkMeta.roleLabel : '角色'}）`;
+    }
+    if (pedagogySentenceJp) {
+      pedagogySentenceJp.innerHTML = turn.jpWithRuby || turn.jp;
+    }
+    if (pedagogySentenceZh) {
+      pedagogySentenceZh.textContent = turn.zh || '';
+    }
+
+    // 绑定整句原声播放
+    if (pedagogySpeakBtn) {
+      pedagogySpeakBtn.onclick = () => {
+        AudioController.speak(turn.jp, pedagogySpeakBtn, audioUrl, null, spkMeta ? spkMeta.voice : 'ja-JP-NanamiNeural');
+      };
+    }
+
+    const p = turn.pedagogy;
+    if (p) {
+      // 1. 核心句型骨架
+      if (pedagogyPatternFormula) pedagogyPatternFormula.textContent = p.pattern || '通用商务表达句型';
+      if (pedagogyPatternMeaning) pedagogyPatternMeaning.textContent = p.patternMeaning || '';
+
+      // 2. 核心语法解析
+      if (pedagogyGrammarList) {
+        if (p.grammar && p.grammar.length) {
+          pedagogyGrammarList.innerHTML = p.grammar.map(g => `
+            <div class="pedagogy-grammar-item">
+              <div class="grammar-item-header">
+                <span class="grammar-name">${g.name}</span>
+                <span class="grammar-rule">${g.rule}</span>
+              </div>
+              <div class="grammar-desc">${g.desc}</div>
+            </div>
+          `).join("");
+        } else {
+          pedagogyGrammarList.innerHTML = '<div style="font-size:0.82rem; color:#64748b;">本句采用标准职场敬语表达。</div>';
+        }
+      }
+
+      // 3. 重点词汇与商务搭配
+      if (pedagogyVocabList) {
+        if (p.vocabulary && p.vocabulary.length) {
+          pedagogyVocabList.innerHTML = p.vocabulary.map(v => `
+            <div class="pedagogy-vocab-item">
+              <div class="vocab-word-row">
+                <span class="vocab-word">${v.word}</span>
+                <span class="vocab-reading">（${v.reading}）</span>
+                <span class="vocab-pos">${v.pos}</span>
+              </div>
+              <div class="vocab-meaning">${v.meaning}</div>
+              ${v.collocation ? `<div class="vocab-collocation">💡 ${v.collocation}</div>` : ''}
+            </div>
+          `).join("");
+        } else {
+          pedagogyVocabList.innerHTML = '<div style="font-size:0.82rem; color:#64748b;">本句词汇为常规职场基础用语。</div>';
+        }
+      }
+
+      // 4. 名师速记心法与口诀
+      const mt = p.memoryTips || {};
+      if (pedagogyMnemonic) pedagogyMnemonic.textContent = mt.mnemonic || '意群模块化组合记忆。';
+      if (pedagogyRhythm) pedagogyRhythm.textContent = mt.rhythm || turn.jp;
+      if (pedagogyAssociation) pedagogyAssociation.textContent = mt.association || '结合上下文痛点与IT方案联想。';
+
+      // 5. 职场情商指引与避雷指南
+      const wt = p.workplaceTips || {};
+      if (pedagogyNuance) pedagogyNuance.textContent = wt.nuance || '遵循严谨、谦逊、以客户为中心的对日商务礼仪。';
+      if (pedagogyPitfall) pedagogyPitfall.textContent = wt.pitfall || '切忌直译或使用非正式口语表达。';
+      if (pedagogyAlternative) pedagogyAlternative.textContent = wt.alternatives || '可根据会议正式程度适度微调敬语层级。';
+    }
+
+    pedagogyOverlay.classList.add("active");
+  }
+
+  function closePedagogyDrawer() {
+    if (pedagogyOverlay) pedagogyOverlay.classList.remove("active");
+  }
+
+  if (pedagogyCloseBtn) pedagogyCloseBtn.addEventListener("click", closePedagogyDrawer);
+  if (pedagogyOverlay) {
+    pedagogyOverlay.addEventListener("click", (e) => {
+      if (e.target === pedagogyOverlay) closePedagogyDrawer();
+    });
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closePedagogyDrawer();
+  });
+
   // 提取单句对白中的核心关键词
   function findKeyTermsInTurn(jpText, scene) {
     const terms = [];
@@ -1103,6 +1215,11 @@ document.addEventListener("DOMContentLoaded", () => {
               <span class="star-icon">${isMastered ? '★' : '☆'}</span>
               <span class="star-label">${isMastered ? '已背熟' : '记为背熟'}</span>
             </button>
+            ${turn.pedagogy ? `
+            <button class="btn-turn-pedagogy" title="点击查看本句名师剖析、语法、词汇与记忆口诀">
+              <span>🎓 句型与记忆法</span>
+            </button>
+            ` : ''}
           </div>
           <button class="btn-speak-clause" title="点击朗读原声" data-text="${turn.jp}">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1138,6 +1255,15 @@ document.addEventListener("DOMContentLoaded", () => {
         applyFilter(scope);
       }
     });
+
+    // 绑定单句名师句型与记忆法弹窗
+    const pedagogyBtn = card.querySelector(".btn-turn-pedagogy");
+    if (pedagogyBtn) {
+      pedagogyBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openPedagogyDrawer(turn, scene, audioUrl, spkMeta);
+      });
+    }
 
     // 绑定知识透镜微标签点击弹窗
     card.querySelectorAll(".k-tag-btn").forEach(tagBtn => {
@@ -2215,56 +2341,695 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 8. 渲染随堂自测互动答题
-  function renderQuiz(scene) {
-    quizListContainer.innerHTML = "";
-    scene.quizzes.forEach((q, qIndex) => {
-      const item = document.createElement("div");
-      item.className = "quiz-item";
+  // =========================================================================
+  // 8. 跨课全场景实战刷题对决引擎 (Battle Quiz Engine)
+  // =========================================================================
+  const BattleQuizEngine = {
+    storageKeyWeakness: "NHG_BATTLE_QUIZ_WEAKNESS_V1",
+    storageKeyHistory: "NHG_BATTLE_QUIZ_HISTORY_V1",
 
-      let optionsHtml = q.options.map((opt, optIndex) => `
-        <button class="quiz-option-btn" data-qindex="${qIndex}" data-optindex="${optIndex}">
-          <span>${opt}</span>
-          <span class="quiz-check-icon"></span>
-        </button>
-      `).join("");
+    currentMode: "quick10", // 'quick10' | 'exam20' | 'weakness' | 'all50'
+    currentCategory: "all",  // 'all' | 'objection' | 'pitfall' | 'elicitation' | 'scope' | 'keigo'
 
-      item.innerHTML = `
-        <div class="quiz-q-text">
-          <span class="quiz-q-num">第 ${qIndex + 1} 题</span>
-          <span>${q.question}</span>
+    questions: [],
+    currentIndex: 0,
+    userAnswers: {}, // { [index]: { selectedIndex, isCorrect, answeredAt } }
+    sessionScore: 0,
+    sessionStreak: 0,
+    maxSessionStreak: 0,
+    examTimer: null,
+    examRemainingSeconds: 900, // 15 min
+
+    // Weakness & History Storage
+    getWeaknessIds() {
+      try {
+        const raw = localStorage.getItem(this.storageKeyWeakness);
+        return raw ? new Set(JSON.parse(raw)) : new Set();
+      } catch (e) {
+        return new Set();
+      }
+    },
+    hasWeakness(id) {
+      return this.getWeaknessIds().has(id);
+    },
+    addWeakness(id) {
+      const set = this.getWeaknessIds();
+      set.add(id);
+      try {
+        localStorage.setItem(this.storageKeyWeakness, JSON.stringify([...set]));
+      } catch (e) {}
+      this.updateTopStats();
+    },
+    removeWeakness(id) {
+      const set = this.getWeaknessIds();
+      if (set.has(id)) {
+        set.delete(id);
+        try {
+          localStorage.setItem(this.storageKeyWeakness, JSON.stringify([...set]));
+        } catch (e) {}
+      }
+      this.updateTopStats();
+    },
+    toggleBookmark(id) {
+      if (this.hasWeakness(id)) {
+        this.removeWeakness(id);
+        showToast("⭐ 已从重点错题本中移除");
+        return false;
+      } else {
+        this.addWeakness(id);
+        showToast("⭐ 已成功收藏至重点错题本！");
+        return true;
+      }
+    },
+    getHistory() {
+      try {
+        const raw = localStorage.getItem(this.storageKeyHistory);
+        return raw ? JSON.parse(raw) : { totalAnswered: 0, totalCorrect: 0, dimensions: {} };
+      } catch (e) {
+        return { totalAnswered: 0, totalCorrect: 0, dimensions: {} };
+      }
+    },
+    recordAnswer(qId, catId, isCorrect) {
+      const history = this.getHistory();
+      history.totalAnswered = (history.totalAnswered || 0) + 1;
+      if (isCorrect) {
+        history.totalCorrect = (history.totalCorrect || 0) + 1;
+      }
+      if (!history.dimensions) history.dimensions = {};
+      if (!history.dimensions[catId]) history.dimensions[catId] = { answered: 0, correct: 0 };
+      history.dimensions[catId].answered += 1;
+      if (isCorrect) history.dimensions[catId].correct += 1;
+
+      try {
+        localStorage.setItem(this.storageKeyHistory, JSON.stringify(history));
+      } catch (e) {}
+      this.updateTopStats();
+    },
+
+    updateTopStats() {
+      const statTotal = document.getElementById("stat-total-answered");
+      const statAcc = document.getElementById("stat-accuracy");
+      const statWeak = document.getElementById("stat-weak-count");
+      const weakBadge = document.getElementById("weakness-badge-pill");
+
+      const hist = this.getHistory();
+      const weakIds = this.getWeaknessIds();
+
+      if (statTotal) statTotal.textContent = hist.totalAnswered || 0;
+      if (statAcc) {
+        const pct = hist.totalAnswered ? Math.round((hist.totalCorrect / hist.totalAnswered) * 100) : 0;
+        statAcc.textContent = `${pct}%`;
+      }
+      if (statWeak) statWeak.textContent = weakIds.size;
+      if (weakBadge) weakBadge.textContent = weakIds.size;
+    },
+
+    // Shuffle helper (Fisher-Yates)
+    shuffle(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    },
+
+    // Start a new session
+    startSession(mode = this.currentMode, cat = this.currentCategory) {
+      this.currentMode = mode;
+      this.currentCategory = cat;
+
+      if (this.examTimer) {
+        clearInterval(this.examTimer);
+        this.examTimer = null;
+      }
+
+      // 1. Get raw pool
+      const allQuestions = window.BATTLE_QUIZ_DATA?.questions || [];
+      let pool = [...allQuestions];
+
+      // 2. Filter by category if not 'all'
+      if (cat !== "all") {
+        pool = pool.filter(q => q.category === cat);
+      }
+
+      // 3. Filter/Slice by mode
+      if (mode === "weakness") {
+        const weakIds = this.getWeaknessIds();
+        pool = pool.filter(q => weakIds.has(q.id));
+      } else if (mode === "quick10") {
+        pool = this.shuffle(pool).slice(0, Math.min(10, pool.length));
+      } else if (mode === "exam20") {
+        pool = this.shuffle(pool).slice(0, Math.min(20, pool.length));
+      } else if (mode === "all50") {
+        pool = this.shuffle(pool);
+      }
+
+      this.questions = pool;
+      this.currentIndex = 0;
+      this.userAnswers = {};
+      this.sessionScore = 0;
+      this.sessionStreak = 0;
+      this.maxSessionStreak = 0;
+
+      // Mode tag
+      const modeTag = document.getElementById("battle-mode-indicator-tag");
+      if (modeTag) {
+        const modeLabels = {
+          "quick10": "⚡ 10题日常速刷",
+          "exam20": "⏱️ 20题限时全真模考",
+          "weakness": "📕 错题消消乐",
+          "all50": "🔥 50题全真死斗"
+        };
+        modeTag.textContent = modeLabels[mode] || "🎯 实战对决";
+      }
+
+      // Timer for exam20
+      const timerPill = document.getElementById("battle-timer-pill");
+      if (mode === "exam20") {
+        if (timerPill) timerPill.style.display = "inline-flex";
+        this.examRemainingSeconds = 900; // 15 mins
+        this.updateTimerDisplay();
+        this.examTimer = setInterval(() => {
+          this.examRemainingSeconds--;
+          this.updateTimerDisplay();
+          if (this.examRemainingSeconds <= 0) {
+            clearInterval(this.examTimer);
+            this.examTimer = null;
+            showToast("⏱️ 模考时间到！自动提交并生成战力诊断报告！");
+            this.finishSession();
+          }
+        }, 1000);
+      } else {
+        if (timerPill) timerPill.style.display = "none";
+      }
+
+      // Toggle UI cards
+      const arenaCard = document.getElementById("battle-arena");
+      const scorecardCard = document.getElementById("battle-scorecard");
+      if (arenaCard) arenaCard.style.display = "block";
+      if (scorecardCard) scorecardCard.style.display = "none";
+
+      this.updateModeAndCatButtons();
+      this.updateTopStats();
+      this.renderQuestion();
+    },
+
+    updateTimerDisplay() {
+      const timerVal = document.getElementById("battle-timer-val");
+      if (!timerVal) return;
+      const m = Math.floor(this.examRemainingSeconds / 60);
+      const s = this.examRemainingSeconds % 60;
+      timerVal.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    },
+
+    updateModeAndCatButtons() {
+      document.querySelectorAll(".battle-mode-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-mode") === this.currentMode);
+      });
+      document.querySelectorAll(".cat-filter-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-cat") === this.currentCategory);
+      });
+    },
+
+    renderQuestion() {
+      const container = document.getElementById("arena-question-container");
+      if (!container) return;
+
+      if (!this.questions.length) {
+        let emptyHtml = "";
+        if (this.currentMode === "weakness") {
+          emptyHtml = `
+            <div style="text-align: center; padding: 4rem 1.5rem;">
+              <div style="font-size: 3.5rem; margin-bottom: 1rem;">🎉</div>
+              <h4 style="font-size: 1.3rem; font-weight: 800; color: #065f46; margin-bottom: 0.5rem;">恭喜！错题本空空如也！</h4>
+              <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 460px; margin: 0 auto 1.5rem;">
+                您目前在所选维度下没有待消除的错题。建议开启「10题日常速刷」或「20题全真模考」检验战力！
+              </p>
+              <button class="battle-nav-btn primary" onclick="BattleQuizEngine.startSession('quick10', 'all')">
+                ⚡ 开启10题日常速刷
+              </button>
+            </div>
+          `;
+        } else {
+          emptyHtml = `
+            <div style="text-align: center; padding: 4rem 1.5rem;">
+              <div style="font-size: 3.5rem; margin-bottom: 1rem;">📭</div>
+              <h4 style="font-size: 1.3rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">未找到匹配题目</h4>
+              <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                当前分类下暂无题目，请切换其他维度或返回全部。
+              </p>
+              <button class="battle-nav-btn primary" onclick="BattleQuizEngine.startSession('quick10', 'all')">
+                查看全部维度题目
+              </button>
+            </div>
+          `;
+        }
+        container.innerHTML = emptyHtml;
+        this.updateNavButtons();
+        return;
+      }
+
+      const q = this.questions[this.currentIndex];
+      const answeredState = this.userAnswers[this.currentIndex];
+      const isAnswered = !!answeredState;
+
+      // Progress bar & indicators
+      const progressText = document.getElementById("battle-progress-text");
+      const progressFill = document.getElementById("battle-progress-fill");
+      const streakVal = document.getElementById("battle-streak-val");
+      const scoreVal = document.getElementById("battle-score-val");
+
+      if (progressText) progressText.textContent = `第 ${this.currentIndex + 1} / ${this.questions.length} 题`;
+      if (progressFill) progressFill.style.width = `${((this.currentIndex + 1) / this.questions.length) * 100}%`;
+      if (streakVal) streakVal.textContent = this.sessionStreak;
+      if (scoreVal) scoreVal.textContent = this.sessionScore;
+
+      // Bookmark status
+      this.updateBookmarkButton(q.id);
+
+      // Render question content
+      let optionsHtml = q.options.map((opt, optIndex) => {
+        let extraClasses = "";
+        let statusTag = "";
+
+        if (isAnswered) {
+          if (optIndex === q.correct) {
+            extraClasses = "opt-correct";
+            statusTag = `<span class="opt-status-tag">✅ 最佳对策</span>`;
+          } else if (optIndex === answeredState.selectedIndex) {
+            extraClasses = "opt-wrong";
+            statusTag = `<span class="opt-status-tag">❌ 触雷选项</span>`;
+          }
+        }
+
+        return `
+          <button class="battle-opt-btn ${extraClasses}" data-optindex="${optIndex}" ${isAnswered ? "disabled" : ""}>
+            <div class="opt-letter-badge">${opt.label}</div>
+            <div class="opt-text-wrap">
+              <div class="opt-sentence-jp">${opt.text}</div>
+            </div>
+            ${statusTag}
+          </button>
+        `;
+      }).join("");
+
+      let explanationHtml = "";
+      if (isAnswered) {
+        const isUserCorrect = answeredState.isCorrect;
+        const verdictBanner = isUserCorrect ? `
+          <div class="exp-verdict-banner verdict-correct">
+            <span class="verdict-icon">🎉</span>
+            <div>
+              <div class="verdict-title">策略满分！完全契合日企商务期待与商谈常识</div>
+              <div class="verdict-desc">不仅展现了高阶商务得体度，更精准切中客户心理防线。</div>
+            </div>
+          </div>
+        ` : `
+          <div class="exp-verdict-banner verdict-wrong">
+            <span class="verdict-icon">⚠️</span>
+            <div>
+              <div class="verdict-title">失策避雷！该应答容易引发客户反感或风控风险</div>
+              <div class="verdict-desc">已自动为您收录至「错题本」，请认真品味下方最佳对策与心理拆解。</div>
+            </div>
+          </div>
+        `;
+
+        const trapsHtml = q.options.map(o => `
+          <div class="exp-trap-item ${o.label === q.options[q.correct].label ? 'correct-opt-analysis' : ''}">
+            <strong>【选项 ${o.label}】</strong>${o.analysis}
+          </div>
+        `).join("");
+
+        const phrasesHtml = (q.explanation.keyPhrases && q.explanation.keyPhrases.length) ? `
+          <div class="exp-section-item">
+            <div class="exp-section-title">💡 关键高频表达与句式</div>
+            <div class="exp-phrases-pills">
+              ${q.explanation.keyPhrases.map(p => `
+                <div class="exp-phrase-chip">
+                  <strong>${p.jp}</strong>
+                  <span>(${p.zh})</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        ` : "";
+
+        const refHtml = q.explanation.referenceDialogue ? `
+          <div class="exp-section-item">
+            <div class="exp-section-title">📖 教材课文溯源联动</div>
+            <div class="exp-ref-badge">
+              <span>🔗 ${q.explanation.referenceDialogue}</span>
+            </div>
+          </div>
+        ` : "";
+
+        explanationHtml = `
+          <div class="battle-explanation-card">
+            ${verdictBanner}
+            <div class="exp-sections-grid">
+              <div class="exp-section-item">
+                <div class="exp-section-title">🎯 最佳对策与商务战略</div>
+                <div class="exp-section-body">${q.explanation.strategy}</div>
+              </div>
+
+              <div class="exp-section-item">
+                <div class="exp-section-title">🧠 日本客户心理暗语与潜台词</div>
+                <div class="exp-section-body">${q.explanation.clientSubtext}</div>
+              </div>
+
+              <div class="exp-section-item">
+                <div class="exp-section-title">❌ 选项逐个剖析与避雷指南</div>
+                <div class="exp-traps-list">${trapsHtml}</div>
+              </div>
+
+              ${phrasesHtml}
+              ${refHtml}
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="battle-q-box">
+          <div class="battle-q-meta-badges">
+            <span class="q-category-pill cat-${q.category}">${q.categoryName}</span>
+            <span class="q-scene-pill">📍 ${q.sceneTag}</span>
+            <span class="q-difficulty-pill diff-${q.difficulty}">${q.difficulty}</span>
+          </div>
+
+          <div class="scenario-bubble-card">
+            <div class="scenario-speaker-header">
+              <span class="scenario-speaker-avatar">${q.speakerAvatar || '👨‍💼'}</span>
+              <div class="scenario-speaker-info">
+                <span class="scenario-speaker-name">${q.speaker}</span>
+                <span class="scenario-speaker-role">${q.speakerRole}</span>
+              </div>
+            </div>
+            <div class="scenario-context-text">${q.context}</div>
+            <div class="scenario-quote-box">
+              <div class="scenario-quote-text">${q.dialogue}</div>
+            </div>
+          </div>
+
+          <div class="battle-prompt-box">
+            <span class="battle-prompt-icon">⚡</span>
+            <span class="battle-prompt-text">${q.prompt}</span>
+          </div>
+
+          <div class="battle-options-list" id="current-options-list">
+            ${optionsHtml}
+          </div>
+
+          ${explanationHtml}
         </div>
-        <div class="quiz-options">${optionsHtml}</div>
-        <div class="quiz-explanation" id="quiz-exp-${q.id}">${q.explanation}</div>
       `;
 
-      item.querySelectorAll(".quiz-option-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const optIndex = parseInt(btn.getAttribute("data-optindex"), 10);
-          const expBox = item.querySelector(`#quiz-exp-${q.id}`);
-          const allOptions = item.querySelectorAll(".quiz-option-btn");
-
-          allOptions.forEach(b => {
-            b.disabled = true;
-            b.style.cursor = "default";
+      // Attach option click listeners
+      if (!isAnswered) {
+        container.querySelectorAll(".battle-opt-btn").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const selectedOpt = parseInt(btn.getAttribute("data-optindex"), 10);
+            this.handleOptionSelect(selectedOpt);
           });
+        });
+      }
 
-          if (optIndex === q.correct) {
-            btn.classList.add("selected-correct");
-            btn.querySelector(".quiz-check-icon").innerHTML = "✅ 正确！";
-          } else {
-            btn.classList.add("selected-wrong");
-            btn.querySelector(".quiz-check-icon").innerHTML = "❌ 错误";
-            allOptions[q.correct].classList.add("selected-correct");
-            allOptions[q.correct].querySelector(".quiz-check-icon").innerHTML = "👈 正确答案";
+      this.updateNavButtons();
+    },
+
+    handleOptionSelect(selectedOpt) {
+      const q = this.questions[this.currentIndex];
+      const isCorrect = (selectedOpt === q.correct);
+
+      this.userAnswers[this.currentIndex] = {
+        selectedIndex: selectedOpt,
+        isCorrect: isCorrect,
+        answeredAt: Date.now()
+      };
+
+      if (isCorrect) {
+        this.sessionScore += 1;
+        this.sessionStreak += 1;
+        this.maxSessionStreak = Math.max(this.maxSessionStreak, this.sessionStreak);
+
+        // If previously in weakness, remove it
+        if (this.hasWeakness(q.id)) {
+          this.removeWeakness(q.id);
+          showToast("🎯 答对！该题已从错题本中成功消除！");
+        }
+      } else {
+        this.sessionStreak = 0;
+        this.addWeakness(q.id);
+        showToast("❌ 回答失策，已自动收录进错题本！");
+      }
+
+      this.recordAnswer(q.id, q.category, isCorrect);
+      this.renderQuestion();
+    },
+
+    updateNavButtons() {
+      const prevBtn = document.getElementById("battle-prev-btn");
+      const nextBtn = document.getElementById("battle-next-btn");
+      const nextBtnText = document.getElementById("battle-next-btn-text");
+
+      const isAnswered = !!this.userAnswers[this.currentIndex];
+      const isLast = (this.currentIndex === this.questions.length - 1);
+
+      if (prevBtn) {
+        prevBtn.disabled = (this.currentIndex === 0);
+      }
+
+      if (nextBtn) {
+        nextBtn.disabled = !isAnswered;
+        if (nextBtnText) {
+          nextBtnText.textContent = isLast ? "🏁 查看战力诊断报告" : "下一题";
+        }
+      }
+    },
+
+    updateBookmarkButton(qId) {
+      const btn = document.getElementById("battle-bookmark-btn");
+      const lbl = document.getElementById("bookmark-label-text");
+      if (!btn) return;
+
+      const isBookmarked = this.hasWeakness(qId);
+      btn.classList.toggle("bookmarked", isBookmarked);
+      if (lbl) {
+        lbl.textContent = isBookmarked ? "已在错题本" : "收藏生疏题";
+      }
+    },
+
+    prevQuestion() {
+      if (this.currentIndex > 0) {
+        this.currentIndex--;
+        this.renderQuestion();
+      }
+    },
+
+    nextQuestion() {
+      if (this.currentIndex < this.questions.length - 1) {
+        this.currentIndex++;
+        this.renderQuestion();
+      } else {
+        this.finishSession();
+      }
+    },
+
+    finishSession() {
+      if (this.examTimer) {
+        clearInterval(this.examTimer);
+        this.examTimer = null;
+      }
+
+      const total = this.questions.length;
+      const score = this.sessionScore;
+      const accuracy = total > 0 ? Math.round((score / total) * 100) : 0;
+
+      // Determine rank
+      let rank = "C";
+      let rankTitle = "⚠️ 预警级 · 存在踩坑死角，需重点复盘";
+      let rankDesc = "在日企商务沟通中仍有部分直球拒绝或失礼表达，建议结合课文深挖客户真实心理，规避合规与关系风险。";
+
+      if (accuracy >= 90) {
+        rank = "S";
+        rankTitle = "👑 殿堂级 · 对日IT金牌顾问 (Master)";
+        rankDesc = "兼备卓越的技术判断力与神级商务情商！对日式商业心理、非功能下钻、范围冻结与高阶敬语游刃有余！";
+      } else if (accuracy >= 80) {
+        rank = "A";
+        rankTitle = "💎 卓越级 · 资深对日SE/PM (Senior)";
+        rankDesc = "具备扎实的对日IT实战交锋素养，在绝大多数场景下能够得体应对日本客户质疑并推动共识达成！";
+      } else if (accuracy >= 70) {
+        rank = "B";
+        rankTitle = "⚔️ 熟练级 · 合格对日工程师 (Qualified)";
+        rankDesc = "掌握基础对日敬语与规范流程，但在复杂的突发阻力与范围谈判中仍偶有踩坑，需强化避雷意识。";
+      } else if (accuracy < 60) {
+        rank = "D";
+        rankTitle = "🚨 危险级 · 高频职场失礼预警 (Review Needed)";
+        rankDesc = "暴露出较多中国工程师常见直男式NG回答（直接拒绝、甩锅他责、模糊承诺），建议立即回炉精读5大场景核心对话！";
+      }
+
+      // 5 Dimensions breakdown
+      const categories = [
+        { id: "objection", name: "🛡️ 异议化解力", barColor: "linear-gradient(90deg, #f59e0b, #d97706)" },
+        { id: "pitfall", name: "🚫 避坑防雷力", barColor: "linear-gradient(90deg, #ef4444, #b91c1c)" },
+        { id: "elicitation", name: "🔍 需求下钻力", barColor: "linear-gradient(90deg, #6366f1, #4338ca)" },
+        { id: "scope", name: "📐 范围把控力", barColor: "linear-gradient(90deg, #0ea5e9, #0369a1)" },
+        { id: "keigo", name: "👔 高阶敬语力", barColor: "linear-gradient(90deg, #a855f7, #7e22ce)" }
+      ];
+
+      const dimBreakdown = categories.map(cat => {
+        let catTotal = 0;
+        let catCorrect = 0;
+        this.questions.forEach((q, idx) => {
+          if (q.category === cat.id) {
+            catTotal++;
+            const ans = this.userAnswers[idx];
+            if (ans && ans.isCorrect) catCorrect++;
           }
+        });
+        const pct = catTotal > 0 ? Math.round((catCorrect / catTotal) * 100) : 100;
+        return {
+          ...cat,
+          total: catTotal,
+          correct: catCorrect,
+          pct: pct
+        };
+      });
 
-          expBox.classList.add("show");
+      // Find lowest category
+      const activeDims = dimBreakdown.filter(d => d.total > 0);
+      activeDims.sort((a, b) => a.pct - b.pct);
+      const lowestDim = activeDims.length ? activeDims[0] : null;
+
+      let adviceHtml = "";
+      if (lowestDim && lowestDim.pct < 80) {
+        adviceHtml = `
+          <div style="background: #fffbeb; border: 1px solid #fef3c7; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 1rem 1.25rem; margin-top: 1.5rem; text-align: left;">
+            <div style="font-weight: 800; color: #92400e; font-size: 0.92rem; margin-bottom: 0.35rem;">
+              💡 战力进阶针对性教练建言：
+            </div>
+            <div style="font-size: 0.86rem; color: #78350f; line-height: 1.5;">
+              您在<strong>「${lowestDim.name}」</strong>维度的正确率为 <strong>${lowestDim.pct}%</strong>。建议重点回炉精读对应场景课文及【职场实战诊所】，掌握日式商务沟通的缓冲语（クッション言葉）与责任分界（デマケーション）思维！
+            </div>
+          </div>
+        `;
+      }
+
+      const barsHtml = dimBreakdown.map(d => `
+        <div class="radar-dim-row">
+          <div class="radar-dim-header">
+            <span>${d.name} ${d.total > 0 ? `(${d.correct}/${d.total})` : ''}</span>
+            <span style="color: ${d.pct >= 80 ? '#059669' : (d.pct >= 60 ? '#d97706' : '#dc2626')};">
+              ${d.pct}% · ${d.pct >= 90 ? '卓越' : (d.pct >= 75 ? '良好' : (d.pct >= 60 ? '及格' : '薄弱'))}
+            </span>
+          </div>
+          <div class="radar-bar-bg">
+            <div class="radar-bar-fill" style="width: ${d.pct}%; background: ${d.barColor};"></div>
+          </div>
+        </div>
+      `).join("");
+
+      const arenaCard = document.getElementById("battle-arena");
+      const scorecardCard = document.getElementById("battle-scorecard");
+      if (arenaCard) arenaCard.style.display = "none";
+      if (!scorecardCard) return;
+
+      scorecardCard.style.display = "block";
+      scorecardCard.innerHTML = `
+        <div class="scorecard-rank-badge rank-${rank}">${rank}</div>
+        <h3 class="scorecard-title">${rankTitle}</h3>
+        <p class="scorecard-subtitle">${rankDesc}</p>
+
+        <div class="scorecard-metrics-grid">
+          <div class="score-metric-box">
+            <div class="score-metric-val" style="color: ${accuracy >= 80 ? '#059669' : '#d97706'};">${accuracy}%</div>
+            <div class="score-metric-lbl">综合正确率</div>
+          </div>
+          <div class="score-metric-box">
+            <div class="score-metric-val">${score} / ${total}</div>
+            <div class="score-metric-lbl">答对真题数</div>
+          </div>
+          <div class="score-metric-box">
+            <div class="score-metric-val">🔥 ${this.maxSessionStreak}</div>
+            <div class="score-metric-lbl">最高连胜</div>
+          </div>
+          <div class="score-metric-box">
+            <div class="score-metric-val" style="color: #dc2626;">${this.getWeaknessIds().size}</div>
+            <div class="score-metric-lbl">错题本待消</div>
+          </div>
+        </div>
+
+        <div class="radar-bars-card">
+          <div class="radar-bars-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            <span>5大对日IT核心实战维度诊断</span>
+          </div>
+          ${barsHtml}
+          ${adviceHtml}
+        </div>
+
+        <div class="scorecard-actions">
+          <button class="scorecard-act-btn primary" onclick="BattleQuizEngine.startSession('quick10', 'all')">
+            ⚡ 换一套10题速刷
+          </button>
+          <button class="scorecard-act-btn secondary" onclick="BattleQuizEngine.startSession('weakness', 'all')">
+            📕 专攻错题消消乐 (${this.getWeaknessIds().size})
+          </button>
+          <button class="scorecard-act-btn secondary" onclick="window.switchTab ? window.switchTab('textbook') : null">
+            📘 查看教材课文精读
+          </button>
+        </div>
+      `;
+    },
+
+    init() {
+      // Bind mode buttons
+      document.querySelectorAll(".battle-mode-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const mode = btn.getAttribute("data-mode");
+          this.startSession(mode, this.currentCategory);
         });
       });
 
-      quizListContainer.appendChild(item);
-    });
+      // Bind category buttons
+      document.querySelectorAll(".cat-filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const cat = btn.getAttribute("data-cat");
+          this.startSession(this.currentMode, cat);
+        });
+      });
+
+      // Bind nav buttons
+      const prevBtn = document.getElementById("battle-prev-btn");
+      const nextBtn = document.getElementById("battle-next-btn");
+      const bookmarkBtn = document.getElementById("battle-bookmark-btn");
+
+      if (prevBtn) {
+        prevBtn.addEventListener("click", () => this.prevQuestion());
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => this.nextQuestion());
+      }
+      if (bookmarkBtn) {
+        bookmarkBtn.addEventListener("click", () => {
+          if (!this.questions.length) return;
+          const q = this.questions[this.currentIndex];
+          this.toggleBookmark(q.id);
+          this.updateBookmarkButton(q.id);
+        });
+      }
+
+      this.updateTopStats();
+      this.startSession("quick10", "all");
+    }
+  };
+
+  // 场景切换时的随堂测验桥接函数
+  function renderQuiz(scene) {
+    if (BattleQuizEngine && BattleQuizEngine.updateTopStats) {
+      BattleQuizEngine.updateTopStats();
+    }
   }
 
   // 9. 渲染对日实战商务邮件模板库 (Business Email & Report Templates)
@@ -2737,8 +3502,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 初始化随身听、背诵控制栏并默认启动渲染
+  // 初始化随身听、背诵控制栏、跨场景对决刷题引擎并默认启动渲染
+  window.switchTab = switchTab;
+  window.BattleQuizEngine = BattleQuizEngine;
   WalkmanController.init();
   setupDrillToolbars();
+  BattleQuizEngine.init();
   renderCurrentScene();
 });

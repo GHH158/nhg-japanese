@@ -107,7 +107,8 @@
         </button>
         <button class="tab-btn" data-tab="quiz">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-          <span>🎯 随堂自测</span>
+          <span>🎯 跨场景实战刷题</span>
+          <span class="counter-pill" style="background:#fee2e2;color:#991b1b;border-color:#fecaca;">50题</span>
         </button>
         <button class="tab-btn" data-tab="email">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22 6 12 13 2 6"></polyline></svg>
@@ -303,13 +304,130 @@
         <div id="vocab-cards-container" class="flashcards-grid"></div>
       </section>
 
-      <!-- 模块 6：互动随堂自测 -->
+      <!-- 模块 6：跨课全场景实战刷题对决系统 (Cross-Scene Battle Drill) -->
       <section id="section-quiz" class="module-section">
-        <div class="section-header">
-          <h3 class="section-title">🎯 随堂互动自测（检验与巩固）</h3>
+        <div class="section-header quiz-battle-header">
+          <div class="battle-title-area">
+            <div class="battle-main-badge">
+              <span class="battle-badge-icon">🎯</span>
+              <span>对日IT攻防实战对决</span>
+              <span class="battle-badge-tag">全场景混编 · 50题题库</span>
+            </div>
+            <h3 class="section-title">跨课全场景实战刷题对决系统</h3>
+            <p class="section-subtitle">
+              告别传统机械死记 · 模拟日本客户现场交锋与心理拆解 · 全面检验「异议化解・避坑防雷・需求下钻・范围把控・高阶敬语」5大实战战力
+            </p>
+          </div>
+          <div class="quiz-top-stats" id="quiz-top-stats">
+            <div class="stat-badge-item">
+              <div class="stat-num" id="stat-total-answered">0</div>
+              <div class="stat-label">已刷真题</div>
+            </div>
+            <div class="stat-badge-item">
+              <div class="stat-num stat-correct" id="stat-accuracy">0%</div>
+              <div class="stat-label">综合正确率</div>
+            </div>
+            <div class="stat-badge-item">
+              <div class="stat-num stat-weakness" id="stat-weak-count">0</div>
+              <div class="stat-label">错题本收录</div>
+            </div>
+          </div>
         </div>
-        <div class="quiz-container">
-          <div id="quiz-list-container"></div>
+
+        <!-- 模式与筛选控制台 (Mode & Category Toolbar) -->
+        <div class="battle-toolbar">
+          <div class="battle-mode-group">
+            <span class="toolbar-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>对决模式：</span>
+            </span>
+            <button class="battle-mode-btn active" data-mode="quick10">
+              <span class="mode-icon">⚡</span>
+              <span>10题日常速刷</span>
+            </button>
+            <button class="battle-mode-btn" data-mode="exam20">
+              <span class="mode-icon">⏱️</span>
+              <span>20题限时全真模考</span>
+            </button>
+            <button class="battle-mode-btn" data-mode="weakness">
+              <span class="mode-icon">📕</span>
+              <span>错题消消乐</span>
+              <span class="weakness-counter-badge" id="weakness-badge-pill">0</span>
+            </button>
+            <button class="battle-mode-btn" data-mode="all50">
+              <span class="mode-icon">🔥</span>
+              <span>50题全真死斗</span>
+            </button>
+          </div>
+
+          <div class="battle-category-group">
+            <span class="toolbar-label">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+              <span>战力维度：</span>
+            </span>
+            <button class="cat-filter-btn active" data-cat="all">全部维度 (50)</button>
+            <button class="cat-filter-btn" data-cat="objection">🛡️ 异议化解 (10)</button>
+            <button class="cat-filter-btn" data-cat="pitfall">🚫 避坑防雷 (10)</button>
+            <button class="cat-filter-btn" data-cat="elicitation">🔍 需求下钻 (10)</button>
+            <button class="cat-filter-btn" data-cat="scope">📐 范围把控 (10)</button>
+            <button class="cat-filter-btn" data-cat="keigo">👔 高阶敬语 (10)</button>
+          </div>
+        </div>
+
+        <!-- 答题主舞台 (Battle Arena) -->
+        <div id="battle-arena" class="battle-arena-card">
+          <!-- 答题状态栏：进度条、倒计时、连击数 -->
+          <div class="arena-top-bar">
+            <div class="arena-progress-wrap">
+              <div class="arena-progress-label-row">
+                <span class="arena-progress-text" id="battle-progress-text">第 1 / 10 题</span>
+                <span class="arena-mode-tag" id="battle-mode-indicator-tag">⚡ 10题日常速刷</span>
+              </div>
+              <div class="arena-progress-bar">
+                <div class="arena-progress-fill" id="battle-progress-fill" style="width: 10%;"></div>
+              </div>
+            </div>
+            <div class="arena-meta-indicators">
+              <div class="timer-pill" id="battle-timer-pill" style="display: none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span id="battle-timer-val">15:00</span>
+              </div>
+              <div class="streak-pill" id="battle-streak-pill">
+                <span>🔥 连胜: <strong id="battle-streak-val">0</strong></span>
+              </div>
+              <div class="score-pill">
+                <span>得分: <strong id="battle-score-val">0</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 题目与场景卡片容器 -->
+          <div class="arena-question-container" id="arena-question-container">
+            <!-- 动态渲染题目内容 -->
+          </div>
+
+          <!-- 底部控制按钮栏 -->
+          <div class="arena-footer-bar">
+            <button id="battle-prev-btn" class="battle-nav-btn" disabled>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <span>上一题</span>
+            </button>
+            <div class="arena-footer-center">
+              <button id="battle-bookmark-btn" class="bookmark-btn" title="标记为重点难题/收录进错题本">
+                <span class="bookmark-icon">⭐</span>
+                <span class="bookmark-label" id="bookmark-label-text">收藏生疏题</span>
+              </button>
+            </div>
+            <button id="battle-next-btn" class="battle-nav-btn primary" disabled>
+              <span id="battle-next-btn-text">下一题</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- 结算诊断报告卡片 (Exam Scorecard & Radar Report) -->
+        <div id="battle-scorecard" class="battle-scorecard-card" style="display: none;">
+          <!-- JS 动态渲染成绩单与五维战力雷达 -->
         </div>
       </section>
 
@@ -381,6 +499,108 @@
     </div>
   </div>
 
+  <!-- 🎓 单句名师精讲与记忆锦囊抽屉 (Sentence Pedagogy & Mnemonics Drawer) -->
+  <div id="pedagogy-drawer-overlay" class="drawer-overlay">
+    <div id="pedagogy-drawer" class="drawer-content pedagogy-drawer-content">
+      <div class="drawer-handle-bar"><div class="drawer-handle"></div></div>
+      <div class="drawer-header pedagogy-drawer-header">
+        <div>
+          <div class="drawer-badge-row">
+            <span id="pedagogy-speaker-badge" class="drawer-badge pedagogy-speaker-badge">李（受托方SE）</span>
+            <span class="drawer-pos pedagogy-level-badge">名师随堂精讲</span>
+          </div>
+          <div class="drawer-title-row">
+            <h3 class="drawer-title" style="font-size: 1.18rem; font-weight: 800; color: #1e293b;">🎓 句型剖析与记忆锦囊</h3>
+          </div>
+        </div>
+        <button id="pedagogy-drawer-close-btn" class="drawer-close-btn" aria-label="关闭">✕</button>
+      </div>
+
+      <div class="drawer-body pedagogy-drawer-body">
+        <!-- 🔊 原句展示与发音 -->
+        <div class="pedagogy-sentence-card">
+          <div class="pedagogy-sentence-header">
+            <span class="pedagogy-sentence-label">🔊 对话原句与发音</span>
+            <button id="pedagogy-speak-btn" class="btn-pedagogy-speak" title="听整句发音">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+              <span>听原声</span>
+            </button>
+          </div>
+          <div id="pedagogy-sentence-jp" class="pedagogy-sentence-jp"></div>
+          <div id="pedagogy-sentence-zh" class="pedagogy-sentence-zh"></div>
+        </div>
+
+        <!-- 📌 核心句型骨架 -->
+        <div class="pedagogy-card pedagogy-card-pattern">
+          <div class="pedagogy-card-title">
+            <span class="icon">📌</span>
+            <span>核心句型骨架（Sentence Pattern）</span>
+          </div>
+          <div id="pedagogy-pattern-formula" class="pedagogy-formula-box"></div>
+          <div id="pedagogy-pattern-meaning" class="pedagogy-formula-desc"></div>
+        </div>
+
+        <!-- 📖 核心语法详解 -->
+        <div class="pedagogy-card pedagogy-card-grammar">
+          <div class="pedagogy-card-title">
+            <span class="icon">📖</span>
+            <span>本句核心语法解析（Grammar Points）</span>
+          </div>
+          <div id="pedagogy-grammar-list" class="pedagogy-grammar-list"></div>
+        </div>
+
+        <!-- 🔤 重点词汇与商务搭配 -->
+        <div class="pedagogy-card pedagogy-card-vocab">
+          <div class="pedagogy-card-title">
+            <span class="icon">🔤</span>
+            <span>本句重点词汇与商务搭配（Vocabulary & Collocations）</span>
+          </div>
+          <div id="pedagogy-vocab-list" class="pedagogy-vocab-list"></div>
+        </div>
+
+        <!-- 🧠 名师记忆技巧与口诀 -->
+        <div class="pedagogy-card pedagogy-card-memory">
+          <div class="pedagogy-card-title">
+            <span class="icon">🧠</span>
+            <span>名师速记心法与口诀（Memory Mnemonics）</span>
+          </div>
+          <div class="pedagogy-mnemonic-banner">
+            <span class="badge">💡 速记口诀</span>
+            <p id="pedagogy-mnemonic" class="mnemonic-text"></p>
+          </div>
+          <div class="pedagogy-tip-subblock">
+            <div class="sub-label">🎵 换气停顿节奏（意群切分）：</div>
+            <p id="pedagogy-rhythm" class="rhythm-text"></p>
+          </div>
+          <div class="pedagogy-tip-subblock">
+            <div class="sub-label">🔗 联想记忆锚点：</div>
+            <p id="pedagogy-association" class="association-text"></p>
+          </div>
+        </div>
+
+        <!-- ⚠️ 职场实战与避雷指南 -->
+        <div class="pedagogy-card pedagogy-card-workplace">
+          <div class="pedagogy-card-title">
+            <span class="icon">⚠️</span>
+            <span>职场情商指引与避雷指南（Workplace Nuance & Pitfalls）</span>
+          </div>
+          <div class="pedagogy-tip-subblock">
+            <div class="sub-label">🎭 客户潜台词与心理洞察：</div>
+            <p id="pedagogy-nuance" class="nuance-text"></p>
+          </div>
+          <div class="pedagogy-tip-subblock pitfall-block">
+            <div class="sub-label alert-label">🚫 失礼避雷提示（NG 对比）：</div>
+            <p id="pedagogy-pitfall" class="pitfall-text"></p>
+          </div>
+          <div class="pedagogy-tip-subblock">
+            <div class="sub-label">✨ 进阶高阶同义替换：</div>
+            <p id="pedagogy-alternative" class="alternative-text"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 🎧 通勤磨耳朵 / 锁屏随身听浮动控制坞 (Walkman Floating Dock) -->
   <div id="walkman-dock" class="walkman-dock" style="display: none;">
     <div class="walkman-inner">
@@ -407,6 +627,7 @@
   <!-- 引入数据层与交互逻辑 -->
   <script src="data/knowledge-data.js"></script>
   <script src="data/email-data.js"></script>
+  <script src="data/battle-quiz-data.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
