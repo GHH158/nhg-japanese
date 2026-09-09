@@ -31,6 +31,18 @@
             />
           </div>
 
+          <div class="audio-controls-cluster">
+            <button id="audio-speed-btn" class="speed-pill-btn" title="点击切换全局播放语速 (0.8x 慢速精听 / 1.0x 标准 / 1.2x 挑战快速)">
+              <span>⚡ 1.0x</span>
+            </button>
+            <button id="audio-loop-btn" class="loop-pill-btn" title="点击切换单句循环复读模式 (1遍 / 循环3遍)">
+              <span>🔁 1遍</span>
+            </button>
+            <button id="launch-walkman-btn" class="walkman-launch-btn" title="开启通勤磨耳朵随身听 (支持锁屏后台播报)">
+              <span>🎧 随身听</span>
+            </button>
+          </div>
+
           <button id="toggle-furigana-btn" class="toggle-chip active" title="开启或隐藏汉字上方的平假名注音">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M2 12h20M12 2v20"></path>
@@ -97,21 +109,76 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
           <span>🎯 随堂自测</span>
         </button>
+        <button class="tab-btn" data-tab="email">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22 6 12 13 2 6"></polyline></svg>
+          <span>💼 实战邮件</span>
+          <span class="counter-pill" style="background:#fef3c7;color:#92400e;border-color:#fde68a;">高频</span>
+        </button>
       </nav>
 
       <!-- 模块 1：教材核心课文精读区 -->
       <section id="section-textbook" class="module-section">
         <div class="section-header">
           <h3 class="section-title">📘 教材核心课文：全景商务研讨</h3>
-          <button id="play-full-textbook-btn" class="play-full-btn" title="朗读教材完整课文">
+          <button id="play-full-textbook-btn" class="play-full-btn" title="朗读教材完整课文（多角色拟真连播）">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
-            <span>朗读整篇对话</span>
+            <span>连播整篇对话</span>
+            <span class="voice-badge-tag">🎙️ 拟真配音</span>
           </button>
         </div>
 
         <div class="sentence-container">
+          <!-- 教材背诵与演练控制栏 -->
+          <div class="drill-toolbar" id="tb-drill-toolbar">
+            <div class="drill-modes" data-scope="tb">
+              <button class="drill-mode-btn active" data-mode="full" title="完整正文、假名注音与点词解析">
+                <span>📖 精读全览</span>
+              </button>
+              <button class="drill-mode-btn" data-mode="cloze" title="核心敬语与IT词汇挖空，点击揭晓">
+                <span>🧩 挖空背诵</span>
+              </button>
+              <button class="drill-mode-btn" data-mode="prompt" title="仅展示业务中文，点击揭晓日文原句">
+                <span>🎯 译日盲背</span>
+              </button>
+              <button class="drill-mode-btn" data-mode="roleplay" title="模拟现场开会，角色交替对答">
+                <span>🎭 模拟开会</span>
+              </button>
+            </div>
+            <div class="drill-extra">
+              <button class="cloze-toggle-all-btn" id="tb-cloze-toggle-all" style="display: none;" title="一键全部揭晓或重新遮挡">
+                <span>👁️ 揭晓全部</span>
+              </button>
+              <div class="drill-filter-group" data-scope="tb">
+                <button class="filter-chip active" data-filter="all" title="展示全部句子">全部</button>
+                <button class="filter-chip chip-weakness" data-filter="weakness" title="仅展示被标记为【还要再练】的重点生疏句">
+                  <span>⚡ 重点生疏</span>
+                  <span class="weakness-badge" id="tb-weakness-badge">0</span>
+                </button>
+                <button class="filter-chip" data-filter="unmastered" title="仅展示尚未背熟的句子">☆ 待背熟</button>
+              </div>
+              <div class="mastery-stat-chip">
+                <span>背熟: <strong id="tb-mastered-stat">0</strong>/<span id="tb-total-stat">0</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 教材角色扮演控制横幅 -->
+          <div class="roleplay-banner" id="tb-roleplay-banner" style="display: none;">
+            <div class="roleplay-banner-left">
+              <span class="rp-badge">🎭 模拟开会</span>
+              <span class="rp-label">指定我的发言角色：</span>
+              <div class="role-selector-pills" id="tb-role-pills">
+                <button class="role-pill active" data-role="李">👨‍💻 李 (SE/PM)</button>
+                <button class="role-pill" data-role="田中部長">👔 田中部长 (决策者)</button>
+              </div>
+            </div>
+            <button class="btn-start-roleplay" id="tb-start-roleplay-btn" title="开始全真会议对答演练">
+              <span>▶ 开始模拟会议</span>
+            </button>
+          </div>
+
           <!-- 逐角色对话流 -->
           <div id="textbook-dialogue-flow"></div>
 
@@ -119,7 +186,7 @@
           <div class="token-section-wrapper">
             <div class="token-section-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"></line><line x1="4" y1="15" x2="20" y2="15"></line><line x1="10" y1="3" x2="8" y2="21"></line><line x1="16" y1="3" x2="14" y2="21"></line></svg>
-              课文语法词性逐词切片（蓝边为重点要件定义成分）
+              课文语法词性逐词切片（蓝边为重点要件定义成分，点击可查看深度卡片）
             </div>
             <div id="token-chips-container" class="token-chip-cloud"></div>
           </div>
@@ -148,11 +215,61 @@
                 <div class="passage-title-text" id="current-passage-title">短文标题</div>
                 <div class="passage-focus-text" id="current-passage-focus">学习目标与重点</div>
               </div>
-              <button id="play-passage-btn" class="play-full-btn" title="朗读该篇短文">
+              <button id="play-passage-btn" class="play-full-btn" title="朗读该篇短文（多角色拟真连播）">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <polygon points="5 3 19 12 5 21 5 3"></polygon>
                 </svg>
-                <span>朗读本篇短文</span>
+                <span>连播本篇短文</span>
+                <span class="voice-badge-tag">🎙️ 拟真配音</span>
+              </button>
+            </div>
+
+            <!-- 短文背诵与演练控制栏 -->
+            <div class="drill-toolbar" id="p-drill-toolbar">
+              <div class="drill-modes" data-scope="p">
+                <button class="drill-mode-btn active" data-mode="full" title="完整正文、假名注音与点词解析">
+                  <span>📖 精读全览</span>
+                </button>
+                <button class="drill-mode-btn" data-mode="cloze" title="核心敬语与IT词汇挖空，点击揭晓">
+                  <span>🧩 挖空背诵</span>
+                </button>
+                <button class="drill-mode-btn" data-mode="prompt" title="仅展示业务中文，点击揭晓日文原句">
+                  <span>🎯 译日盲背</span>
+                </button>
+                <button class="drill-mode-btn" data-mode="roleplay" title="模拟现场开会，角色交替对答">
+                  <span>🎭 模拟开会</span>
+                </button>
+              </div>
+              <div class="drill-extra">
+                <button class="cloze-toggle-all-btn" id="p-cloze-toggle-all" style="display: none;" title="一键全部揭晓或重新遮挡">
+                  <span>👁️ 揭晓全部</span>
+                </button>
+                <div class="drill-filter-group" data-scope="p">
+                  <button class="filter-chip active" data-filter="all" title="展示全部句子">全部</button>
+                  <button class="filter-chip chip-weakness" data-filter="weakness" title="仅展示被标记为【还要再练】的重点生疏句">
+                    <span>⚡ 重点生疏</span>
+                    <span class="weakness-badge" id="p-weakness-badge">0</span>
+                  </button>
+                  <button class="filter-chip" data-filter="unmastered" title="仅展示尚未背熟的句子">☆ 待背熟</button>
+                </div>
+                <div class="mastery-stat-chip">
+                  <span>背熟: <strong id="p-mastered-stat">0</strong>/<span id="p-total-stat">0</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 短文角色扮演控制横幅 -->
+            <div class="roleplay-banner" id="p-roleplay-banner" style="display: none;">
+              <div class="roleplay-banner-left">
+                <span class="rp-badge">🎭 模拟开会</span>
+                <span class="rp-label">指定我的发言角色：</span>
+                <div class="role-selector-pills" id="p-role-pills">
+                  <button class="role-pill active" data-role="李">👨‍💻 李 (SE/PM)</button>
+                  <button class="role-pill" data-role="田中部長">👔 田中部长</button>
+                </div>
+              </div>
+              <button class="btn-start-roleplay" id="p-start-roleplay-btn" title="开始全真会议对答演练">
+                <span>▶ 开始模拟会议</span>
               </button>
             </div>
 
@@ -196,6 +313,19 @@
         </div>
       </section>
 
+      <!-- 模块 7：对日职场实战邮件模板库 -->
+      <section id="section-email" class="module-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h3 class="section-title">💼 对日实战商务邮件与周报模板库</h3>
+            <p class="section-subtitle">日企高规格商务邮件规范 · 黄金5步结构（宛名・挨拶・本文・結び・署名）· 支持变量替换与一键复制</p>
+          </div>
+        </div>
+        <div id="email-templates-container" class="email-templates-wrapper">
+          <!-- 由 JS 动态渲染匹配当前场景的商务邮件列表与交互 -->
+        </div>
+      </section>
+
       <!-- 模块 7：数据驱动扩展说明 -->
       <section class="extensibility-card">
         <div class="extensibility-header">
@@ -212,8 +342,71 @@
     </main>
   </div>
 
+  <!-- 知识点详情抽屉弹窗 (Knowledge Bottom Sheet Drawer) -->
+  <div id="knowledge-drawer-overlay" class="drawer-overlay">
+    <div id="knowledge-drawer" class="drawer-content">
+      <div class="drawer-handle-bar"><div class="drawer-handle"></div></div>
+      <div class="drawer-header">
+        <div>
+          <div class="drawer-badge-row">
+            <span id="drawer-badge" class="drawer-badge">IT 业务核心词</span>
+            <span id="drawer-pos" class="drawer-pos">敬语动词</span>
+          </div>
+          <div class="drawer-title-row">
+            <h3 id="drawer-title" class="drawer-title">要件定義</h3>
+            <button id="drawer-speak-btn" class="drawer-speak-btn" title="朗读发音">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            </button>
+          </div>
+        </div>
+        <button id="drawer-close-btn" class="drawer-close-btn" aria-label="关闭">✕</button>
+      </div>
+
+      <div class="drawer-body">
+        <div class="drawer-section">
+          <div class="drawer-section-title">💼 业务释义与实务语境</div>
+          <p id="drawer-meaning" class="drawer-text"></p>
+        </div>
+
+        <div class="drawer-section" id="drawer-subtext-section">
+          <div class="drawer-section-title">💡 职场情商指引 / 日本客户潜台词</div>
+          <p id="drawer-subtext" class="drawer-subtext-text"></p>
+        </div>
+
+        <div class="drawer-section" id="drawer-examples-section">
+          <div class="drawer-section-title">📝 实战例句与典型搭配</div>
+          <div id="drawer-examples" class="drawer-examples-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎧 通勤磨耳朵 / 锁屏随身听浮动控制坞 (Walkman Floating Dock) -->
+  <div id="walkman-dock" class="walkman-dock" style="display: none;">
+    <div class="walkman-inner">
+      <div class="walkman-meta">
+        <div class="walkman-avatar-badge" id="wm-avatar">👨‍💻</div>
+        <div class="walkman-text-wrap">
+          <div class="walkman-title-line" id="wm-title">随身听准备就绪</div>
+          <div class="walkman-sub-line" id="wm-sub">场景 1 · SFA需求调研</div>
+        </div>
+      </div>
+      <div class="walkman-mode-switch">
+        <button class="wm-mode-btn active" id="wm-mode-pure" title="多角色纯日文原声连续演播">纯日文</button>
+        <button class="wm-mode-btn" id="wm-mode-echo" title="日文 ➜ 留白2秒跟读 ➜ 中文释义播报">日中跟读</button>
+      </div>
+      <div class="walkman-actions">
+        <button id="wm-prev-btn" class="wm-btn" title="上一句">⏮️</button>
+        <button id="wm-play-btn" class="wm-btn wm-btn-play" title="播放 / 暂停">▶</button>
+        <button id="wm-next-btn" class="wm-btn" title="下一句">⏭️</button>
+        <button id="wm-close-btn" class="wm-btn wm-btn-close" title="收起随身听">✕</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 引入数据层与交互逻辑 -->
   <script src="data/knowledge-data.js"></script>
+  <script src="data/email-data.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

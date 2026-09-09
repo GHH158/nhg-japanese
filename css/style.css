@@ -1500,6 +1500,507 @@ mark.hl-koto:hover {
 .btn-review:hover { background: #fecaca; }
 
 /* ===================================================================
+   Recitation Drill Engine & In-Context Knowledge Lens Styles
+   =================================================================== */
+
+/* 1. 背诵模式工具栏 (Drill Toolbar) */
+.drill-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.85rem;
+  margin-bottom: 1.25rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.drill-modes {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #e2e8f0;
+  padding: 3px;
+  border-radius: 9999px;
+}
+
+.drill-mode-btn {
+  border: none;
+  background: transparent;
+  padding: 0.35rem 0.8rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.drill-mode-btn:hover {
+  color: var(--text-main);
+}
+
+.drill-mode-btn.active {
+  background: white;
+  color: var(--primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.drill-extra {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.cloze-toggle-all-btn {
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: var(--primary);
+  border-radius: 9999px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cloze-toggle-all-btn:hover {
+  background: #dbeafe;
+}
+
+.mastery-stat-chip {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+/* 2. 原文交互式知识透镜芯片 (Interactive Knowledge Chip) */
+.k-chip {
+  display: inline;
+  position: relative;
+  background: rgba(30, 58, 138, 0.06);
+  border-bottom: 2px dashed #2563eb;
+  padding: 1px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.k-chip:hover {
+  background: #dbeafe;
+  color: #1e3a8a;
+  border-bottom-style: solid;
+}
+
+.k-chip::after {
+  content: "💡";
+  font-size: 0.62em;
+  margin-left: 2px;
+  vertical-align: super;
+  opacity: 0.75;
+}
+
+/* 3. 挖空背诵遮挡组件 (Cloze Mask Blanks) */
+.cloze-mask {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #e2e8f0;
+  border: 1.5px dashed #94a3b8;
+  border-radius: 6px;
+  padding: 0.05rem 0.5rem;
+  margin: 0 0.2rem;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+  font-size: 0.85em;
+  vertical-align: middle;
+}
+
+.cloze-mask:hover {
+  border-color: var(--primary);
+  background: #dbeafe;
+  color: var(--primary);
+}
+
+.cloze-mask.revealed {
+  background: #ecfdf5;
+  border: 1.5px solid #10b981;
+  color: #065f46;
+  font-weight: 700;
+  animation: revealPulse 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes revealPulse {
+  0% { transform: scale(0.92); }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+/* 4. 译日盲背模式组件 (Prompt / Blind Recitation) */
+.prompt-blind-wrapper {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 0.6rem;
+}
+
+.prompt-blind-wrapper:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.prompt-cover-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.prompt-unmasked-content {
+  display: none;
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid #e2e8f0;
+  animation: fadeIn 0.3s ease;
+}
+
+.prompt-blind-wrapper.revealed {
+  background: white;
+  border-style: solid;
+  border-color: #cbd5e1;
+}
+
+.prompt-blind-wrapper.revealed .prompt-cover-hint {
+  display: none;
+}
+
+.prompt-blind-wrapper.revealed .prompt-unmasked-content {
+  display: block;
+}
+
+.prompt-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.btn-prompt-pass {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-prompt-pass:hover {
+  background: #d1fae5;
+  transform: translateY(-1px);
+}
+
+.btn-prompt-retry {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-prompt-retry:hover {
+  background: #f1f5f9;
+}
+
+.turn-knowledge-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.55rem;
+}
+
+.k-tag-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 9999px;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.k-tag-btn:hover {
+  background: #dbeafe;
+  transform: translateY(-1px);
+}
+
+/* 5. 单句背熟打卡星标 (Mastery Action) */
+.turn-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-turn-mastery {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 9999px;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn-turn-mastery:hover {
+  background: #fef08a;
+  border-color: #fde047;
+  color: #854d0e;
+}
+
+.btn-turn-mastery.mastered {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #065f46;
+}
+
+.dialogue-turn.is-mastered {
+  border-left: 4px solid #10b981;
+}
+
+/* 6. 知识点底部抽屉弹窗 (Knowledge Bottom Sheet Drawer) */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.drawer-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer-content {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  width: 100%;
+  max-width: 620px;
+  background: white;
+  border-radius: 22px 22px 0 0;
+  padding: 1.25rem 1.5rem 2.25rem 1.5rem;
+  z-index: 1001;
+  box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.18);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+  max-height: 82vh;
+  overflow-y: auto;
+}
+
+.drawer-overlay.active .drawer-content {
+  transform: translate(-50%, 0);
+}
+
+.drawer-handle-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.85rem;
+}
+
+.drawer-handle {
+  width: 40px;
+  height: 4px;
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 1.15rem;
+}
+
+.drawer-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+}
+
+.drawer-badge {
+  background: #eff6ff;
+  color: var(--primary);
+  border: 1px solid #bfdbfe;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.drawer-pos {
+  background: #f1f5f9;
+  color: var(--text-muted);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.drawer-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.drawer-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.drawer-speak-btn {
+  background: var(--primary-subtle);
+  border: 1px solid #bfdbfe;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.drawer-speak-btn:hover {
+  background: #dbeafe;
+}
+
+.drawer-close-btn {
+  background: #f1f5f9;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.drawer-close-btn:hover {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+.drawer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.drawer-section-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+
+.drawer-text {
+  font-size: 0.95rem;
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.drawer-subtext-text {
+  font-size: 0.9rem;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.9rem;
+  line-height: 1.6;
+}
+
+.drawer-examples-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.drawer-eg-item {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+}
+
+.drawer-eg-jp {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.2rem;
+}
+
+.drawer-eg-zh {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+/* ===================================================================
    Mobile First Responsive Overhaul (Smartphones & Tablets <= 768px)
    =================================================================== */
 @media (max-width: 768px) {
@@ -1900,5 +2401,960 @@ mark.hl-koto:hover {
     padding: 0.3rem 0.55rem;
     font-size: 0.75rem;
   }
+
+  /* 9. 背诵工具栏与知识抽屉移动端适配 */
+  .drill-toolbar {
+    padding: 0.4rem 0.6rem;
+    gap: 0.5rem;
+  }
+
+  .drill-modes {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .drill-mode-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 0.35rem 0.3rem;
+    font-size: 0.76rem;
+  }
+
+  .drill-extra {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .drawer-content {
+    padding: 1rem 1.15rem calc(1.5rem + env(safe-area-inset-bottom, 0px)) 1.15rem;
+    max-height: 85vh;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .drawer-title {
+    font-size: 1.25rem;
+  }
 }
+
+/* ==========================================================================
+   拟真神经网络音频播放交互动效
+   ========================================================================== */
+.dialogue-turn.audio-active {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18), var(--shadow-sm) !important;
+  background: #f8faff !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-speak-clause.playing {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
+  animation: pulse-speaker 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse-speaker {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45); }
+  50% { transform: scale(1.1); box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+}
+
+.voice-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 9999px;
+  margin-left: 0.4rem;
+}
+
+/* ==========================================================================
+   1. 顶部音频快捷控制坞 (语速 / 单句循环 / 随身听)
+   ========================================================================== */
+.audio-controls-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.speed-pill-btn, .loop-pill-btn, .walkman-launch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: white;
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.speed-pill-btn:hover, .loop-pill-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.loop-pill-btn.active {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #93c5fd;
+}
+
+.walkman-launch-btn {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+.walkman-launch-btn:hover {
+  background: linear-gradient(135deg, #334155, #1e293b);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* ==========================================================================
+   2. 重点生疏攻坚筛选 (Weakness SRS Filters)
+   ========================================================================== */
+.drill-filter-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #f1f5f9;
+  padding: 0.2rem;
+  border-radius: 9999px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.filter-chip:hover {
+  color: var(--text-primary);
+}
+
+.filter-chip.active {
+  background: white;
+  color: var(--primary);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.filter-chip.chip-weakness.active {
+  color: #b45309;
+}
+
+.weakness-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f59e0b;
+  color: white;
+  font-size: 0.68rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  padding: 0 4px;
+}
+
+/* ==========================================================================
+   3. 角色扮演模拟开会 (Role-Play Mode)
+   ========================================================================== */
+.roleplay-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #fdf4ff 0%, #faf5ff 100%);
+  border: 1px solid #e9d5ff;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.roleplay-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.rp-badge {
+  background: #c026d3;
+  color: white;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.rp-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #581c87;
+}
+
+.role-selector-pills {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.role-pill {
+  background: white;
+  border: 1px solid #d8b4fe;
+  color: #6b21a8;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.role-pill:hover {
+  background: #f5d0fe;
+}
+
+.role-pill.active {
+  background: #9333ea;
+  color: white;
+  border-color: #7e22ce;
+  box-shadow: 0 2px 6px rgba(147, 51, 234, 0.25);
+}
+
+.btn-start-roleplay {
+  background: #9333ea;
+  color: white;
+  border: none;
+  padding: 0.45rem 1.1rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(147, 51, 234, 0.3);
+}
+
+.btn-start-roleplay:hover {
+  background: #7e22ce;
+  transform: translateY(-1px);
+}
+
+.btn-start-roleplay.playing {
+  background: #dc2626;
+  animation: pulse-speaker 1.2s infinite ease-in-out;
+}
+
+/* 角色扮演对白卡片状态 */
+.dialogue-turn.is-my-turn {
+  border: 2px solid #a855f7 !important;
+  background: #faf5ff !important;
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.12), var(--shadow-sm) !important;
+}
+
+.dialogue-turn.is-my-turn .speaker-label-name::after {
+  content: "（你当前扮演）";
+  color: #9333ea;
+  font-size: 0.72rem;
+  margin-left: 0.3rem;
+  font-weight: 600;
+}
+
+.rp-prompt-box {
+  background: white;
+  border: 1px dashed #d8b4fe;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  margin-top: 0.6rem;
+}
+
+.rp-prompt-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #7e22ce;
+  margin-bottom: 0.4rem;
+}
+
+.rp-zh-text {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.6;
+}
+
+.btn-rp-reveal {
+  margin-top: 0.75rem;
+  width: 100%;
+  background: linear-gradient(135deg, #9333ea, #7e22ce);
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-rp-reveal:hover {
+  opacity: 0.95;
+}
+
+.rp-revealed-content {
+  display: none;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e9d5ff;
+}
+
+.rp-revealed-content.show {
+  display: block;
+}
+
+.rp-eval-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.btn-rp-pass {
+  flex: 1;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+  padding: 0.45rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-rp-retry {
+  flex: 1;
+  background: #fff1f2;
+  color: #be123c;
+  border: 1px solid #fecdd3;
+  padding: 0.45rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   4. 通勤磨耳朵随身听浮动控制坞 (Walkman Dock)
+   ========================================================================== */
+.walkman-dock {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 2rem);
+  max-width: 620px;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #f8fafc;
+  border-radius: 20px;
+  padding: 0.75rem 1.15rem;
+  box-shadow: 0 20px 30px -8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.12);
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translate(-50%, 40px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.walkman-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.walkman-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.walkman-avatar-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.walkman-text-wrap {
+  min-width: 0;
+  flex: 1;
+}
+
+.walkman-title-line {
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #f1f5f9;
+}
+
+.walkman-sub-line {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.walkman-mode-switch {
+  display: flex;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.2rem;
+  border-radius: 9999px;
+}
+
+.wm-mode-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wm-mode-btn.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.walkman-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.wm-btn {
+  background: transparent;
+  border: none;
+  color: #f1f5f9;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.wm-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.wm-btn-play {
+  width: 36px;
+  height: 36px;
+  background: #3b82f6 !important;
+  color: white !important;
+  font-size: 0.95rem;
+}
+
+.wm-btn-play:hover {
+  background: #2563eb !important;
+}
+
+.wm-btn-close {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-left: 0.2rem;
+}
+
+/* ==========================================================================
+   5. 对日实战商务邮件模板库 (Business Email Module)
+   ========================================================================== */
+.email-templates-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.email-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.email-card:hover {
+  box-shadow: var(--shadow-md);
+  border-color: #cbd5e1;
+}
+
+.email-meta-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.email-title-group {
+  flex: 1;
+}
+
+.email-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.email-cat-badge {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.email-tag-badge {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.email-title-h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.4rem 0;
+}
+
+.email-purpose-text {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.email-subject-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.email-subject-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 0.25rem;
+}
+
+.email-subject-val {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.email-body-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.25rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.86rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #1e293b;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.email-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btn-copy-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.5rem 1.15rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-copy-email:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-copy-email.copied {
+  background: #059669 !important;
+}
+
+.email-phrases-box {
+  margin-top: 1rem;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+}
+
+.email-phrases-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #15803d;
+  margin-bottom: 0.5rem;
+}
+
+.email-phrases-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.email-phrase-item {
+  font-size: 0.82rem;
+  color: #166534;
+}
+
+.email-etiquette-alert {
+  margin-top: 1rem;
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  border-radius: 0 8px 8px 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #92400e;
+}
+
+/* ==========================================================================
+   5. 日语默写输入与逐字智能 Diff 核对引擎 (Input & Intelligent Diff Verification)
+   ========================================================================== */
+.input-check-box {
+  margin-top: 0.75rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.85rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.input-check-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.input-check-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.btn-skip-input {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.75rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+
+.btn-skip-input:hover {
+  color: #1e293b;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.input-field-wrap {
+  display: flex;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.user-jp-input, .user-rp-input {
+  flex: 1;
+  width: 100%;
+  min-height: 48px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.92rem;
+  font-family: inherit;
+  line-height: 1.5;
+  color: #0f172a;
+  background: #ffffff;
+  resize: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.user-jp-input:focus, .user-rp-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+
+.user-rp-input:focus {
+  border-color: #9333ea;
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.18);
+}
+
+.btn-submit-check, .btn-rp-submit-check {
+  background: #3b82f6;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 0 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+  transition: all 0.15s;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+}
+
+.btn-submit-check:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-rp-submit-check {
+  background: #9333ea;
+  box-shadow: 0 2px 6px rgba(147, 51, 234, 0.25);
+}
+
+.btn-rp-submit-check:hover {
+  background: #7e22ce;
+  transform: translateY(-1px);
+}
+
+.rp-input-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.check-result-panel, .rp-check-result {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #cbd5e1;
+  animation: fadeIn 0.25s ease;
+}
+
+.check-score-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.check-score-badge {
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.score-perfect {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.score-high {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.score-medium {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.score-low {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.check-score-tip {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.diff-box {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.diff-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.diff-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  flex-shrink: 0;
+  width: 68px;
+}
+
+.diff-char-match {
+  color: #15803d;
+  background: #dcfce7;
+  padding: 1px 2px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.diff-char-mismatch {
+  color: #b91c1c;
+  background: #fee2e2;
+  padding: 1px 3px;
+  border-radius: 3px;
+  text-decoration: line-through;
+  font-weight: 600;
+}
+
+.diff-char-missing {
+  color: #b45309;
+  background: #fef3c7;
+  padding: 1px 3px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.kana-tip-pill {
+  display: inline-block;
+  margin-top: 0.4rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.diff-standard-row {
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.35rem;
+  border-top: 1px dashed #f1f5f9;
+  animation: fadeIn 0.2s ease;
+}
+
+.btn-speak-standard {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  border-radius: 6px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  transition: all 0.15s;
+}
+
+.btn-speak-standard:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
 
