@@ -2,6 +2,7 @@
 .swift-cache/
 materials/
 dist/
+scratch/
 __pycache__/
 *.pyc
 
