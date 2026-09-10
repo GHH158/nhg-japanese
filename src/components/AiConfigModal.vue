@@ -41,7 +41,11 @@ async function handleTest() {
     const res = await testConnection(formApiKey.value, formModel.value, formBaseUrl.value);
     testResult.value = { success: true, msg: `连接成功！模型应答: "${res}"` };
   } catch (err) {
-    testResult.value = { success: false, msg: `连接失败: ${err.message || '网络异常'}` };
+    let msg = err.message || '网络异常';
+    if (msg.includes('405')) {
+      msg = '连接失败: HTTP 405 Method Not Allowed（端点拒绝 POST 请求）。常见原因：API 代理端点被误改为了网页域名或官网地址。请点击下方【恢复默认】设为 /api/chat 后重试！';
+    }
+    testResult.value = { success: false, msg };
   } finally {
     isTesting.value = false;
   }
@@ -108,14 +112,25 @@ function handleSave() {
 
           <!-- Base URL (Proxy/Endpoint) -->
           <div class="form-group">
-            <label class="form-label">API 代理端点 (Base URL)</label>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+              <label class="form-label" style="margin-bottom: 0;">API 代理端点 (Base URL)</label>
+              <button
+                type="button"
+                style="background: none; border: none; font-size: 0.78rem; color: #2563eb; cursor: pointer; padding: 0; text-decoration: underline;"
+                @click="formBaseUrl = '/api/chat'"
+              >
+                恢复默认 (/api/chat)
+              </button>
+            </div>
             <input
               type="text"
               v-model="formBaseUrl"
               class="form-control"
               placeholder="/api/chat"
             />
-            <p class="form-help">保持默认 <code>/api/chat</code> 即可自动适配 Cloudflare Pages 边缘函数与本地代理服务。</p>
+            <p class="form-help">
+              💡 <b>注意</b>：线上部署与本地均已内置高可用代理。<b>请直接保持默认 <code>/api/chat</code></b>。切勿输入个人网页域名或阿里云官网地址（否则会触发 405 或浏览器跨域拦截）。
+            </p>
           </div>
 
           <!-- Test Feedback -->

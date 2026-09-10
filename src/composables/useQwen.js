@@ -108,9 +108,29 @@ export function useQwen() {
 
   function resolveEndpoint(baseUrl) {
     let ep = (baseUrl && baseUrl.trim()) ? baseUrl.trim() : '/api/chat';
+
+    // 1. 如果用户输入了阿里云 DashScope 官方地址，自动使用本地或边缘反向代理，规避浏览器 CORS 跨域限制
     if (ep.includes('dashscope.aliyuncs.com')) {
       ep = '/api/chat';
     }
+
+    // 2. 智能容错：如果用户输入了网站根地址（如 https://xxx.pages.dev），自动补全为 /api/chat，防止 POST 静态根目录爆 405
+    if (ep.startsWith('http://') || ep.startsWith('https://')) {
+      try {
+        const u = new URL(ep);
+        if (!u.pathname || u.pathname === '/' || u.pathname === '') {
+          u.pathname = '/api/chat';
+          ep = u.toString();
+        }
+      } catch (e) {}
+    }
+
+    // 3. 去除末尾冗余斜杠，杜绝 301/308 重定向导致浏览器将 POST 自动降级为 GET 产生 405
+    if (ep.endsWith('/') && ep.length > 1) {
+      ep = ep.replace(/\/+$/, '');
+    }
+
+    // 4. 本地直接以 file:// 协议打开时，自动路由到本地运行的 Python 代理端口
     if (window.location.protocol === 'file:' && ep.startsWith('/')) {
       ep = `http://localhost:8080${ep}`;
     }

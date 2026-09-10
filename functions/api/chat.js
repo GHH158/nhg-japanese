@@ -12,16 +12,39 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
 };
 
-// 预检请求响应
-export async function onRequestOptions() {
-  return new Response(null, {
-    status: 204,
-    headers: CORS_HEADERS
-  });
-}
+// 核心处理函数 (处理 OPTIONS, GET, POST)
+export async function onRequest(context) {
+  const { request } = context;
 
-// 核心转发处理
-export async function onRequestPost(context) {
+  // 1. 跨域预检处理
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 204,
+      headers: CORS_HEADERS
+    });
+  }
+
+  // 2. 健康检查 / 连通性探针 (GET 请求友好响应，避免 405)
+  if (request.method === "GET") {
+    return new Response(JSON.stringify({
+      status: "ok",
+      service: "DashScope Qwen AI Proxy",
+      message: "API 代理端点运行正常！请使用 POST 请求提交 API Key 与对话内容。"
+    }), {
+      status: 200,
+      headers: { ...CORS_HEADERS, "Content-Type": "application/json; charset=utf-8" }
+    });
+  }
+
+  if (request.method !== "POST") {
+    return new Response(JSON.stringify({
+      error: { message: `HTTP ${request.method} Method Not Allowed. 请使用 POST 请求。` }
+    }), {
+      status: 405,
+      headers: { ...CORS_HEADERS, "Content-Type": "application/json; charset=utf-8" }
+    });
+  }
+
   try {
     const request = context.request;
 
@@ -91,3 +114,8 @@ export async function onRequestPost(context) {
     });
   }
 }
+
+// 导出方法别名，全面兼容 Cloudflare Pages 静态与动态匹配引擎
+export const onRequestPost = onRequest;
+export const onRequestOptions = onRequest;
+export const onRequestGet = onRequest;
