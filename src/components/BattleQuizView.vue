@@ -169,8 +169,8 @@ async function handleSubmitEssay(q) {
   essayGrading.value[q.id] = true;
   try {
     const report = await gradeEssayAnswer({
-      question: q.question,
-      situation: q.situation,
+      question: q.prompt || q.question,
+      situation: q.context || q.situation,
       userText: text,
       sampleAnswer: q.sampleAnswer,
       rubric: q.rubric
@@ -213,16 +213,20 @@ function handlePlayKeyPhrase(phrase) {
 
 function handleAskAi(q) {
   emit('ask-ai', {
-    speaker: '日本客户 / 实战考题情境',
-    jp: q.dialogue || q.question,
-    zh: `${q.question}\n【对战考点分类】: ${q.categoryBadge || q.category || ''}\n【标准策略】: ${typeof q.explanation === 'object' ? q.explanation.strategy : (q.explanation || '')}`,
-    keyNote: `情境：${q.situation || '跨场景实战综合'}`
+    speaker: q.speaker || '日本客户 / 实战考题情境',
+    jp: q.dialogue || q.prompt || q.question,
+    zh: `${q.prompt || q.question}\n【对战考点分类】: ${q.categoryName || q.categoryBadge || q.category || ''}\n【标准策略】: ${typeof q.explanation === 'object' ? (q.explanation.strategy || '') : (q.explanation || '')}`,
+    keyNote: `情境：${q.context || q.situation || q.sceneTag || '跨场景实战综合'}`
   });
+}
+
+function hasOptionAnalysis(q) {
+  return q.options && q.options.some(o => typeof o === 'object' && o.analysis);
 }
 </script>
 
 <template>
-  <div class="battle-arena-section" style="margin-top: 1.5rem;">
+  <div class="battle-arena-section" style="margin-top: 1rem;">
     <!-- 顶栏标题 -->
     <div class="battle-title-area">
       <div class="battle-main-badge">
@@ -230,20 +234,13 @@ function handleAskAi(q) {
         <span>对日IT全场景实战刷题大竞技场</span>
       </div>
       <p class="battle-subtitle">
-        跨越所有课文边界 · 汇聚5大实战战力维度 · 覆盖危机公关/排序流程/实战简答 · AI无限动态出题
+        跨越所有课文边界 · 覆盖5大实战战力维度 · 模拟日本客户现场交锋与心理拆解 · AI无限动态出题
       </p>
     </div>
 
     <!-- 模式与分类筛选栏 -->
     <div class="battle-toolbar">
       <div class="battle-mode-group">
-        <button
-          :class="['battle-mode-btn', { active: currentMode === 'ai3' }]"
-          style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; border: none; font-weight: 800;"
-          @click="setMode('ai3')"
-        >
-          🤖 AI 跨场景无限出题 (3题/轮)
-        </button>
         <button
           :class="['battle-mode-btn', { active: currentMode === 'quick10' }]"
           @click="setMode('quick10')"
@@ -267,6 +264,13 @@ function handleAskAi(q) {
           @click="setMode('weakness')"
         >
           ❌ 错题消消乐 ({{ weaknessIds.size }})
+        </button>
+        <button
+          :class="['battle-mode-btn', { active: currentMode === 'ai3' }]"
+          style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; border: none; font-weight: 800;"
+          @click="setMode('ai3')"
+        >
+          🤖 AI 跨场景无限出题 (3题/轮)
         </button>
       </div>
 
@@ -331,10 +335,16 @@ function handleAskAi(q) {
         <!-- 标签行 -->
         <div class="battle-q-meta-badges">
           <span :class="['q-category-pill', `cat-${currentQuestion.category || 'general'}`]">
-            {{ currentQuestion.categoryBadge || currentQuestion.category || '跨场景实战' }}
+            {{ currentQuestion.categoryName || currentQuestion.categoryBadge || currentQuestion.category || '综合对战' }}
           </span>
-          <span class="q-scene-pill">
-            {{ currentQuestion.type === 'essay' ? '✍️ 开放简答题' : (currentQuestion.type === 'ordering' ? '🧩 逻辑排序题' : '🔘 现场选择题') }}
+          <span v-if="currentQuestion.sceneTag" class="q-scene-pill">
+            📍 {{ currentQuestion.sceneTag }}
+          </span>
+          <span v-else class="q-scene-pill">
+            {{ currentQuestion.type === 'essay' ? '✍️ 开放简答题' : (currentQuestion.type === 'ordering' ? '🧩 流程排序题' : '🔘 现场选择题') }}
+          </span>
+          <span v-if="currentQuestion.difficulty" :class="['q-difficulty-pill', `diff-${currentQuestion.difficulty}`]">
+            {{ currentQuestion.difficulty }}
           </span>
           <button
             class="btn-turn-ai-tutor"
@@ -346,13 +356,13 @@ function handleAskAi(q) {
           </button>
         </div>
 
-        <!-- 场景发言气泡（如果存在情境或对白） -->
-        <div v-if="currentQuestion.situation || currentQuestion.dialogue" class="scenario-bubble-card">
+        <!-- 场景发言气泡（如果存在角色、情境或对白） -->
+        <div v-if="currentQuestion.context || currentQuestion.dialogue || currentQuestion.situation" class="scenario-bubble-card">
           <div class="scenario-speaker-header">
-            <span class="scenario-speaker-avatar">👔</span>
+            <span class="scenario-speaker-avatar">{{ currentQuestion.speakerAvatar || '👨‍💼' }}</span>
             <div class="scenario-speaker-info">
-              <span class="scenario-speaker-name">日本客户现场交锋</span>
-              <span class="scenario-speaker-role">{{ currentQuestion.situation }}</span>
+              <span class="scenario-speaker-name">{{ currentQuestion.speaker || '日本客户现场交锋' }}</span>
+              <span class="scenario-speaker-role">{{ currentQuestion.speakerRole || currentQuestion.situation || '' }}</span>
             </div>
             <button
               v-if="currentQuestion.dialogue"
@@ -367,6 +377,9 @@ function handleAskAi(q) {
               </svg>
             </button>
           </div>
+          <div v-if="currentQuestion.context" class="scenario-context-text" style="font-size: 0.88rem; color: #475569; margin: 0.5rem 0; line-height: 1.5;">
+            {{ currentQuestion.context }}
+          </div>
           <div v-if="currentQuestion.dialogue" class="scenario-quote-box">
             <div class="scenario-quote-text" v-html="currentQuestion.dialogueWithRuby || currentQuestion.dialogue"></div>
           </div>
@@ -374,8 +387,8 @@ function handleAskAi(q) {
 
         <!-- 提问指令 -->
         <div class="battle-prompt-box">
-          <span class="battle-prompt-icon">🎯</span>
-          <div class="battle-prompt-text">{{ currentQuestion.question }}</div>
+          <span class="battle-prompt-icon">⚡</span>
+          <div class="battle-prompt-text">{{ currentQuestion.prompt || currentQuestion.question }}</div>
         </div>
 
         <!-- 题型 1：选择题 (Choice) -->
@@ -393,9 +406,14 @@ function handleAskAi(q) {
             :disabled="userAnswers[currentQuestion.id] !== undefined"
             @click="handleSelectOpt(currentQuestion, optIdx)"
           >
-            <div class="opt-letter-badge">{{ ['A', 'B', 'C', 'D'][optIdx] }}</div>
-            <div style="flex: 1;">
-              <div class="opt-sentence-jp">{{ opt }}</div>
+            <div class="opt-letter-badge">
+              {{ typeof opt === 'object' && opt.label ? opt.label : ['A', 'B', 'C', 'D'][optIdx] }}
+            </div>
+            <div class="opt-text-wrap" style="flex: 1;">
+              <div
+                class="opt-sentence-jp"
+                v-html="typeof opt === 'object' ? (opt.textWithRuby || opt.text) : opt"
+              ></div>
             </div>
             <span
               v-if="userAnswers[currentQuestion.id] && optIdx === currentQuestion.correct"
@@ -407,7 +425,7 @@ function handleAskAi(q) {
               v-else-if="userAnswers[currentQuestion.id] && userAnswers[currentQuestion.id].selectedIndex === optIdx"
               class="opt-status-tag"
             >
-              ❌ 触雷失礼
+              ❌ 触雷选项
             </span>
           </button>
         </div>
@@ -559,63 +577,95 @@ function handleAskAi(q) {
         <div
           v-if="userAnswers[currentQuestion.id] && currentQuestion.type !== 'essay'"
           class="battle-explanation-card"
-          style="margin-top: 1.5rem; background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;"
+          style="margin-top: 1.5rem;"
         >
-          <div style="font-weight: 800; font-size: 1.02rem; color: #1e3a8a; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
-            <span>💡 专家战术拆解与客户心理透析</span>
-          </div>
-
-          <!-- 简单字符串解析（AI生成或通用题） -->
-          <div v-if="typeof currentQuestion.explanation === 'string'" style="font-size: 0.92rem; color: #334155; line-height: 1.6;">
-            {{ currentQuestion.explanation }}
-          </div>
-
-          <!-- 复杂对象解析（预制60题） -->
-          <div v-else-if="typeof currentQuestion.explanation === 'object'">
-            <div v-if="currentQuestion.explanation.strategy" style="margin-bottom: 0.75rem;">
-              <div style="font-weight: 700; font-size: 0.85rem; color: #334155; margin-bottom: 0.2rem;">战术策略：</div>
-              <p style="font-size: 0.9rem; color: #475569; line-height: 1.55; margin: 0;">
-                {{ currentQuestion.explanation.strategy }}
-              </p>
-            </div>
-
-            <div v-if="currentQuestion.explanation.clientSubtext" style="margin-bottom: 0.75rem; background: #eff6ff; border-left: 3px solid #3b82f6; padding: 0.6rem 0.85rem; border-radius: 0 6px 6px 0;">
-              <div style="font-weight: 700; font-size: 0.85rem; color: #1e40af; margin-bottom: 0.2rem;">🧠 客户心理潜台词与本音：</div>
-              <p style="font-size: 0.88rem; color: #1e3a8a; line-height: 1.5; margin: 0;">
-                {{ currentQuestion.explanation.clientSubtext }}
-              </p>
-            </div>
-
-            <!-- 满分例句金句 -->
-            <div v-if="currentQuestion.explanation.keyPhrases && currentQuestion.explanation.keyPhrases.length" style="margin-top: 0.75rem;">
-              <div style="font-weight: 700; font-size: 0.85rem; color: #059669; margin-bottom: 0.4rem;">💎 现场满分表达范例：</div>
-              <div
-                v-for="(p, pIdx) in currentQuestion.explanation.keyPhrases"
-                :key="pIdx"
-                style="display: flex; align-items: flex-start; gap: 0.5rem; background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 0.6rem 0.85rem; margin-bottom: 0.4rem;"
-              >
-                <button class="btn-speak-clause" @click="handlePlayKeyPhrase(p)" title="朗读">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                  </svg>
-                </button>
-                <div>
-                  <div style="font-size: 0.98rem; font-weight: 600; color: #0f172a;" v-html="p.jpWithRuby || p.jp"></div>
-                  <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.2rem;">{{ p.zh }}</div>
-                </div>
+          <!-- 判定横幅 (Verdict Banner) -->
+          <div :class="['exp-verdict-banner', userAnswers[currentQuestion.id].isCorrect ? 'verdict-correct' : 'verdict-wrong']">
+            <span class="verdict-icon">{{ userAnswers[currentQuestion.id].isCorrect ? '🎉' : '⚠️' }}</span>
+            <div>
+              <div class="verdict-title">
+                {{ userAnswers[currentQuestion.id].isCorrect ? '策略满分！完全契合日企商务期待与商谈常识' : '失策避雷！该应答容易引发客户反感或风控风险' }}
+              </div>
+              <div class="verdict-desc">
+                {{ userAnswers[currentQuestion.id].isCorrect ? '不仅展现了高阶商务得体度，更精准切中客户心理防线。' : '已自动为您收录至「错题本」，请认真品味下方最佳对策与心理拆解。' }}
               </div>
             </div>
           </div>
 
-          <!-- 排序题答错时的正确答案展示 -->
-          <div
-            v-if="currentQuestion.type === 'ordering' && !userAnswers[currentQuestion.id].isCorrect"
-            style="margin-top: 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 0.6rem 0.85rem;"
-          >
-            <div style="font-size: 0.8rem; font-weight: 700; color: #991b1b; margin-bottom: 0.25rem;">标准正确流程：</div>
-            <div style="font-size: 0.92rem; font-weight: 600; color: #1e293b;">
-              {{ currentQuestion.correctOrder.join(' ➔ ') }}
+          <!-- 解析分块网格 -->
+          <div class="exp-sections-grid">
+            <!-- 战略策略 -->
+            <div v-if="typeof currentQuestion.explanation === 'object' && currentQuestion.explanation.strategy" class="exp-section-item">
+              <div class="exp-section-title">🎯 最佳对策与商务战略</div>
+              <div class="exp-section-body">{{ currentQuestion.explanation.strategy }}</div>
+            </div>
+            <!-- 纯字符串解析 -->
+            <div v-else-if="typeof currentQuestion.explanation === 'string'" class="exp-section-item">
+              <div class="exp-section-title">🎯 最佳对策与商务战略</div>
+              <div class="exp-section-body">{{ currentQuestion.explanation }}</div>
+            </div>
+
+            <!-- 客户心理潜台词 -->
+            <div v-if="typeof currentQuestion.explanation === 'object' && currentQuestion.explanation.clientSubtext" class="exp-section-item">
+              <div class="exp-section-title">🧠 日本客户心理暗语与潜台词</div>
+              <div class="exp-section-body">{{ currentQuestion.explanation.clientSubtext }}</div>
+            </div>
+
+            <!-- 选项逐个剖析与避雷指南 (Traps list) -->
+            <div v-if="hasOptionAnalysis(currentQuestion)" class="exp-section-item">
+              <div class="exp-section-title">❌ 选项逐个剖析与避雷指南</div>
+              <div class="exp-traps-list">
+                <div
+                  v-for="(o, oIdx) in currentQuestion.options"
+                  :key="oIdx"
+                  :class="['exp-trap-item', { 'correct-opt-analysis': oIdx === currentQuestion.correct }]"
+                >
+                  <strong>【选项 {{ o.label || ['A','B','C','D'][oIdx] }}】</strong>
+                  <span>{{ o.analysis }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 满分例句金句 (Key Phrases) -->
+            <div v-if="currentQuestion.explanation?.keyPhrases && currentQuestion.explanation.keyPhrases.length" class="exp-section-item">
+              <div class="exp-section-title">💡 关键高频表达与句式</div>
+              <div class="exp-phrases-pills" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <div
+                  v-for="(p, pIdx) in currentQuestion.explanation.keyPhrases"
+                  :key="pIdx"
+                  style="display: flex; align-items: flex-start; gap: 0.5rem; background: white; border: 1px solid #d1fae5; border-radius: 8px; padding: 0.6rem 0.85rem;"
+                >
+                  <button class="btn-speak-clause" @click="handlePlayKeyPhrase(p)" title="朗读">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                    </svg>
+                  </button>
+                  <div>
+                    <div style="font-size: 0.98rem; font-weight: 600; color: #0f172a;" v-html="p.jpWithRuby || p.jp"></div>
+                    <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.2rem;">{{ p.zh }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 溯源联动 -->
+            <div v-if="currentQuestion.explanation?.referenceDialogue" class="exp-section-item">
+              <div class="exp-section-title">📖 教材课文溯源联动</div>
+              <div class="exp-ref-badge" style="display: inline-block; background: #eff6ff; color: #1e40af; padding: 0.35rem 0.75rem; border-radius: 6px; font-size: 0.82rem; font-weight: 600;">
+                <span>🔗 {{ currentQuestion.explanation.referenceDialogue }}</span>
+              </div>
+            </div>
+
+            <!-- 排序题答错时的正确答案展示 -->
+            <div
+              v-if="currentQuestion.type === 'ordering' && !userAnswers[currentQuestion.id].isCorrect"
+              style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 0.6rem 0.85rem;"
+            >
+              <div style="font-size: 0.8rem; font-weight: 700; color: #991b1b; margin-bottom: 0.25rem;">标准正确流程：</div>
+              <div style="font-size: 0.92rem; font-weight: 600; color: #1e293b;">
+                {{ currentQuestion.correctOrder.join(' ➔ ') }}
+              </div>
             </div>
           </div>
         </div>
@@ -629,7 +679,7 @@ function handleAskAi(q) {
           >
             ← 上一题
           </button>
-          <span style="font-size: 0.85rem; color: var(--text-muted);">
+          <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">
             已作答 {{ Object.keys(userAnswers).length }} / {{ activeQuestionPool.length }}
           </span>
           <button

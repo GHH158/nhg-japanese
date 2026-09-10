@@ -80,20 +80,20 @@ function handleCycleRate() {
           @click="emit('update:showFurigana', !showFurigana)"
           title="开启或隐藏汉字上方的平假名注音"
         >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M2 12h20M12 2v20"></path>
           </svg>
-          <span>假名注音：{{ showFurigana ? '已开启' : '已隐藏' }}</span>
+          <span>注音: {{ showFurigana ? '开' : '关' }}</span>
         </button>
 
         <button
           id="btn-ai-config"
           class="btn-ai-config"
           @click="emit('open-ai-config')"
-          title="配置通义千问 Qwen AI 助手 (输入API Key与模型设置)"
+          :title="`通义千问模型: ${config.model || 'qwen3.7-plus'} · 点击打开配置`"
         >
           <span :class="['ai-status-dot', { 'dot-active': isConfigured }]"></span>
-          <span class="ai-btn-text">🤖 AI私教: {{ isConfigured ? (config.model || 'qwen3.7-plus') : '未配置' }}</span>
+          <span class="ai-btn-text">🤖 AI私教: {{ isConfigured ? '已就绪' : '未配置' }}</span>
         </button>
       </div>
     </div>

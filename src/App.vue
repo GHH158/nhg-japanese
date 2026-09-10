@@ -234,15 +234,18 @@ function toggleAllPCloze() {
       @start-walkman="handleStartWalkman"
     />
 
-    <!-- 场景选择器 (Scene Selector) -->
-    <div class="scene-nav-wrapper">
+    <!-- 场景选择器 (Scene Selector - 仅在单课相关学习模式显示) -->
+    <div
+      v-if="activeNavTab !== 'quiz' && activeNavTab !== 'interview_universal'"
+      class="scene-nav-wrapper"
+    >
       <div class="scene-nav-inner">
         <div class="scene-label-title">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
-          <span>当前学习场景：</span>
+          <span>学习场景：</span>
         </div>
         <div id="scene-pills-container" class="scene-pills-list">
           <button
@@ -260,8 +263,12 @@ function toggleAllPCloze() {
 
     <!-- 主体内容 -->
     <main class="main-layout">
-      <!-- 场景 Hero 简介横幅 -->
-      <section class="hero-card" id="scene-hero-banner">
+      <!-- 场景 Hero 简介横幅 (仅在单课相关学习模式显示) -->
+      <section
+        v-if="activeNavTab !== 'quiz' && activeNavTab !== 'interview_universal'"
+        class="hero-card"
+        id="scene-hero-banner"
+      >
         <div class="hero-badge" id="hero-badge-tag">
           <span>💼 {{ currentScene.domain || '需求定义领域' }}</span>
         </div>
@@ -274,73 +281,72 @@ function toggleAllPCloze() {
       <!-- 模块筛选标签栏 -->
       <nav class="nav-tabs" aria-label="学习模块切换">
         <button :class="['tab-btn', { active: activeNavTab === 'all' }]" @click="activeNavTab = 'all'">
-          <span>全部综合全览</span>
+          <span>全部</span>
         </button>
         <button :class="['tab-btn', { active: activeNavTab === 'textbook' }]" @click="activeNavTab = 'textbook'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
           </svg>
-          <span>📘 教材核心课文</span>
+          <span>📘 核心课文</span>
         </button>
         <button :class="['tab-btn', { active: activeNavTab === 'practice' }]" @click="activeNavTab = 'practice'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
             <polyline points="14 2 14 8 20 8"></polyline>
             <line x1="16" y1="13" x2="8" y2="13"></line>
             <line x1="16" y1="17" x2="8" y2="17"></line>
-            <polyline points="10 9 9 9 8 9"></polyline>
           </svg>
-          <span>📝 配套练习·5篇短文</span>
+          <span>📝 配套短文</span>
           <span class="counter-pill">{{ currentScene.practiceTexts?.length || 5 }}篇</span>
         </button>
         <button :class="['tab-btn', { active: activeNavTab === 'grammar' }]" @click="activeNavTab = 'grammar'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
-          <span>📚 深度语法图鉴</span>
+          <span>📚 深度语法</span>
         </button>
         <button :class="['tab-btn', { active: activeNavTab === 'vocab' }]" @click="activeNavTab = 'vocab'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
             <line x1="3" y1="9" x2="21" y2="9"></line>
             <line x1="9" y1="21" x2="9" y2="9"></line>
           </svg>
-          <span>🗂️ 智能 3D 词汇闪卡</span>
+          <span>🗂️ 词汇闪卡</span>
         </button>
         <button :class="['tab-btn', { active: activeNavTab === 'quiz_scene' }]" @click="activeNavTab = 'quiz_scene'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"></circle>
             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
             <line x1="12" y1="17" x2="12.01" y2="17"></line>
           </svg>
-          <span>🎯 课后靶向测验</span>
-          <span class="counter-pill" style="background:#e0e7ff;color:#3730a3;border-color:#c7d2fe;">本课3题</span>
+          <span>🎯 课后测验</span>
+          <span class="counter-pill" style="background:#e0e7ff;color:#3730a3;border-color:#c7d2fe;">3题</span>
         </button>
         <button :class="['tab-btn', { active: activeNavTab === 'interview_scene' }]" @click="activeNavTab = 'interview_scene'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
             <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
             <line x1="12" y1="19" x2="12" y2="23"></line>
             <line x1="8" y1="23" x2="16" y2="23"></line>
           </svg>
-          <span>🎙️ 本课AI面试</span>
-          <span class="counter-pill" style="background:#fef3c7;color:#92400e;border-color:#fde68a;">现场角色扮演</span>
+          <span>🎙️ 课后面试</span>
+          <span class="counter-pill" style="background:#fef3c7;color:#92400e;border-color:#fde68a;">角色扮演</span>
         </button>
         <button :class="['tab-btn', { active: activeNavTab === 'quiz' }]" @click="activeNavTab = 'quiz'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
           </svg>
-          <span>⚔️ 全场景综合大竞技场</span>
-          <span class="counter-pill" style="background:#fee2e2;color:#991b1b;border-color:#fecaca;">无限挑战</span>
+          <span>⚔️ 综合竞技场</span>
+          <span class="counter-pill" style="background:#fee2e2;color:#991b1b;border-color:#fecaca;">60题</span>
         </button>
         <button :class="['tab-btn', { active: activeNavTab === 'interview_universal' }]" @click="activeNavTab = 'interview_universal'">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
             <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
           </svg>
-          <span>👔 全场景模拟面试</span>
-          <span class="counter-pill" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe;">日企入场终面</span>
+          <span>👔 综合模拟面接</span>
+          <span class="counter-pill" style="background:#dbeafe;color:#1e40af;border-color:#bfdbfe;">入场终面</span>
         </button>
       </nav>
 

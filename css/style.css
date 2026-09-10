@@ -74,12 +74,14 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .brand-area {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .brand-icon {
@@ -114,7 +116,9 @@ body {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .search-box-wrapper {
@@ -230,27 +234,35 @@ body {
 .nav-tabs {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.45rem;
   margin-bottom: 1.75rem;
   overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
+}
+
+.nav-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab-btn {
   background: transparent;
   border: none;
-  padding: 0.6rem 1.1rem;
-  font-size: 0.95rem;
+  padding: 0.55rem 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-muted);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.4rem;
 }
 
 .tab-btn:hover {
@@ -2026,9 +2038,8 @@ mark.hl-koto:hover {
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 1rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .scene-label-title {
@@ -2039,14 +2050,24 @@ mark.hl-koto:hover {
   align-items: center;
   gap: 0.45rem;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .scene-pills-list {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
   overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 2px;
+}
+
+.scene-pills-list::-webkit-scrollbar {
+  display: none;
 }
 
 .scene-pill-btn {
@@ -2060,6 +2081,7 @@ mark.hl-koto:hover {
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 0.4rem;
