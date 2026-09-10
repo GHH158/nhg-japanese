@@ -265,6 +265,254 @@ document.addEventListener("DOMContentLoaded", () => {
     window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
   }
 
+  // ==========================================
+  // 通义千问 Qwen AI 引擎与轻量 Markdown 渲染器
+  // ==========================================
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function renderMarkdown(md) {
+    if (!md) return "";
+    let html = escapeHtml(md);
+
+    // 代码块 ```lang ... ```
+    html = html.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+      return `<pre class="ai-code-block"><code class="language-${lang}">${code}</code></pre>`;
+    });
+
+    // 标题
+    html = html.replace(/^#### (.*$)/gim, '<h5 class="ai-h5">$1</h5>');
+    html = html.replace(/^### (.*$)/gim, '<h4 class="ai-h4">$1</h4>');
+    html = html.replace(/^## (.*$)/gim, '<h3 class="ai-h3">$1</h3>');
+    html = html.replace(/^# (.*$)/gim, '<h2 class="ai-h2">$1</h2>');
+
+    // 粗体 & 斜体 & 行内代码
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    html = html.replace(/`([^`]+)`/g, '<code class="ai-inline-code">$1</code>');
+
+    // 无序列表项
+    html = html.replace(/^[\s]*[-*]\s+(.*$)/gim, '<li class="ai-li">$1</li>');
+    html = html.replace(/(<li class="ai-li">.*<\/li>(?:\n|$))+/g, '<ul class="ai-ul">$&</ul>');
+
+    // 引用
+    html = html.replace(/^>\s+(.*$)/gim, '<blockquote class="ai-quote">$1</blockquote>');
+
+    // 段落换行
+    const blocks = html.split(/\n\n+/);
+    html = blocks.map(block => {
+      const b = block.trim();
+      if (!b) return '';
+      if (b.startsWith('<h') || b.startsWith('<ul') || b.startsWith('<pre') || b.startsWith('<blockquote')) {
+        return b;
+      }
+      return `<p class="ai-p">${b.replace(/\n/g, '<br>')}</p>`;
+    }).join('');
+
+    return html;
+  }
+
+  const QwenAIEngine = {
+    STORAGE_KEY: "nhg_qwen_config",
+
+    getConfig() {
+      try {
+        const raw = localStorage.getItem(this.STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          // 若原配置是旧版默认 qwen-plus 或未设置，自动平滑升级为 qwen3.7-plus
+          if (parsed && (parsed.model === "qwen-plus" || !parsed.model)) {
+            parsed.model = "qwen3.7-plus";
+          }
+          return parsed;
+        }
+      } catch (e) {
+        console.error("加载 Qwen 配置失败", e);
+      }
+      return {
+        apiKey: "",
+        model: "qwen3.7-plus",
+        baseUrl: "/api/chat"
+      };
+    },
+
+    saveConfig(cfg) {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(cfg));
+    },
+
+    isConfigured() {
+      const cfg = this.getConfig();
+      return !!(cfg && cfg.apiKey && cfg.apiKey.trim().length > 5);
+    },
+
+    resolveEndpoint(baseUrl) {
+      let ep = (baseUrl && baseUrl.trim()) ? baseUrl.trim() : "/api/chat";
+      // 容错：如果用户直接填写了阿里云官方地址，提示并自动转为本地/线上代理
+      if (ep.includes("dashscope.aliyuncs.com")) {
+        ep = "/api/chat";
+      }
+      // 容错：如果用户通过本地文件 (file://) 直接双击网页打开，自动路由至本地运行的 server.py 端口
+      if (window.location.protocol === "file:" && ep.startsWith("/")) {
+        ep = `http://localhost:8080${ep}`;
+      }
+      return ep;
+    },
+
+    async callChatCompletions(messages, options = {}) {
+      const cfg = this.getConfig();
+      if (!cfg.apiKey || !cfg.apiKey.trim()) {
+        throw new Error("请先点击右上角【🤖 AI私教设置】配置您的通义千问 API Key！");
+      }
+
+      const endpoint = this.resolveEndpoint(cfg.baseUrl);
+      const model = (cfg.model && cfg.model.trim()) ? cfg.model.trim() : "qwen3.7-plus";
+
+      const payload = {
+        model: model,
+        messages: messages,
+        temperature: options.temperature ?? 0.7,
+        max_tokens: options.max_tokens ?? 1500
+      };
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${cfg.apiKey.trim()}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        let errDetail = "";
+        try {
+          const errJson = await res.json();
+          errDetail = errJson.error?.message || JSON.stringify(errJson);
+        } catch (e) {
+          errDetail = `HTTP ${res.status} ${res.statusText}`;
+        }
+        throw new Error(`AI 服务响应错误: ${errDetail}`);
+      }
+
+      const data = await res.json();
+      const reply = data.choices?.[0]?.message?.content;
+      if (!reply) {
+        throw new Error("AI 返回了空响应，请重试。");
+      }
+      return reply;
+    },
+
+    async testConnection(apiKey, model, baseUrl) {
+      const endpoint = this.resolveEndpoint(baseUrl);
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey.trim()}`
+        },
+        body: JSON.stringify({
+          model: model || "qwen3.7-plus",
+          messages: [
+            { role: "system", content: "You are a helpful assistant." },
+            { role: "user", content: "请只回复两个字：【成功】" }
+          ],
+          max_tokens: 15
+        })
+      });
+
+      if (!res.ok) {
+        let errDetail = `HTTP ${res.status}`;
+        try {
+          const errJson = await res.json();
+          errDetail = errJson.error?.message || errDetail;
+        } catch (e) {}
+        throw new Error(errDetail);
+      }
+
+      const data = await res.json();
+      return data.choices?.[0]?.message?.content || "连接成功";
+    },
+
+    async reviewRoleplay({ userText, standardJp, standardZh, speaker, promptZh, scene }) {
+      const systemPrompt = `你是一位在日本一线对日IT咨询企业拥有15年项目管理经验的资深总监（PM/Director）兼中日商务礼仪考官。
+你的任务是严谨、专业、透彻地评审学员（赴日/离岸IT工程师）在与日本客户会谈中的日文发言。
+请按以下结构使用清晰优美的 Markdown 格式输出评审报告：
+
+### 🎯 综合评级：【S / A / B / C】
+（S: 顶级商务顾问 / A: 合格商务IT员工 / B: 语法尚可但有敬语失礼或中式日语痕迹 / C: 表达错误或严重商务失礼）
+
+### 🧐 敬语与礼貌诊断
+指出发言中的敬语得失（尊敬语/谦让语/郑重语是否准确、有无内外不分、是否过于随意或生硬）。
+
+### 💼 商务情商与心理博弈
+站在日本客户高管的心理学视角分析：该发言是否体现了“倾听受容（クッション言葉）”、“为客户着想（相手目線）”、“控制风险（リスクヘッジ）”的高情商？
+
+### 🛡️ IT技术严密性与避坑
+从式样书、纳期、品质、责任边界等对日IT开发实践角度，评估此回答是否稳妥严密。
+
+### 💎 大师级地道改写范例
+提供1~2段最地道、最让日本客户安心的满分日文范例（标注假名与中文翻译），并说明改写亮点。`;
+
+      const userPrompt = `【当前业务场景】: ${scene ? scene.title : '商务会谈'}
+【会谈上文/背景】: ${promptZh || standardZh}
+【学员扮演角色】: ${speaker}
+【教材标准范例】:
+日文：${standardJp}
+中文：${standardZh}
+
+【学员输入的日文发言】:
+"""
+${userText}
+"""
+
+请为学员进行深度诊断并给出专业评审与改写建议。`;
+
+      return await this.callChatCompletions([
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ], { temperature: 0.6, max_tokens: 1800 });
+    },
+
+    async askTutor({ question, turn, scene, history = [] }) {
+      const systemPrompt = `你是一位精通日本IT外包、赴日软件开发、日企商务礼仪与实战日语的高级AI私教。
+你的受众是正在学习《新编日企商务日语》与备战对日IT项目现场的中国工程师或项目经理。
+请针对学员提出的关于对白、潜台词、语法、敬语或实战演练的问题，给出深入浅出、切中要害的专业解答。
+风格要求：
+- 敏锐深刻，透彻解析日本客户思维（本音与建前）。
+- 结合对日IT真实开发背景（如定例会、障害报告、变更要求、测试验收等）。
+- 格式清晰，重点突出，使用 Markdown 格式。`;
+
+      let contextDesc = `【当前场景】: ${scene ? scene.title : ''}\n`;
+      if (turn) {
+        contextDesc += `【锚定句子信息】:
+- 说话人: ${turn.speaker}
+- 日文原句: ${turn.jp}
+- 中文释义: ${turn.zh || ''}
+${turn.keyNote ? `- 关键备考要点: ${turn.keyNote}\n` : ''}`;
+      }
+
+      const cleanHistory = history.map(item => ({
+        role: item.role,
+        content: item.content
+      }));
+
+      const messages = [
+        { role: "system", content: systemPrompt },
+        ...cleanHistory,
+        { role: "user", content: `${contextDesc}\n【学员提问】: ${question}` }
+      ];
+
+      return await this.callChatCompletions(messages, { temperature: 0.7, max_tokens: 1500 });
+    }
+  };
+
   // DOM 容器
   const mainContainer = document.getElementById("main-app-container");
   const scenePillsContainer = document.getElementById("scene-pills-container");
@@ -283,7 +531,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const passageDialogueFlow = document.getElementById("passage-dialogue-flow");
 
   const grammarCardsContainer = document.getElementById("grammar-cards-container");
-  const clinicContainer = document.getElementById("clinic-container");
   const vocabCardsContainer = document.getElementById("vocab-cards-container");
   const quizListContainer = document.getElementById("quiz-list-container") || document.getElementById("arena-question-container");
 
@@ -294,10 +541,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "textbook": document.getElementById("section-textbook"),
     "practice": document.getElementById("section-practice"),
     "grammar": document.getElementById("section-grammar"),
-    "clinic": document.getElementById("section-clinic"),
     "vocab": document.getElementById("section-vocab"),
-    "quiz": document.getElementById("section-quiz"),
-    "email": document.getElementById("section-email")
+    "quiz": document.getElementById("section-quiz")
   };
 
   // 背诵演练与知识抽屉状态与 DOM 引用
@@ -808,7 +1053,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const p = turn.pedagogy;
     if (p) {
       // 1. 核心句型骨架
-      if (pedagogyPatternFormula) pedagogyPatternFormula.textContent = p.pattern || '通用商务表达句型';
+      if (pedagogyPatternFormula) pedagogyPatternFormula.innerHTML = p.patternWithRuby || p.pattern || '通用商务表达句型';
       if (pedagogyPatternMeaning) pedagogyPatternMeaning.textContent = p.patternMeaning || '';
 
       // 2. 核心语法解析
@@ -817,7 +1062,7 @@ document.addEventListener("DOMContentLoaded", () => {
           pedagogyGrammarList.innerHTML = p.grammar.map(g => `
             <div class="pedagogy-grammar-item">
               <div class="grammar-item-header">
-                <span class="grammar-name">${g.name}</span>
+                <span class="grammar-name">${g.nameWithRuby || g.name}</span>
                 <span class="grammar-rule">${g.rule}</span>
               </div>
               <div class="grammar-desc">${g.desc}</div>
@@ -839,7 +1084,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <span class="vocab-pos">${v.pos}</span>
               </div>
               <div class="vocab-meaning">${v.meaning}</div>
-              ${v.collocation ? `<div class="vocab-collocation">💡 ${v.collocation}</div>` : ''}
+              ${v.collocation ? `<div class="vocab-collocation">💡 ${v.collocationWithRuby || v.collocation}</div>` : ''}
             </div>
           `).join("");
         } else {
@@ -850,7 +1095,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // 4. 名师速记心法与口诀
       const mt = p.memoryTips || {};
       if (pedagogyMnemonic) pedagogyMnemonic.textContent = mt.mnemonic || '意群模块化组合记忆。';
-      if (pedagogyRhythm) pedagogyRhythm.textContent = mt.rhythm || turn.jp;
+      if (pedagogyRhythm) pedagogyRhythm.innerHTML = mt.rhythmWithRuby || mt.rhythm || turn.jpWithRuby || turn.jp;
       if (pedagogyAssociation) pedagogyAssociation.textContent = mt.association || '结合上下文痛点与IT方案联想。';
 
       // 5. 职场情商指引与避雷指南
@@ -1089,7 +1334,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isMyTurn) {
         card.classList.add("is-my-turn");
         bubbleBodyHtml = `
-          <div class="turn-zh" style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 0.6rem;">${turn.zh}</div>
+          <div class="turn-zh" style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 0.6rem;">${turn.zh || ''}</div>
           ${turn.keyNote ? `<div class="turn-note" style="margin-bottom: 0.6rem;">${turn.keyNote}</div>` : ''}
           ${tagsHtml}
           <div class="rp-prompt-box">
@@ -1104,6 +1349,9 @@ document.addEventListener("DOMContentLoaded", () => {
                   <span>🚀 提交发言并核对</span>
                 </button>
                 <button class="btn-skip-input btn-rp-skip-input">直接看范例 👁️</button>
+                <button type="button" class="btn-skip-input btn-rp-ai-eval" title="请资深对日IT总监 AI 深度诊断您的发言（敬语/情商/IT方案）">
+                  <span>🤖 AI 导师点评</span>
+                </button>
               </div>
             </div>
             <div class="rp-check-result" style="display: none;">
@@ -1129,12 +1377,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button class="btn-rp-retry">🔄 还要再练（记入生疏本）</button>
               </div>
             </div>
+            <div class="rp-ai-eval-container" style="display: none; margin-top: 1rem;"></div>
           </div>
         `;
       } else {
         bubbleBodyHtml = `
           <div class="turn-jp">${turn.jpWithRuby || turn.jp}</div>
-          <div class="turn-zh">${turn.zh}</div>
+          <div class="turn-zh">${turn.zh || ''}</div>
           ${turn.keyNote ? `<div class="turn-note">${turn.keyNote}</div>` : ''}
           ${tagsHtml}
         `;
@@ -1142,7 +1391,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (mode === 'prompt') {
       // 模式 3：译日盲背模式 (支持实时打字比对 + 最终核对揭晓标准范例)
       bubbleBodyHtml = `
-        <div class="turn-zh" style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 0.6rem;">${turn.zh}</div>
+        <div class="turn-zh" style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 0.6rem;">${turn.zh || ''}</div>
         ${turn.keyNote ? `<div class="turn-note" style="margin-bottom: 0.6rem;">${turn.keyNote}</div>` : ''}
         ${tagsHtml}
         <div class="input-check-box">
@@ -1186,7 +1435,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const clozeJp = generateClozeHtml(turn.jpWithRuby || turn.jp, keyTerms);
       bubbleBodyHtml = `
         <div class="turn-jp">${clozeJp}</div>
-        <div class="turn-zh">${turn.zh}</div>
+        <div class="turn-zh">${turn.zh || ''}</div>
         ${turn.keyNote ? `<div class="turn-note">${turn.keyNote}</div>` : ''}
         ${tagsHtml}
       `;
@@ -1194,7 +1443,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // 模式 1：精读全览模式 (完整日文正文 + 假名注音 + 知识透镜)
       bubbleBodyHtml = `
         <div class="turn-jp">${turn.jpWithRuby || turn.jp}</div>
-        <div class="turn-zh">${turn.zh}</div>
+        <div class="turn-zh">${turn.zh || ''}</div>
         ${turn.keyNote ? `<div class="turn-note">${turn.keyNote}</div>` : ''}
         ${tagsHtml}
       `;
@@ -1220,6 +1469,9 @@ document.addEventListener("DOMContentLoaded", () => {
               <span>🎓 句型与记忆法</span>
             </button>
             ` : ''}
+            <button class="btn-turn-ai-tutor" title="向AI私教深度提问本句用法、客户潜台词或敬语升级">
+              <span>🤖 问AI私教</span>
+            </button>
           </div>
           <button class="btn-speak-clause" title="点击朗读原声" data-text="${turn.jp}">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1262,6 +1514,15 @@ document.addEventListener("DOMContentLoaded", () => {
       pedagogyBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         openPedagogyDrawer(turn, scene, audioUrl, spkMeta);
+      });
+    }
+
+    // 绑定单句问AI私教抽屉
+    const aiTutorBtn = card.querySelector(".btn-turn-ai-tutor");
+    if (aiTutorBtn) {
+      aiTutorBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openAiTutorDrawer(turn, scene, spkMeta);
       });
     }
 
@@ -1604,6 +1865,90 @@ document.addEventListener("DOMContentLoaded", () => {
           showToast("已加入重点生疏本 📌");
           if (roleplayMeetingActive && typeof advanceMeetingTurn === "function") {
             advanceMeetingTurn();
+          }
+        });
+      }
+
+      // 角色扮演 AI 导师深度点评
+      const rpAiEvalBtn = card.querySelector(".btn-rp-ai-eval");
+      const rpAiEvalContainer = card.querySelector(".rp-ai-eval-container");
+
+      if (rpAiEvalBtn && rpAiEvalContainer) {
+        rpAiEvalBtn.addEventListener("click", async () => {
+          if (!QwenAIEngine.isConfigured()) {
+            showToast("请先在右上角【🤖 AI私教设置】中配置 Qwen API Key 🔑");
+            openAiConfigModal();
+            return;
+          }
+          const userText = rpInputEl ? rpInputEl.value.trim() : "";
+          if (!userText) {
+            showToast("请先在文本框中输入您的发言作答，AI导师将为您全方位诊断！✍️");
+            if (rpInputEl) rpInputEl.focus();
+            return;
+          }
+
+          rpAiEvalContainer.style.display = "block";
+          rpAiEvalContainer.innerHTML = `
+            <div class="ai-eval-loading-box">
+              <div class="ai-spinner"></div>
+              <div class="ai-eval-loading-text">
+                <div style="font-weight: 700; color: #312e81; font-size: 0.95rem;">资深对日IT总监 AI 正在全方位深度诊断您的发言...</div>
+                <div style="font-size: 0.8rem; color: #4338ca; margin-top: 0.2rem;">正在多维度评估：敬语规范度 · 商务情商与潜台词 · IT方案严谨度 · 地道母语润色</div>
+              </div>
+            </div>
+          `;
+
+          try {
+            const reviewMd = await QwenAIEngine.reviewRoleplay({
+              userText: userText,
+              standardJp: turn.jp,
+              standardZh: turn.zh || '',
+              speaker: turn.speaker,
+              promptZh: turn.zh || '',
+              scene: scene
+            });
+
+            rpAiEvalContainer.innerHTML = `
+              <div class="ai-eval-card">
+                <div class="ai-eval-header">
+                  <div class="ai-eval-title-wrap">
+                    <span class="ai-eval-icon">🎖️</span>
+                    <div>
+                      <h4 class="ai-eval-title">资深对日IT总监 · AI 深度评审报告</h4>
+                      <div class="ai-eval-subtitle">模型：${QwenAIEngine.getConfig().model || 'qwen-plus'} · 针对「${turn.speaker}」发言的综合诊断</div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn-close-ai-eval" title="收起点评">✕</button>
+                </div>
+                <div class="ai-eval-content">
+                  ${renderMarkdown(reviewMd)}
+                </div>
+              </div>
+            `;
+
+            const closeBtn = rpAiEvalContainer.querySelector(".btn-close-ai-eval");
+            if (closeBtn) {
+              closeBtn.addEventListener("click", () => {
+                rpAiEvalContainer.style.display = "none";
+              });
+            }
+          } catch (err) {
+            rpAiEvalContainer.innerHTML = `
+              <div class="ai-eval-error">
+                <span style="font-size: 1.25rem;">⚠️</span>
+                <div style="flex:1;">
+                  <strong>AI 点评获取失败：</strong> ${escapeHtml(err.message || '网络连接超时')}
+                  <div style="margin-top: 0.35rem; font-size: 0.78rem; color: #64748b;">若使用本地代理，请确认终端已运行 <code>python3 server.py</code> 并开启默认 <code>/api/chat</code></div>
+                </div>
+                <button type="button" class="btn-retry-eval">重试</button>
+              </div>
+            `;
+            const retryEvalBtn = rpAiEvalContainer.querySelector(".btn-retry-eval");
+            if (retryEvalBtn) {
+              retryEvalBtn.addEventListener("click", () => {
+                rpAiEvalBtn.click();
+              });
+            }
           }
         });
       }
@@ -2084,10 +2429,10 @@ document.addEventListener("DOMContentLoaded", () => {
       else btn.classList.remove("active");
     });
 
-    currentPassageTitle.textContent = p.title;
+    currentPassageTitle.textContent = p.title || `短文 ${p.pNum || ''}`;
     currentPassageFocus.innerHTML = `
-      <div>🎯 <b>训练目标：</b>${p.theme}</div>
-      <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.2rem;">📖 出处：${p.sourceBook} (${p.sourcePages})</div>
+      <div>🎯 <b>训练目标：</b>${p.theme || p.objective || ''}</div>
+      <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.2rem;">📖 出处：${p.sourceBook || '《对日软件需求定义分析设计场景对话训练教材配套练习》'} (${p.sourcePages || '配套练习'})</div>
     `;
 
     // 动态渲染短文模拟开会角色选项
@@ -2155,14 +2500,26 @@ document.addEventListener("DOMContentLoaded", () => {
       let rulesHtml = "";
       if (gp.rules && gp.rules.length) {
         gp.rules.forEach(r => {
-          let egItems = r.examples ? r.examples.map(e => `<li><strong>${e.jp}</strong> — ${e.desc}</li>`).join("") : "";
-          rulesHtml += `
-            <div class="rule-item">
-              <div class="rule-type">${r.type}</div>
-              <div class="rule-summary">${r.rule}</div>
-              ${egItems ? `<ul class="rule-examples">${egItems}</ul>` : ''}
-            </div>
-          `;
+          if (typeof r === 'string') {
+            const parts = r.split(/[:：]/);
+            const rType = parts.length > 1 ? parts[0].trim() : '接续要点';
+            const rRule = parts.length > 1 ? parts.slice(1).join('：').trim() : r;
+            rulesHtml += `
+              <div class="rule-item">
+                <div class="rule-type">${rType}</div>
+                <div class="rule-summary">${rRule}</div>
+              </div>
+            `;
+          } else if (r && typeof r === 'object') {
+            let egItems = (r.examples && r.examples.length) ? r.examples.map(e => `<li><strong>${e.jpWithRuby || e.jp}</strong> — ${e.desc || ''}</li>`).join("") : "";
+            rulesHtml += `
+              <div class="rule-item">
+                <div class="rule-type">${r.type || '接续要点'}</div>
+                <div class="rule-summary">${r.rule || ''}</div>
+                ${egItems ? `<ul class="rule-examples">${egItems}</ul>` : ''}
+              </div>
+            `;
+          }
         });
       }
 
@@ -2171,7 +2528,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let items = gp.businessExamples.map(eg => `
           <div class="eg-item">
             <div style="flex:1;">
-              <div class="eg-content-jp">${eg.jp}</div>
+              <div class="eg-content-jp">${eg.jpWithRuby || eg.jp}</div>
               <div class="eg-content-zh">${eg.zh}</div>
             </div>
             <button class="btn-speak-clause" title="朗读例句" data-text="${eg.audio || eg.jp}">
@@ -2226,45 +2583,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 6. 渲染职场实战诊所
-  function renderClinic(scene) {
-    const c = scene.businessClinic;
-    if (!c) {
-      moduleSections.clinic.style.display = "none";
-      return;
-    }
-
-    let compHtml = c.comparisons.map(item => `
-      <div class="clinic-item">
-        <div class="clinic-point-header">${item.point}</div>
-        <div class="clinic-comparison">
-          <div class="side-box side-casual">
-            <div class="side-label">⚠️ 及格普通口语（不建议汇报）</div>
-            <div class="side-text">${item.casual}</div>
-          </div>
-          <div class="side-box side-pro">
-            <div class="side-label">✅ 对日咨询高阶满分表达</div>
-            <div class="side-text">${item.pro}</div>
-          </div>
-        </div>
-      </div>
-    `).join("");
-
-    clinicContainer.innerHTML = `
-      <div class="clinic-card">
-        <h4 style="font-size: 1.15rem; font-weight:800; color: var(--text-main); margin-bottom: 1.25rem;">${c.title}</h4>
-        <div class="clinic-grid">${compHtml}</div>
-        ${c.template ? `
-          <div class="template-card">
-            <h4>📌 本场景通用沟通话术模板</h4>
-            <div class="template-code">${c.template}</div>
-          </div>
-        ` : ''}
-      </div>
-    `;
-  }
-
-  // 7. 渲染 3D 翻转智能词汇闪卡
+  // 6. 渲染 3D 翻转智能词汇闪卡
   function renderVocab(scene) {
     vocabCardsContainer.innerHTML = "";
     scene.vocabulary.forEach((v, vIndex) => {
@@ -2293,7 +2612,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <div style="font-size: 1.1rem; font-weight:700; color: var(--primary); margin-bottom: 0.35rem;">${v.kanji}</div>
               <div class="vocab-zh">${v.zh}</div>
               <div class="vocab-phrase" style="text-align:left; margin-top:0.75rem;">
-                <strong>搭配：</strong>${v.phrase}
+                <strong>搭配：</strong>${v.phraseWithRuby || v.phrase}
               </div>
             </div>
             <div>
@@ -2608,13 +2927,16 @@ document.addEventListener("DOMContentLoaded", () => {
       // Bookmark status
       this.updateBookmarkButton(q.id);
 
+      const correctIdx = typeof q.correct === 'number' ? q.correct : ({"A":0,"B":1,"C":2,"D":3}[q.correctAnswer] !== undefined ? {"A":0,"B":1,"C":2,"D":3}[q.correctAnswer] : 0);
+      const correctLabel = (q.options && q.options[correctIdx]) ? q.options[correctIdx].label : 'B';
+
       // Render question content
       let optionsHtml = q.options.map((opt, optIndex) => {
         let extraClasses = "";
         let statusTag = "";
 
         if (isAnswered) {
-          if (optIndex === q.correct) {
+          if (optIndex === correctIdx) {
             extraClasses = "opt-correct";
             statusTag = `<span class="opt-status-tag">✅ 最佳对策</span>`;
           } else if (optIndex === answeredState.selectedIndex) {
@@ -2627,7 +2949,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <button class="battle-opt-btn ${extraClasses}" data-optindex="${optIndex}" ${isAnswered ? "disabled" : ""}>
             <div class="opt-letter-badge">${opt.label}</div>
             <div class="opt-text-wrap">
-              <div class="opt-sentence-jp">${opt.text}</div>
+              <div class="opt-sentence-jp">${opt.textWithRuby || opt.text}</div>
             </div>
             ${statusTag}
           </button>
@@ -2656,30 +2978,37 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
 
         const trapsHtml = q.options.map(o => `
-          <div class="exp-trap-item ${o.label === q.options[q.correct].label ? 'correct-opt-analysis' : ''}">
-            <strong>【选项 ${o.label}】</strong>${o.analysis}
+          <div class="exp-trap-item ${o.label === correctLabel ? 'correct-opt-analysis' : ''}">
+            <strong>【选项 ${o.label}】</strong>${o.analysis || ''}
           </div>
         `).join("");
 
-        const phrasesHtml = (q.explanation.keyPhrases && q.explanation.keyPhrases.length) ? `
+        const exp = q.explanation || {
+          strategy: q.analysis || '深入把握客户心理诉求，以专业顾问姿态提出可控对策。',
+          clientSubtext: '客户关注业务平稳性与风险可控性，切忌推卸责任或空洞许诺。',
+          keyPhrases: [],
+          referenceDialogue: q.sceneTag || ''
+        };
+
+        const phrasesHtml = (exp.keyPhrases && exp.keyPhrases.length) ? `
           <div class="exp-section-item">
             <div class="exp-section-title">💡 关键高频表达与句式</div>
             <div class="exp-phrases-pills">
-              ${q.explanation.keyPhrases.map(p => `
+              ${exp.keyPhrases.map(p => `
                 <div class="exp-phrase-chip">
-                  <strong>${p.jp}</strong>
-                  <span>(${p.zh})</span>
+                  <strong>${p.jpWithRuby || p.jp}</strong>
+                  <span>(${p.zh || ''})</span>
                 </div>
               `).join("")}
             </div>
           </div>
         ` : "";
 
-        const refHtml = q.explanation.referenceDialogue ? `
+        const refHtml = exp.referenceDialogue ? `
           <div class="exp-section-item">
             <div class="exp-section-title">📖 教材课文溯源联动</div>
             <div class="exp-ref-badge">
-              <span>🔗 ${q.explanation.referenceDialogue}</span>
+              <span>🔗 ${exp.referenceDialogue}</span>
             </div>
           </div>
         ` : "";
@@ -2690,12 +3019,12 @@ document.addEventListener("DOMContentLoaded", () => {
             <div class="exp-sections-grid">
               <div class="exp-section-item">
                 <div class="exp-section-title">🎯 最佳对策与商务战略</div>
-                <div class="exp-section-body">${q.explanation.strategy}</div>
+                <div class="exp-section-body">${exp.strategy || ''}</div>
               </div>
 
               <div class="exp-section-item">
                 <div class="exp-section-title">🧠 日本客户心理暗语与潜台词</div>
-                <div class="exp-section-body">${q.explanation.clientSubtext}</div>
+                <div class="exp-section-body">${exp.clientSubtext || ''}</div>
               </div>
 
               <div class="exp-section-item">
@@ -2728,7 +3057,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
             <div class="scenario-context-text">${q.context}</div>
             <div class="scenario-quote-box">
-              <div class="scenario-quote-text">${q.dialogue}</div>
+              <div class="scenario-quote-text">${q.dialogueWithRuby || q.dialogue}</div>
             </div>
           </div>
 
@@ -3030,102 +3359,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (BattleQuizEngine && BattleQuizEngine.updateTopStats) {
       BattleQuizEngine.updateTopStats();
     }
-  }
-
-  // 9. 渲染对日实战商务邮件模板库 (Business Email & Report Templates)
-  function renderEmailSection(scene) {
-    const container = document.getElementById("email-templates-container");
-    if (!container) return;
-
-    const allTemplates = window.JAPANESE_EMAIL_TEMPLATES || [];
-    // 优先匹配当前场景，若无专属邮件则展示高频通用邮件
-    let sceneTemplates = allTemplates.filter(t => t.sceneId === scene.id);
-    if (!sceneTemplates.length) {
-      sceneTemplates = allTemplates;
-    }
-
-    container.innerHTML = "";
-
-    sceneTemplates.forEach(tpl => {
-      const card = document.createElement("div");
-      card.className = "email-card";
-
-      const keyPhrasesHtml = (tpl.keyPhrases && tpl.keyPhrases.length) ? `
-        <div class="email-phrases-box">
-          <div class="email-phrases-title">💡 邮件高频敬语与金句搭配</div>
-          <div class="email-phrases-list">
-            ${tpl.keyPhrases.map(p => `
-              <div class="email-phrase-item">
-                <strong>${p.jp}</strong> — <span>${p.zh}</span>
-              </div>
-            `).join("")}
-          </div>
-        </div>
-      ` : "";
-
-      card.innerHTML = `
-        <div class="email-meta-header">
-          <div class="email-title-group">
-            <div class="email-badges-row">
-              <span class="email-cat-badge">📁 ${tpl.category}</span>
-              <span class="email-tag-badge">🏷️ ${tpl.badge}</span>
-            </div>
-            <h4 class="email-title-h4">${tpl.title}</h4>
-            <p class="email-purpose-text">${tpl.purpose}</p>
-          </div>
-        </div>
-
-        <div class="email-subject-box">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-            <div class="email-subject-label">件名（遵循日企规约，自带业务与自社名标签）：</div>
-            <button class="btn-copy-email btn-copy-subject" style="padding: 0.25rem 0.65rem; font-size: 0.75rem;">
-              <span>复制件名 📋</span>
-            </button>
-          </div>
-          <div class="email-subject-val">${tpl.subject}</div>
-        </div>
-
-        <div>
-          <div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 0.35rem;">
-            宛名：<span style="color: #0f172a;">${tpl.recipient}</span>
-          </div>
-          <div class="email-body-box">${tpl.body}</div>
-        </div>
-
-        <div class="email-actions-bar">
-          <div style="font-size: 0.75rem; color: #64748b;">
-            💡 提示：点击复制后，可直接将【〇〇】处替换为您真实的客户名、系统名或姓名
-          </div>
-          <button class="btn-copy-email btn-copy-full">
-            <span>复制完整邮件正文 📋</span>
-          </button>
-        </div>
-
-        ${keyPhrasesHtml}
-
-        <div class="email-etiquette-alert" style="margin-top: 1rem; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 0.85rem 1rem; font-size: 0.82rem; color: #92400e; line-height: 1.5;">
-          ${tpl.etiquetteNotes}
-        </div>
-      `;
-
-      // 复制件名
-      const copySubBtn = card.querySelector(".btn-copy-subject");
-      if (copySubBtn) {
-        copySubBtn.addEventListener("click", () => {
-          copyToClipboard(tpl.subject, copySubBtn, "邮件件名已复制 📋");
-        });
-      }
-
-      // 复制正文
-      const copyFullBtn = card.querySelector(".btn-copy-full");
-      if (copyFullBtn) {
-        copyFullBtn.addEventListener("click", () => {
-          copyToClipboard(tpl.body, copyFullBtn, "完整邮件正文已复制 📋");
-        });
-      }
-
-      container.appendChild(card);
-    });
   }
 
   // 剪贴板复制工具函数
@@ -3436,10 +3669,8 @@ document.addEventListener("DOMContentLoaded", () => {
     renderTextbook(scene);
     renderPractice(scene);
     renderGrammar(scene);
-    renderClinic(scene);
     renderVocab(scene);
     renderQuiz(scene);
-    renderEmailSection(scene);
     updateWeaknessBadges();
     switchTab(activeTab);
   }
@@ -3495,18 +3726,317 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       Object.values(moduleSections).forEach(sec => { if (sec) sec.style.display = "block"; });
-      document.querySelectorAll(".dialogue-turn, .grammar-card, .flashcard-3d, .email-card").forEach(card => {
+      document.querySelectorAll(".dialogue-turn, .grammar-card, .flashcard-3d").forEach(card => {
         const txt = card.innerText.toLowerCase();
         card.style.display = txt.includes(kw) ? "" : "none";
       });
     });
   }
 
-  // 初始化随身听、背诵控制栏、跨场景对决刷题引擎并默认启动渲染
+  // ==========================================
+  // AI 设置与 AI 私教抽屉交互逻辑
+  // ==========================================
+  let tutorCurrentTurn = null;
+  let tutorCurrentScene = null;
+  let tutorHistory = [];
+
+  function updateAiHeaderBtn() {
+    const btn = document.getElementById("btn-ai-config");
+    if (!btn) return;
+    const cfg = QwenAIEngine.getConfig();
+    const isConfigured = QwenAIEngine.isConfigured();
+    const dot = btn.querySelector(".ai-status-dot");
+    const text = btn.querySelector(".ai-btn-text");
+
+    if (dot) {
+      dot.className = `ai-status-dot ${isConfigured ? 'dot-active' : 'dot-inactive'}`;
+    }
+    if (text) {
+      text.textContent = isConfigured ? `🤖 AI私教: ${cfg.model || 'qwen3.7-plus'}` : "🤖 AI私教: 未配置";
+    }
+  }
+
+  function openAiConfigModal() {
+    const modal = document.getElementById("ai-config-modal");
+    if (!modal) return;
+    const cfg = QwenAIEngine.getConfig();
+    const keyInput = document.getElementById("ai-api-key-input");
+    const modelSelect = document.getElementById("ai-model-select");
+    const endpointInput = document.getElementById("ai-endpoint-input");
+    const testResult = document.getElementById("ai-test-result");
+
+    if (keyInput) keyInput.value = cfg.apiKey || "";
+    if (modelSelect) modelSelect.value = cfg.model || "qwen3.7-plus";
+    if (endpointInput) endpointInput.value = cfg.baseUrl || "/api/chat";
+    if (testResult) {
+      testResult.style.display = "none";
+      testResult.textContent = "";
+    }
+
+    modal.style.display = "flex";
+    if (keyInput) keyInput.focus();
+  }
+
+  function closeAiConfigModal() {
+    const modal = document.getElementById("ai-config-modal");
+    if (!modal) return;
+    modal.style.display = "none";
+  }
+
+  function setupAiConfigModal() {
+    const openBtn = document.getElementById("btn-ai-config");
+    const closeBtn = document.getElementById("ai-modal-close-btn");
+    const cancelBtn = document.getElementById("btn-cancel-ai-config");
+    const saveBtn = document.getElementById("btn-save-ai-config");
+    const testBtn = document.getElementById("btn-test-ai-connection");
+    const visBtn = document.getElementById("btn-toggle-key-vis");
+    const keyInput = document.getElementById("ai-api-key-input");
+    const modelSelect = document.getElementById("ai-model-select");
+    const endpointInput = document.getElementById("ai-endpoint-input");
+    const testResult = document.getElementById("ai-test-result");
+    const modal = document.getElementById("ai-config-modal");
+
+    if (openBtn) {
+      openBtn.addEventListener("click", openAiConfigModal);
+    }
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeAiConfigModal);
+    }
+    if (cancelBtn) {
+      cancelBtn.addEventListener("click", closeAiConfigModal);
+    }
+    if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeAiConfigModal();
+      });
+    }
+
+    if (visBtn && keyInput) {
+      visBtn.addEventListener("click", () => {
+        if (keyInput.type === "password") {
+          keyInput.type = "text";
+          visBtn.textContent = "🙈";
+        } else {
+          keyInput.type = "password";
+          visBtn.textContent = "👁️";
+        }
+      });
+    }
+
+    if (saveBtn) {
+      saveBtn.addEventListener("click", () => {
+        const apiKey = keyInput ? keyInput.value.trim() : "";
+        const model = modelSelect ? modelSelect.value : "qwen3.7-plus";
+        const baseUrl = endpointInput ? endpointInput.value.trim() : "/api/chat";
+
+        QwenAIEngine.saveConfig({ apiKey, model, baseUrl });
+        updateAiHeaderBtn();
+        showToast("Qwen AI 配置已成功保存！🎉");
+        closeAiConfigModal();
+      });
+    }
+
+    if (testBtn) {
+      testBtn.addEventListener("click", async () => {
+        const apiKey = keyInput ? keyInput.value.trim() : "";
+        const model = modelSelect ? modelSelect.value : "qwen3.7-plus";
+        const baseUrl = endpointInput ? endpointInput.value.trim() : "/api/chat";
+
+        if (!apiKey) {
+          testResult.style.display = "block";
+          testResult.className = "ai-test-result error";
+          testResult.textContent = "请先填写 DashScope API Key！";
+          return;
+        }
+
+        testBtn.disabled = true;
+        testBtn.innerHTML = "<span>测试连接中... ⏳</span>";
+        testResult.style.display = "block";
+        testResult.className = "ai-test-result loading";
+        testResult.textContent = "正在连接 Qwen 模型，请稍候...";
+
+        try {
+          const reply = await QwenAIEngine.testConnection(apiKey, model, baseUrl);
+          testResult.className = "ai-test-result success";
+          testResult.innerHTML = `✅ 连接测试成功！模型返回：<code>${escapeHtml(reply)}</code>`;
+        } catch (err) {
+          testResult.className = "ai-test-result error";
+          testResult.innerHTML = `❌ 连接失败: ${escapeHtml(err.message)}<br><small style="margin-top:0.35rem; display:block; color:#475569;">提示：若在浏览器直接请求遇到 CORS，请使用本地代理（在终端运行 <code>python3 server.py</code> 并设置端点为默认的 <code>/api/chat</code>）。</small>`;
+        } finally {
+          testBtn.disabled = false;
+          testBtn.innerHTML = "<span>⚡ 测试连接</span>";
+        }
+      });
+    }
+  }
+
+  function openAiTutorDrawer(turn, scene, spkMeta) {
+    tutorCurrentTurn = turn;
+    tutorCurrentScene = scene;
+    tutorHistory = [];
+
+    const drawer = document.getElementById("ai-tutor-drawer");
+    if (!drawer) return;
+
+    const sceneContext = document.getElementById("ai-tutor-scene-context");
+    const anchorSpeaker = document.getElementById("ai-anchor-speaker");
+    const anchorJp = document.getElementById("ai-anchor-jp");
+    const anchorZh = document.getElementById("ai-anchor-zh");
+    const messagesBox = document.getElementById("ai-chat-messages");
+    const inputEl = document.getElementById("ai-tutor-input");
+
+    if (sceneContext) {
+      sceneContext.textContent = `场景 ${scene.id} · ${scene.title}`;
+    }
+    if (anchorSpeaker) {
+      anchorSpeaker.textContent = `${turn.speaker} (${spkMeta ? spkMeta.roleLabel : '对白'})`;
+    }
+    if (anchorJp) {
+      anchorJp.innerHTML = turn.jpWithRuby || turn.jp;
+    }
+    if (anchorZh) {
+      anchorZh.textContent = turn.zh || "";
+    }
+
+    if (messagesBox) {
+      messagesBox.innerHTML = `
+        <div class="ai-msg ai-msg-bot">
+          <div class="ai-msg-avatar">🤖</div>
+          <div class="ai-msg-bubble">
+            您好！我是您的对日软件架构与商务沟通 AI 私教。正在研读当前对白：<br>
+            <div style="margin: 0.4rem 0; padding: 0.4rem 0.6rem; background: #e0e7ff; border-radius: 6px; color: #1e1b4b; font-size: 0.85rem;">
+              <strong>${turn.speaker}</strong>: 「${turn.jp}」
+            </div>
+            您可以直接点击上方的快捷分析胶囊，或在下方输入您的疑问，我将为您深度剖析客户本音、敬语细节与对日开发避坑点！
+          </div>
+        </div>
+      `;
+    }
+
+    drawer.style.display = "flex";
+    if (inputEl) {
+      inputEl.value = "";
+      setTimeout(() => inputEl.focus(), 150);
+    }
+  }
+
+  function closeAiTutorDrawer() {
+    const drawer = document.getElementById("ai-tutor-drawer");
+    if (drawer) drawer.style.display = "none";
+  }
+
+  async function sendAiTutorQuestion(questionText) {
+    const text = (questionText || "").trim();
+    if (!text) return;
+
+    if (!QwenAIEngine.isConfigured()) {
+      showToast("请先在右上角【🤖 AI私教设置】中配置 Qwen API Key 🔑");
+      openAiConfigModal();
+      return;
+    }
+
+    const messagesBox = document.getElementById("ai-chat-messages");
+    const inputEl = document.getElementById("ai-tutor-input");
+    const sendBtn = document.getElementById("btn-ai-tutor-send");
+
+    if (inputEl) inputEl.value = "";
+
+    // 用户消息气泡
+    const userMsgDiv = document.createElement("div");
+    userMsgDiv.className = "ai-msg ai-msg-user";
+    userMsgDiv.innerHTML = `<div class="ai-msg-bubble">${escapeHtml(text)}</div>`;
+    messagesBox.appendChild(userMsgDiv);
+
+    // 私教思考气泡
+    const botMsgDiv = document.createElement("div");
+    botMsgDiv.className = "ai-msg ai-msg-bot";
+    botMsgDiv.innerHTML = `
+      <div class="ai-msg-avatar">🤖</div>
+      <div class="ai-msg-bubble ai-bubble-loading">
+        <div class="ai-typing-dots"><span></span><span></span><span></span></div>
+        <span style="font-size: 0.85rem; color: #4338ca; margin-left: 0.4rem; font-weight:600;">AI 私教正在深度推演中...</span>
+      </div>
+    `;
+    messagesBox.appendChild(botMsgDiv);
+    messagesBox.scrollTop = messagesBox.scrollHeight;
+
+    if (sendBtn) sendBtn.disabled = true;
+
+    try {
+      const answer = await QwenAIEngine.askTutor({
+        question: text,
+        turn: tutorCurrentTurn,
+        scene: tutorCurrentScene,
+        history: tutorHistory
+      });
+
+      tutorHistory.push({ role: "user", content: text });
+      tutorHistory.push({ role: "assistant", content: answer });
+
+      const bubble = botMsgDiv.querySelector(".ai-msg-bubble");
+      bubble.className = "ai-msg-bubble";
+      bubble.innerHTML = renderMarkdown(answer);
+    } catch (err) {
+      const bubble = botMsgDiv.querySelector(".ai-msg-bubble");
+      bubble.className = "ai-msg-bubble ai-bubble-error";
+      bubble.innerHTML = `⚠️ <strong>私教解答出现异常：</strong>${escapeHtml(err.message || '网络连接超时')}<br><small style="margin-top:0.35rem; display:block; color:#64748b;">提示：请确认终端已运行 <code>python3 server.py</code> 本地代理服务并配置了有效 API Key。</small>`;
+    } finally {
+      if (sendBtn) sendBtn.disabled = false;
+      messagesBox.scrollTop = messagesBox.scrollHeight;
+    }
+  }
+
+  function setupAiTutorDrawer() {
+    const closeBtn = document.getElementById("ai-tutor-close-btn");
+    const drawer = document.getElementById("ai-tutor-drawer");
+    const sendBtn = document.getElementById("btn-ai-tutor-send");
+    const inputEl = document.getElementById("ai-tutor-input");
+    const quickChips = document.querySelectorAll(".ai-quick-chip");
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeAiTutorDrawer);
+    }
+    if (drawer) {
+      drawer.addEventListener("click", (e) => {
+        if (e.target === drawer) closeAiTutorDrawer();
+      });
+    }
+
+    quickChips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        const prompt = chip.getAttribute("data-prompt");
+        if (prompt) {
+          sendAiTutorQuestion(prompt);
+        }
+      });
+    });
+
+    if (sendBtn) {
+      sendBtn.addEventListener("click", () => {
+        if (inputEl) sendAiTutorQuestion(inputEl.value);
+      });
+    }
+
+    if (inputEl) {
+      inputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          if (e.isComposing || e.keyCode === 229) return;
+          e.preventDefault();
+          sendAiTutorQuestion(inputEl.value);
+        }
+      });
+    }
+  }
+
+  // 初始化随身听、背诵控制栏、跨场景对决刷题引擎、AI模块并默认启动渲染
   window.switchTab = switchTab;
   window.BattleQuizEngine = BattleQuizEngine;
+  window.QwenAIEngine = QwenAIEngine;
   WalkmanController.init();
   setupDrillToolbars();
   BattleQuizEngine.init();
+  setupAiConfigModal();
+  setupAiTutorDrawer();
+  updateAiHeaderBtn();
   renderCurrentScene();
 });

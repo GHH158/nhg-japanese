@@ -3,6 +3,9 @@
 materials/
 dist/
 scratch/
+node_modules/
+.vite/
 __pycache__/
 *.pyc
+
 

@@ -28,7 +28,9 @@
 ## 🛠️ 自动化持续集成 (CI/CD)
 
 本项目原生支持托管于 **Cloudflare Pages**：
-- **Framework preset**: None
-- **Build command**: *(留空)*
-- **Build output directory**: `/`
+- **Framework preset**: `Vite`
+- **Build command**: `npm run build`
+- **Build output directory**: `dist`
+- **Node.js version**: `20`（通过仓库内 `.nvmrc` 自动锁定）
+- **Functions**: 原生集成 `functions/api/chat.js`（通义千问边缘代理）与 `functions/api/tts.js`（真人神经网络TTS边缘缓存）
 
