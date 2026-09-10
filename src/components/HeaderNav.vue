@@ -13,7 +13,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['update:showFurigana', 'update:searchQuery', 'open-ai-config', 'start-walkman']);
+const emit = defineEmits(['update:showFurigana', 'update:searchQuery', 'open-ai-config', 'open-correction', 'start-walkman']);
 
 const { config, isConfigured } = useQwen();
 const { state: audioState, setRate, toggleRepeat } = useAudioPlayer();
@@ -84,6 +84,15 @@ function handleCycleRate() {
             <path d="M2 12h20M12 2v20"></path>
           </svg>
           <span>注音: {{ showFurigana ? '开' : '关' }}</span>
+        </button>
+
+        <button
+          class="toggle-chip"
+          style="background: white; border-color: #cbd5e1; color: #1e3a8a;"
+          @click="emit('open-correction')"
+          title="打开课文内容校对与补齐工作台"
+        >
+          <span>✏️ 课文校对</span>
         </button>
 
         <button

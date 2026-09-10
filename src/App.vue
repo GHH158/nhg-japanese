@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue';
-import { KNOWLEDGE_BASE } from './data/scenes.js';
 import { useMastery } from './composables/useMastery.js';
 import { useAudioPlayer } from './composables/useAudioPlayer.js';
+import { useSceneCorrection } from './composables/useSceneCorrection.js';
 
 import HeaderNav from './components/HeaderNav.vue';
 import DialogueCard from './components/DialogueCard.vue';
@@ -12,8 +12,9 @@ import SceneInterviewView from './components/SceneInterviewView.vue';
 import UniversalInterviewView from './components/UniversalInterviewView.vue';
 import AiBottomSheet from './components/AiBottomSheet.vue';
 import AiConfigModal from './components/AiConfigModal.vue';
+import SceneCorrectionModal from './components/SceneCorrectionModal.vue';
 
-const scenes = KNOWLEDGE_BASE.scenes || [];
+const { scenes, hasCorrection, resetSceneCorrection } = useSceneCorrection();
 const { isMastered, isWeakness } = useMastery();
 const { startWalkman, speak, stop, state: audioState } = useAudioPlayer();
 
@@ -55,7 +56,21 @@ const isAiSheetOpen = ref(false);
 const anchorTurn = ref(null);
 const isAiConfigOpen = ref(false);
 
-const currentScene = computed(() => scenes[currentSceneIndex.value] || scenes[0]);
+// 课文内容校正工作台弹层
+const isCorrectionModalOpen = ref(false);
+const initialCorrectionTurnIndex = ref(-1);
+
+function handleOpenCorrection(turn = null) {
+  if (turn && turn.turnId) {
+    const idx = tbTurns.value.findIndex(t => t.turnId === turn.turnId);
+    initialCorrectionTurnIndex.value = idx >= 0 ? idx : -1;
+  } else {
+    initialCorrectionTurnIndex.value = -1;
+  }
+  isCorrectionModalOpen.value = true;
+}
+
+const currentScene = computed(() => scenes.value[currentSceneIndex.value] || scenes.value[0]);
 
 // 教材对话队列
 const tbTurns = computed(() => {
@@ -231,6 +246,7 @@ function toggleAllPCloze() {
       v-model:show-furigana="showFurigana"
       v-model:search-query="searchQuery"
       @open-ai-config="isAiConfigOpen = true"
+      @open-correction="handleOpenCorrection()"
       @start-walkman="handleStartWalkman"
     />
 
@@ -357,21 +373,49 @@ function toggleAllPCloze() {
         class="module-section"
       >
         <div class="section-header">
-          <h3 class="section-title">📘 教材核心课文：全景商务研讨</h3>
-          <button
-            class="play-full-btn"
-            :class="{ active: audioState.isPlaying && audioState.isWalkmanActive }"
-            @click="handlePlayFullTextbook"
-            :title="audioState.isPlaying && audioState.isWalkmanActive ? '停止当前连续播报' : '朗读教材完整课文（多角色拟真连播）'"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon v-if="!(audioState.isPlaying && audioState.isWalkmanActive)" points="5 3 19 12 5 21 5 3"></polygon>
-              <rect v-if="audioState.isPlaying && audioState.isWalkmanActive" x="6" y="4" width="4" height="16"></rect>
-              <rect v-if="audioState.isPlaying && audioState.isWalkmanActive" x="14" y="4" width="4" height="16"></rect>
-            </svg>
-            <span>{{ audioState.isPlaying && audioState.isWalkmanActive ? '停止播报' : '连播整篇对话' }}</span>
-            <span class="voice-badge-tag">🎙️ 拟真配音</span>
-          </button>
+          <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+            <h3 class="section-title">📘 教材核心课文：全景商务研讨</h3>
+            <span
+              v-if="hasCorrection(currentScene.id)"
+              style="background: #fef3c7; color: #92400e; border: 1px solid #fde68a; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.4rem;"
+            >
+              <span>✨ 已应用本地校对</span>
+              <button
+                style="background: none; border: none; color: #b45309; text-decoration: underline; cursor: pointer; font-size: 0.75rem; padding: 0;"
+                title="清空本课自定义修改，恢复官方预设课文"
+                @click="resetSceneCorrection(currentScene.id)"
+              >
+                恢复原版
+              </button>
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <!-- 课文校对工作台入口 -->
+            <button
+              class="play-full-btn"
+              style="background: white; color: #1e3a8a; border: 1px solid #cbd5e1;"
+              title="校对本课课文、修改错误、补齐遗漏对话或使用AI一键提取"
+              @click="handleOpenCorrection()"
+            >
+              <span>✏️ 校对/补全课文</span>
+            </button>
+
+            <button
+              class="play-full-btn"
+              :class="{ active: audioState.isPlaying && audioState.isWalkmanActive }"
+              @click="handlePlayFullTextbook"
+              :title="audioState.isPlaying && audioState.isWalkmanActive ? '停止当前连续播报' : '朗读教材完整课文（多角色拟真连播）'"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon v-if="!(audioState.isPlaying && audioState.isWalkmanActive)" points="5 3 19 12 5 21 5 3"></polygon>
+                <rect v-if="audioState.isPlaying && audioState.isWalkmanActive" x="6" y="4" width="4" height="16"></rect>
+                <rect v-if="audioState.isPlaying && audioState.isWalkmanActive" x="14" y="4" width="4" height="16"></rect>
+              </svg>
+              <span>{{ audioState.isPlaying && audioState.isWalkmanActive ? '停止播报' : '连播整篇对话' }}</span>
+              <span class="voice-badge-tag">🎙️ 拟真配音</span>
+            </button>
+          </div>
         </div>
 
         <div class="sentence-container">
@@ -429,6 +473,7 @@ function toggleAllPCloze() {
               :audio-url="turn.audioUrl"
               :show-furigana="showFurigana"
               @ask-ai="handleOpenAiTutor"
+              @edit-turn="handleOpenCorrection"
             />
           </div>
         </div>
@@ -442,6 +487,14 @@ function toggleAllPCloze() {
       >
         <div class="section-header">
           <h3 class="section-title">📝 配套练习：5篇短文拓展闯关</h3>
+          <button
+            class="play-full-btn"
+            style="background: white; color: #1e3a8a; border: 1px solid #cbd5e1;"
+            title="校对本课配套练习短文内容"
+            @click="handleOpenCorrection()"
+          >
+            <span>✏️ 校对短文内容</span>
+          </button>
         </div>
 
         <div class="practice-container-card">
@@ -729,6 +782,15 @@ function toggleAllPCloze() {
     <AiConfigModal
       :is-open="isAiConfigOpen"
       @close="isAiConfigOpen = false"
+    />
+
+    <!-- 课文内容实时校对与补齐工作台 -->
+    <SceneCorrectionModal
+      :is-open="isCorrectionModalOpen"
+      :scene="currentScene"
+      :initial-turn-index="initialCorrectionTurnIndex"
+      @close="isCorrectionModalOpen = false"
+      @saved="isCorrectionModalOpen = false"
     />
   </div>
 </template>

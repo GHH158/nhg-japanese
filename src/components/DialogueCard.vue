@@ -32,7 +32,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['ask-ai']);
+const emit = defineEmits(['ask-ai', 'edit-turn']);
 
 const { state: audioState, speak, stop } = useAudioPlayer();
 const { isMastered, toggleMastered, markMastered, isWeakness, toggleWeakness } = useMastery();
@@ -94,7 +94,8 @@ function handlePlayAudio() {
   if (isCurrentlyPlaying.value) {
     stop();
   } else {
-    speak(props.turn.jp, props.audioUrl, props.turnId, null, spkMeta.value.voice);
+    const audioTarget = props.turn._isCustom ? null : props.audioUrl;
+    speak(props.turn.jp, audioTarget, props.turnId, null, spkMeta.value.voice);
   }
 }
 
@@ -206,6 +207,16 @@ async function handleAiReview() {
             title="向AI私教深度提问本句用法、客户潜台词或敬语升级"
           >
             <span>🤖 问AI私教</span>
+          </button>
+
+          <!-- 快速校对本句 -->
+          <button
+            class="btn-turn-ai-tutor"
+            style="background: #f8fafc; color: #475569; border-color: #cbd5e1;"
+            @click="emit('edit-turn', turn)"
+            title="点击快速校对或修改课文内容"
+          >
+            <span>✏️ 校对</span>
           </button>
         </div>
 
