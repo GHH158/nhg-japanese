@@ -87,10 +87,32 @@ function loadConfig() {
 
 // 全局响应式配置对象
 const config = ref(loadConfig());
+const isPlatformReady = ref(false);
+
+async function checkPlatformStatus() {
+  try {
+    const ep = (config.value.baseUrl && config.value.baseUrl.trim()) ? config.value.baseUrl.trim() : '/api/chat';
+    const endpoint = (window.location.protocol === 'file:' && ep.startsWith('/')) ? `http://localhost:8080${ep}` : ep;
+    const res = await fetch(endpoint, { method: 'GET' });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.hasPlatformKey) {
+        isPlatformReady.value = true;
+      }
+    }
+  } catch (e) {}
+}
+
+// 页面初始化时静默探测云端公共 Key
+checkPlatformStatus();
 
 export function useQwen() {
-  const isConfigured = computed(() => {
+  const hasPersonalKey = computed(() => {
     return !!(config.value.apiKey && config.value.apiKey.trim().length > 5);
+  });
+
+  const isConfigured = computed(() => {
+    return isPlatformReady.value || hasPersonalKey.value;
   });
 
   function saveConfig(newConfig) {
@@ -138,8 +160,8 @@ export function useQwen() {
   }
 
   async function callChatCompletions(messages, options = {}) {
-    if (!config.value.apiKey || !config.value.apiKey.trim()) {
-      throw new Error('请先点击右上角【🤖 AI私教】配置您的通义千问 API Key！');
+    if (!isConfigured.value) {
+      throw new Error('AI 私教服务尚未就绪。请先点击右上角【🤖 AI私教】配置您的通义千问 API Key！');
     }
 
     const endpoint = resolveEndpoint(config.value.baseUrl);
@@ -152,12 +174,16 @@ export function useQwen() {
       max_tokens: options.max_tokens ?? 1500
     };
 
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    if (config.value.apiKey && config.value.apiKey.trim()) {
+      headers['Authorization'] = `Bearer ${config.value.apiKey.trim()}`;
+    }
+
     const res = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.value.apiKey.trim()}`
-      },
+      headers: headers,
       body: JSON.stringify(payload)
     });
 
@@ -182,12 +208,16 @@ export function useQwen() {
 
   async function testConnection(apiKey, model, baseUrl) {
     const endpoint = resolveEndpoint(baseUrl);
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+    if (apiKey && apiKey.trim()) {
+      headers['Authorization'] = `Bearer ${apiKey.trim()}`;
+    }
+
     const res = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey.trim()}`
-      },
+      headers: headers,
       body: JSON.stringify({
         model: model || 'qwen3.7-plus',
         messages: [
@@ -288,6 +318,9 @@ ${turn.keyNote ? `- 关键备考要点: ${turn.keyNote}\n` : ''}`;
     isConfigured,
     saveConfig,
     testConnection,
+    isPlatformReady,
+    hasPersonalKey,
+    checkPlatformStatus,
     callChatCompletions,
     reviewRoleplay,
     askTutor,

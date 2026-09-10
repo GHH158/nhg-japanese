@@ -11,7 +11,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'saved']);
 
-const { config, saveConfig, testConnection } = useQwen();
+const { config, saveConfig, testConnection, isPlatformReady, checkPlatformStatus } = useQwen();
 
 const formApiKey = ref('');
 const formModel = ref('qwen3.7-plus');
@@ -23,6 +23,7 @@ const testResult = ref(null); // { success: boolean, msg: string }
 
 watch(() => props.isOpen, (open) => {
   if (open) {
+    checkPlatformStatus();
     formApiKey.value = config.value.apiKey || '';
     formModel.value = config.value.model || 'qwen3.7-plus';
     formBaseUrl.value = config.value.baseUrl || '/api/chat';
@@ -31,8 +32,8 @@ watch(() => props.isOpen, (open) => {
 });
 
 async function handleTest() {
-  if (!formApiKey.value.trim()) {
-    testResult.value = { success: false, msg: '请先填入 API Key 才能进行连通性测试' };
+  if (!formApiKey.value.trim() && !isPlatformReady.value) {
+    testResult.value = { success: false, msg: '未检测到 API Key。请填入您的 DashScope API Key 才能进行测试。' };
     return;
   }
   isTesting.value = true;
@@ -79,6 +80,17 @@ function handleSave() {
         </div>
 
         <div class="modal-body">
+          <!-- Cloudflare Platform Key Ready Banner -->
+          <div v-if="isPlatformReady" style="margin-bottom: 1.25rem; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 0.65rem 0.85rem; font-size: 0.85rem; color: #065f46; display: flex; align-items: flex-start; gap: 0.5rem; line-height: 1.5;">
+            <span style="font-size: 1.15rem; line-height: 1;">☁️</span>
+            <div>
+              <div style="font-weight: 700; color: #047857;">云端环境公共秘钥已生效</div>
+              <div style="color: #065f46; font-size: 0.8rem; margin-top: 0.15rem;">
+                Cloudflare Pages 环境变量已就绪。所有学员无需填写任何个人 Key，即可直接使用 AI 模拟面试与竞技场对决！若您在下方填入个人 API Key，系统将优先使用您的私有 Key。
+              </div>
+            </div>
+          </div>
+
           <!-- API Key Input -->
           <div class="form-group">
             <label class="form-label">

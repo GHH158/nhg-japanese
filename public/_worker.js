@@ -24,11 +24,13 @@ async function handleChat(request, env) {
     });
   }
 
-  // GET 健康探针检测
+  // GET 健康探针检测与公共云端 Key 状态暴露
   if (request.method === "GET") {
+    const hasPlatformKey = !!(env && env.DASHSCOPE_API_KEY && env.DASHSCOPE_API_KEY.trim().length > 5);
     return new Response(JSON.stringify({
       status: "ok",
       service: "DashScope Qwen AI Proxy",
+      hasPlatformKey: hasPlatformKey,
       message: "API 代理端点就绪，请使用 POST 请求提交对话内容。"
     }), {
       status: 200,

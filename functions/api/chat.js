@@ -24,11 +24,13 @@ export async function onRequest(context) {
     });
   }
 
-  // 2. 健康检查 / 连通性探针 (GET 请求友好响应，避免 405)
+  // 2. 健康检查 / 连通性探针 (GET 请求友好响应，避免 405，同时探测云端 Key 状态)
   if (request.method === "GET") {
+    const hasPlatformKey = !!(context.env && context.env.DASHSCOPE_API_KEY && context.env.DASHSCOPE_API_KEY.trim().length > 5);
     return new Response(JSON.stringify({
       status: "ok",
       service: "DashScope Qwen AI Proxy",
+      hasPlatformKey: hasPlatformKey,
       message: "API 代理端点运行正常！请使用 POST 请求提交 API Key 与对话内容。"
     }), {
       status: 200,
