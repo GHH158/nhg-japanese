@@ -1,4 +1,4 @@
-window.JAPANESE_KNOWLEDGE_BASE = {
+const KNOWLEDGE_BASE = {
   "metadata": {
     "title": "对日软件需求定义与分析设计场景智能研习平台",
     "lastUpdated": "2026-09-09",
@@ -2483,8 +2483,8 @@ window.JAPANESE_KNOWLEDGE_BASE = {
     {
       "id": "scene-11",
       "sceneNumber": 11,
-      "badge": "客服系统调研",
-      "title": "场景 11：客户支持系统需求调研",
+      "badge": "客服需求调研",
+      "title": "场景 11：カスタマーサポートシステム（客服中台）業務現状ヒアリング",
       "theme": "客户支持中心现状听取 · 工单分散与FAQ缺失 · 首次响应超时痛点",
       "domain": "需求定义领域（客服工单与知识库体系）",
       "background": "客户服务呼叫中心面临客服业务严重“属人化”、客户来电与邮件分散于各个个人电脑中、没有统一知识库且首次回复平均超过2小时的严重痛点。李深入挖掘其三大核心瓶颈。",
@@ -3903,8 +3903,8 @@ window.JAPANESE_KNOWLEDGE_BASE = {
     {
       "id": "scene-12",
       "sceneNumber": 12,
-      "badge": "客服系统确认",
-      "title": "场景 12：客户支持系统需求确认与共识形成",
+      "badge": "客服需求确认",
+      "title": "场景 12：カスタマーサポートシステム（客服中台）要件確認・合意形成",
       "theme": "调研结果复盘 · 自动派单与FAQ知识库 · 人机结合与分阶段实施",
       "domain": "需求定义领域（AI/NLP 辅助与流程自动化）",
       "background": "针对客服中心工单分散与效率低下的问题，李提出了“基于关键词解析的自动派单”与“基于NLP的历史工单自动沉淀FAQ”两大功能，并承诺保留人工兜底确认机制，成功达成优先级与工期共识。",
@@ -5280,9 +5280,9 @@ window.JAPANESE_KNOWLEDGE_BASE = {
     {
       "id": "scene-18",
       "sceneNumber": 18,
-      "badge": "系统通用功能",
-      "title": "场景 18：カスタマーサポートシステム通用機能実現方針の協議",
-      "theme": "通用功能架构协商 · SAML SSO认证 · 审计日志两阶段 · 异常监控阈值告警",
+      "badge": "共通功能协议",
+      "title": "场景 18：カスタマーサポートシステム共通機能（認証・監査ログ・異常監視）実現方針の協議",
+      "theme": "共通基盘架构协商 · SAML SSO认证 · 审计日志两阶段 · 异常监控阈值告警",
       "domain": "技术架构与通用功能领域（SAML SSO / 审计 / 监控）",
       "background": "受托方软件设计师李与客户方IT负责人山田课长、安全负责人佐藤召开专门技术协商会。针对客服系统的三大核心通用功能（SAML SSO单点登录与AD FS集成、操作与访问审计日志加密保存2年、CPU/内存/磁盘/时延/错误率5大性能指标阈值监控与多级升级机制）展开深度技术对接并达成共识。",
       "participants": [
@@ -6348,317 +6348,407 @@ window.JAPANESE_KNOWLEDGE_BASE = {
       "practiceTexts": [
         {
           "pNum": 1,
-          "title": "短文 1：通用功能概要与3大基础功能说明",
-          "theme": "通用功能概要与3大功能说明",
-          "objective": "掌握架构通用功能三部曲说明法（认证、审计日志、异常监控），强化「〜から構成されております」「まず〜続いて〜最後に」的逻辑条理性。",
+          "title": "短文 1：通用功能概要与3功能说明",
+          "theme": "练习 1 · 通用功能概要与3功能说明",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第18课练习 1（P1-P2）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P1-P2",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "本システムの通用機能は、認証・監査ログ・異常監視の3機能から構成されております。",
               "jpWithRuby": "<ruby>本<rt>ほん</rt></ruby>システムの<ruby>通用<rt>つうよう</rt></ruby><ruby>機能<rt>きのう</rt></ruby>は、<ruby>認証<rt>にんしょう</rt></ruby>・<ruby>監査<rt>かんさ</rt></ruby>ログ・<ruby>異常<rt>いじょう</rt></ruby><ruby>監視<rt>かんし</rt></ruby>の3<ruby>機能<rt>きのう</rt></ruby>から<ruby>構成<rt>こうせい</rt></ruby>されております。",
-              "zh": "本系统的通用基础功能由身份认证、审计日志、异常监控三大功能构成。"
+              "zh": "本系统的通用功能由认证、审计日志、异常监控这3个功能构成。"
             },
             {
               "speaker": "田中部長",
               "jp": "よろしくお願いします。",
               "jpWithRuby": "よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "拜托你了，请多关照。"
+              "zh": "拜托了。"
             },
             {
               "speaker": "李",
               "jp": "まず1つ目の機能は、認証です。SAML SSOを用いて実装いたします。",
               "jpWithRuby": "まず1つ<ruby>目<rt>め</rt></ruby>の<ruby>機能<rt>きのう</rt></ruby>は、<ruby>認証<rt>にんしょう</rt></ruby>です。SAML SSOを<ruby>用い<rt>もちい</rt></ruby>て<ruby>実装<rt>じっそう</rt></ruby>いたします。",
-              "zh": "首先第1个功能是身份认证。我们将基于 SAML SSO 进行开发实现。"
+              "zh": "首先第1个功能是认证。我们将使用SAML SSO来实现。"
             },
             {
               "speaker": "山田課長",
               "jp": "SAML SSOのメリットは。",
               "jpWithRuby": "SAML SSOのメリットは。",
-              "zh": "采用 SAML SSO 的优势是什么呢？"
+              "zh": "SAML SSO的优势是什么？"
             },
             {
               "speaker": "李",
               "jp": "AD連携によりシングルサインオンを実現し、ユーザーの利便性向上とパスワード管理の負荷軽減を実現いたします。",
               "jpWithRuby": "AD<ruby>連携<rt>れんけい</rt></ruby>によりシングルサインオンを<ruby>実現<rt>じつげん</rt></ruby>し、ユーザーの<ruby>利便<rt>りべん</rt></ruby><ruby>性<rt>せい</rt></ruby><ruby>向上<rt>こうじょう</rt></ruby>とパスワード<ruby>管理<rt>かんり</rt></ruby>の<ruby>負荷<rt>ふか</rt></ruby><ruby>軽減<rt>けいげん</rt></ruby>を<ruby>実現<rt>じつげん</rt></ruby>いたします。",
-              "zh": "通过与内网 Active Directory 联动实现单点登录，既能提升用户操作便利性，同时也能减轻密码管理的日常运维负担。"
+              "zh": "通过AD联动实现单点登录，提升用户便利性并减轻密码管理的负担。"
             },
             {
               "speaker": "李",
               "jp": "続いて2つ目の機能は、監査ログです。操作ログとアクセスログの2種類です。",
               "jpWithRuby": "<ruby>続い<rt>つづい</rt></ruby>て2つ<ruby>目<rt>め</rt></ruby>の<ruby>機能<rt>きのう</rt></ruby>は、<ruby>監査<rt>かんさ</rt></ruby>ログです。<ruby>操作<rt>そうさ</rt></ruby>ログとアクセスログの2<ruby>種類<rt>しゅるい</rt></ruby>です。",
-              "zh": "接下来第2个功能是审计日志。分为操作日志和访问日志两类。"
+              "zh": "接下来第2个功能是审计日志。分为操作日志和访问日志2种。"
             },
             {
               "speaker": "田中部長",
               "jp": "ログの保存期間は。",
               "jpWithRuby": "ログの<ruby>保存<rt>ほぞん</rt></ruby><ruby>期間<rt>きかん</rt></ruby>は。",
-              "zh": "日志的保存期限是多久？"
+              "zh": "日志的保存期限是？"
             },
             {
               "speaker": "李",
               "jp": "暗号化して2年間保存いたします。",
               "jpWithRuby": "<ruby>暗号<rt>あんごう</rt></ruby><ruby>化<rt>か</rt></ruby>して2<ruby>年間<rt>ねんかん</rt></ruby><ruby>保存<rt>ほぞん</rt></ruby>いたします。",
-              "zh": "我们会在高强度加密后妥善保存2年。"
+              "zh": "进行加密后保存2年。"
             },
             {
               "speaker": "李",
               "jp": "最後に3つ目の機能は、異常監視です。5つのメトリクスを監視いたします。",
               "jpWithRuby": "<ruby>最後<rt>さいご</rt></ruby>に3つ<ruby>目<rt>め</rt></ruby>の<ruby>機能<rt>きのう</rt></ruby>は、<ruby>異常<rt>いじょう</rt></ruby><ruby>監視<rt>かんし</rt></ruby>です。5つのメトリクスを<ruby>監視<rt>かんし</rt></ruby>いたします。",
-              "zh": "最后第3个功能是异常监控。我们将全天候监控5大核心指标。"
+              "zh": "最后第3个功能是异常监控。我们将监控5个指标。"
             },
             {
               "speaker": "山田課長",
               "jp": "5つのメトリクスは何ですか。",
               "jpWithRuby": "5つのメトリクスは<ruby>何<rt>なん</rt></ruby>ですか。",
-              "zh": "这5大监控指标具体包括哪些？"
+              "zh": "5个指标是什么？"
             },
             {
               "speaker": "李",
               "jp": "CPU・メモリ・ディスク・レスポンス・エラー率です。",
               "jpWithRuby": "CPU・メモリ・ディスク・レスポンス・エラー<ruby>率<rt>りつ</rt></ruby>です。",
-              "zh": "包括 CPU使用率、内存占用、磁盘使用率、接口响应时延以及错误率。"
+              "zh": "是CPU、内存、磁盘、响应时间和错误率。"
             },
             {
               "speaker": "田中部長",
               "jp": "承知しました。3機能の構成は妥当だと考えます。",
               "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。3<ruby>機能<rt>きのう</rt></ruby>の<ruby>構成<rt>こうせい</rt></ruby>は<ruby>妥当<rt>だとう</rt></ruby>だと<ruby>考え<rt>かんがえ</rt></ruby>ます。",
-              "zh": "明白了。这三大功能的架构配置我认为非常妥当。"
+              "zh": "明白了。我认为这3个功能的构成是合理的。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P1-P2"
+          ]
         },
         {
           "pNum": 2,
-          "title": "短文 2：认证・日志・监控详细说明与Q&A应答",
-          "theme": "认证・日志・监控详细说明与Q&A应答",
-          "objective": "学会使用「はい、可能でございます」「〜として〜を利用し」等专业应答句型，从容应对日企关于SAML Token有效期与空闲超时的安全追问。",
+          "title": "短文 2：认证·日志·监控详细说明与Q&A",
+          "theme": "练习 2 · 认证·日志·监控详细说明与Q&A",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第18课练习 2（P3-P4）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P3-P4",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "さて、次に認証機能の詳細について説明いたします。",
               "jpWithRuby": "さて、<ruby>次<rt>つぎ</rt></ruby>に<ruby>認証<rt>にんしょう</rt></ruby><ruby>機能<rt>きのう</rt></ruby>の<ruby>詳細<rt>しょうさい</rt></ruby>について<ruby>説明<rt>せつめい</rt></ruby>いたします。",
-              "zh": "接下来，我将向各位详细汇报身份认证功能的具体设计。"
+              "zh": "那么，接下来我来说明认证功能的详情。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "はい、お願いします。",
+              "jpWithRuby": "はい、お<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "好的，拜托了。"
+            },
+            {
+              "speaker": "李",
+              "jp": "SAML SSOは、トークンの有効期限を8時間として設定いたします。",
+              "jpWithRuby": "SAML SSOは、トークンの<ruby>有効<rt>ゆうこう</rt></ruby><ruby>期限<rt>きげん</rt></ruby>を8<ruby>時間<rt>じかん</rt></ruby>として<ruby>設定<rt>せってい</rt></ruby>いたします。",
+              "zh": "SAML SSO将令牌的有效期设置为8小时。"
             },
             {
               "speaker": "山田課長",
-              "jp": "社内のActiveDirectoryと連携できますか。",
-              "jpWithRuby": "<ruby>社内<rt>しゃない</rt></ruby>のActiveDirectoryと<ruby>連携<rt>れんけい</rt></ruby>できますか。",
-              "zh": "能够与公司现有的 Active Directory 体系进行联动吗？"
+              "jp": "アイドルタイムアウトは。",
+              "jpWithRuby": "アイドルタイムアウトは。",
+              "zh": "空闲超时时间是？"
             },
             {
               "speaker": "李",
-              "jp": "はい、可能でございます。AD FSをIdPとして利用し、本システムはSPとして構成いたします。",
-              "jpWithRuby": "はい、<ruby>可能<rt>かのう</rt></ruby>でございます。AD FSをIdPとして<ruby>利用<rt>りよう</rt></ruby>し、<ruby>本<rt>ほん</rt></ruby>システムはSPとして<ruby>構成<rt>こうせい</rt></ruby>いたします。",
-              "zh": "是的，完全可以。我们将利用公司的 AD FS 作为 IdP（身份提供者），本系统则作为 SP（服务提供者）进行架构配置。"
-            },
-            {
-              "speaker": "佐藤",
-              "jp": "セッションの有効期限はどのように設定されていますか。",
-              "jpWithRuby": "セッションの<ruby>有効<rt>ゆうこう</rt></ruby><ruby>期限<rt>きげん</rt></ruby>はどのように<ruby>設定<rt>せってい</rt></ruby>されていますか。",
-              "zh": "会话 Session 的有效期限是如何设定的？"
+              "jp": "アイドルタイムアウトは、30分で設定いたします。",
+              "jpWithRuby": "アイドルタイムアウトは、30<ruby>分<rt>ぶん</rt></ruby>で<ruby>設定<rt>せってい</rt></ruby>いたします。",
+              "zh": "空闲超时时间设置为30分钟。"
             },
             {
               "speaker": "李",
-              "jp": "SAMLトークンの有効期限は8時間とし、アイドルタイムアウトは30分に設定いたします。",
-              "jpWithRuby": "SAMLトークンの<ruby>有効<rt>ゆうこう</rt></ruby><ruby>期限<rt>きげん</rt></ruby>は8<ruby>時間<rt>じかん</rt></ruby>とし、アイドルタイムアウトは30<ruby>分<rt>ふん</rt></ruby>に<ruby>設定<rt>せってい</rt></ruby>いたします。",
-              "zh": "SAML Token 令牌的有效期设定为8小时，无操作空闲超时时间设定为30分钟。"
+              "jp": "監査ログにつきましては、操作ログとアクセスログに分けて保存いたします。",
+              "jpWithRuby": "<ruby>監査<rt>かんさ</rt></ruby>ログにつきましては、<ruby>操作<rt>そうさ</rt></ruby>ログとアクセスログに<ruby>分け<rt>わけ</rt></ruby>て<ruby>保存<rt>ほぞん</rt></ruby>いたします。",
+              "zh": "关于审计日志，将分为操作日志和访问日志分别保存。"
             },
             {
-              "speaker": "佐藤",
-              "jp": "セキュリティ要件を満たしていますね。ログについてはどうですか。",
-              "jpWithRuby": "セキュリティ<ruby>要件<rt>ようけん</rt></ruby>を<ruby>満たし<rt>みたし</rt></ruby>ていますね。ログについてはどうですか。",
-              "zh": "这样就完全满足安全基线要求了。那么日志方面是怎么考虑的呢？"
+              "speaker": "田中部長",
+              "jp": "異常監視の通知は。",
+              "jpWithRuby": "<ruby>異常<rt>いじょう</rt></ruby><ruby>監視<rt>かんし</rt></ruby>の<ruby>通知<rt>つうち</rt></ruby>は。",
+              "zh": "异常监控的通知机制是？"
             },
             {
               "speaker": "李",
-              "jp": "操作ログとアクセスログを収集し、改ざん防止のため暗号化ストレージに保管いたします。",
-              "jpWithRuby": "<ruby>操作<rt>そうさ</rt></ruby>ログとアクセスログを<ruby>収集<rt>しゅうしゅう</rt></ruby>し、<ruby>改ざん<rt>かいざん</rt></ruby><ruby>防止<rt>ぼうし</rt></ruby>のため<ruby>暗号<rt>あんごう</rt></ruby><ruby>化<rt>か</rt></ruby>ストレージに<ruby>保管<rt>ほかん</rt></ruby>いたします。",
-              "zh": "我们会全面采集操作日志与访问日志，并存入加密存储空间以杜绝任何篡改隐患。"
+              "jp": "異常監視につきましては、閾値超過時に通知いたします。通知方法は、メールとチャット通知です。",
+              "jpWithRuby": "<ruby>異常<rt>いじょう</rt></ruby><ruby>監視<rt>かんし</rt></ruby>につきましては、<ruby>閾値<rt>しきいち</rt></ruby><ruby>超過<rt>ちょうか</rt></ruby><ruby>時<rt>じ</rt></ruby>に<ruby>通知<rt>つうち</rt></ruby>いたします。<ruby>通知<rt>つうち</rt></ruby><ruby>方法<rt>ほうほう</rt></ruby>は、メールとチャット<ruby>通知<rt>つうち</rt></ruby>です。",
+              "zh": "关于异常监控，在超过阈值时发出通知。通知方式为邮件和聊天工具通知。"
             },
             {
               "speaker": "山田課長",
-              "jp": "万が一の追跡も可能ですね。承知しました。",
-              "jpWithRuby": "<ruby>万が一<rt>まんがいち</rt></ruby>の<ruby>追跡<rt>ついせき</rt></ruby>も<ruby>可能<rt>かのう</rt></ruby>ですね。<ruby>承知<rt>しょうち</rt></ruby>しました。",
-              "zh": "万一发生异常也能够事后追溯了。明白了。"
+              "jp": "エスカレーションはありますか。",
+              "jpWithRuby": "エスカレーションはありますか。",
+              "zh": "有升级汇报机制吗？"
+            },
+            {
+              "speaker": "李",
+              "jp": "エスカレーションは、重大度に応じて3段階で実施いたします。",
+              "jpWithRuby": "エスカレーションは、<ruby>重大<rt>じゅうだい</rt></ruby><ruby>度<rt>ど</rt></ruby>に<ruby>応じ<rt>おうじ</rt></ruby>て3<ruby>段階<rt>だんかい</rt></ruby>で<ruby>実施<rt>じっし</rt></ruby>いたします。",
+              "zh": "升级汇报将根据严重程度分3个阶段实施。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "詳細な設定値はいただけますか。",
+              "jpWithRuby": "<ruby>詳細<rt>しょうさい</rt></ruby>な<ruby>設定<rt>せってい</rt></ruby><ruby>値<rt>ち</rt></ruby>はいただけますか。",
+              "zh": "能提供详细的设定数值吗？"
+            },
+            {
+              "speaker": "李",
+              "jp": "恐れ入りますが、詳細な設定値は後ほどお送りします。",
+              "jpWithRuby": "<ruby>恐れ入り<rt>おそれいり</rt></ruby>ますが、<ruby>詳細<rt>しょうさい</rt></ruby>な<ruby>設定<rt>せってい</rt></ruby><ruby>値<rt>ち</rt></ruby>は<ruby>後ほど<rt>のちほど</rt></ruby>お<ruby>送り<rt>おくり</rt></ruby>します。",
+              "zh": "非常抱歉，详细的设定数值稍后给您发送。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P3-P4"
+          ]
         },
         {
           "pNum": 3,
-          "title": "短文 3：功能实现详细说明：SAML SSO・日志・监控",
-          "theme": "功能实现详细说明：SAML SSO・日志・监控",
-          "objective": "运用量化参数（8h/30min/2年/5指标）阐述高可靠落地机制，掌握「〜に備え、〜を自動検出する機能を実装します」的前瞻性防范表达。",
+          "title": "短文 3：功能实现详细说明：认证·日志·监控",
+          "theme": "练习 3 · 功能实现详细说明：认证·日志·监控",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第18课练习 3（P5-P6）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P5-P6",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "認証機能は、SAML SSOによるAD連携を実装いたします。",
               "jpWithRuby": "<ruby>認証<rt>にんしょう</rt></ruby><ruby>機能<rt>きのう</rt></ruby>は、SAML SSOによるAD<ruby>連携<rt>れんけい</rt></ruby>を<ruby>実装<rt>じっそう</rt></ruby>いたします。",
-              "zh": "认证功能方面，我们将通过 SAML SSO 实现与 AD 的联动集成。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "設定値は。",
-              "jpWithRuby": "<ruby>設定<rt>せってい</rt></ruby><ruby>値<rt>ち</rt></ruby>は。",
-              "zh": "具体配置的阈值参数是？"
-            },
-            {
-              "speaker": "李",
-              "jp": "トークン有効期限8時間、アイドルタイムアウト30分でございます。",
-              "jpWithRuby": "トークン<ruby>有効<rt>ゆうこう</rt></ruby><ruby>期限<rt>きげん</rt></ruby>8<ruby>時間<rt>じかん</rt></ruby>、アイドルタイムアウト30<ruby>分<rt>ふん</rt></ruby>でございます。",
-              "zh": "Token 有效期为8小时，空闲超时时间为30分钟。"
-            },
-            {
-              "speaker": "李",
-              "jp": "監査ログは操作ログとアクセスログの2種類を暗号化し、2年間保存いたします。",
-              "jpWithRuby": "<ruby>監査<rt>かんさ</rt></ruby>ログは<ruby>操作<rt>そうさ</rt></ruby>ログとアクセスログの2<ruby>種類<rt>しゅるい</rt></ruby>を<ruby>暗号<rt>あんごう</rt></ruby><ruby>化<rt>か</rt></ruby>し、2<ruby>年間<rt>ねんかん</rt></ruby><ruby>保存<rt>ほぞん</rt></ruby>いたします。",
-              "zh": "审计日志方面，我们将对操作日志和访问日志两类进行加密，并归档留存2年。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "検索機能は備わっていますか。",
-              "jpWithRuby": "<ruby>検索<rt>けんさく</rt></ruby><ruby>機能<rt>きのう</rt></ruby>は<ruby>備わっ<rt>そなわっ</rt></ruby>ていますか。",
-              "zh": "是否配备了检索查询功能？"
-            },
-            {
-              "speaker": "李",
-              "jp": "はい。ユーザーIDや日時で検索可能で、異常なアクセスパターンを自動検出する機能も備えます。",
-              "jpWithRuby": "はい。ユーザーIDや<ruby>日時<rt>にちじ</rt></ruby>で<ruby>検索<rt>けんさく</rt></ruby><ruby>可能<rt>かのう</rt></ruby>で、<ruby>異常<rt>いじょう</rt></ruby>なアクセスパターンを<ruby>自動<rt>じどう</rt></ruby><ruby>検出<rt>けんしゅつ</rt></ruby>する<ruby>機能<rt>きのう</rt></ruby>も<ruby>備え<rt>そなえ</rt></ruby>ます。",
-              "zh": "是的。不仅支持按用户工号和操作时间范围检索，还配备了针对异常访问行为的自动检测报警机制。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "異常監視の通知方法は。",
-              "jpWithRuby": "<ruby>異常<rt>いじょう</rt></ruby><ruby>監視<rt>かんし</rt></ruby>の<ruby>通知<rt>つうち</rt></ruby><ruby>方法<rt>ほうほう</rt></ruby>は。",
-              "zh": "异常监控的通知告警渠道是怎样的？"
-            },
-            {
-              "speaker": "李",
-              "jp": "閾値超過時にメールとチャットで通知し、重大度に応じて3段階でエスカレーションいたします。",
-              "jpWithRuby": "<ruby>閾値<rt>しきいち</rt></ruby><ruby>超過<rt>ちょうか</rt></ruby><ruby>時<rt>じ</rt></ruby>にメールとチャットで<ruby>通知<rt>つうち</rt></ruby>し、<ruby>重大<rt>じゅうだい</rt></ruby><ruby>度<rt>ど</rt></ruby>に<ruby>応じ<rt>おうじ</rt></ruby>て3<ruby>段階<rt>だんかい</rt></ruby>でエスカレーションいたします。",
-              "zh": "指标超阈值时将通过邮件和即时通讯群推送通知，并根据故障严重级别实行3级自动上报升级。"
+              "zh": "认证功能将实现基于SAML SSO的AD联动。"
             },
             {
               "speaker": "田中部長",
-              "jp": "非常に堅牢な設計ですね。安心しました。",
-              "jpWithRuby": "<ruby>非常<rt>ひじょう</rt></ruby>に<ruby>堅牢<rt>けんろう</rt></ruby>な<ruby>設計<rt>せっけい</rt></ruby>ですね。<ruby>安心<rt>あんしん</rt></ruby>しました。",
-              "zh": "设计得非常稳健可靠，这下我们就放心了。"
+              "jp": "トークンの設定は。",
+              "jpWithRuby": "トークンの<ruby>設定<rt>せってい</rt></ruby>は。",
+              "zh": "令牌的设定是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "トークンは、8時間有効で、30分のアイドルタイムアウトを設定いたします。",
+              "jpWithRuby": "トークンは、8<ruby>時間<rt>じかん</rt></ruby><ruby>有効<rt>ゆうこう</rt></ruby>で、30<ruby>分<rt>ぶん</rt></ruby>のアイドルタイムアウトを<ruby>設定<rt>せってい</rt></ruby>いたします。",
+              "zh": "令牌8小时有效，并设置30分钟的空闲超时。"
+            },
+            {
+              "speaker": "李",
+              "jp": "監査ログは、操作ログとアクセスログに分けて保存いたします。",
+              "jpWithRuby": "<ruby>監査<rt>かんさ</rt></ruby>ログは、<ruby>操作<rt>そうさ</rt></ruby>ログとアクセスログに<ruby>分け<rt>わけ</rt></ruby>て<ruby>保存<rt>ほぞん</rt></ruby>いたします。",
+              "zh": "审计日志分为操作日志和访问日志分别保存。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "保存方法は。",
+              "jpWithRuby": "<ruby>保存<rt>ほぞん</rt></ruby><ruby>方法<rt>ほうほう</rt></ruby>は。",
+              "zh": "保存方式是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "ログは、暗号化して2年間保存いたします。",
+              "jpWithRuby": "ログは、<ruby>暗号<rt>あんごう</rt></ruby><ruby>化<rt>か</rt></ruby>して2<ruby>年間<rt>ねんかん</rt></ruby><ruby>保存<rt>ほぞん</rt></ruby>いたします。",
+              "zh": "日志将进行加密并保存2年。"
+            },
+            {
+              "speaker": "李",
+              "jp": "異常監視は、5つのメトリクスを監視いたします。",
+              "jpWithRuby": "<ruby>異常<rt>いじょう</rt></ruby><ruby>監視<rt>かんし</rt></ruby>は、5つのメトリクスを<ruby>監視<rt>かんし</rt></ruby>いたします。",
+              "zh": "异常监控将对5个指标进行监控。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "5つのメトリクスは。",
+              "jpWithRuby": "5つのメトリクスは。",
+              "zh": "5个指标是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "CPU・メモリ・ディスク・レスポンス・エラー率です。",
+              "jpWithRuby": "CPU・メモリ・ディスク・レスポンス・エラー<ruby>率<rt>りつ</rt></ruby>です。",
+              "zh": "是CPU、内存、磁盘、响应时间和错误率。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "通知方法は。",
+              "jpWithRuby": "<ruby>通知<rt>つうち</rt></ruby><ruby>方法<rt>ほうほう</rt></ruby>は。",
+              "zh": "通知方式是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "閾値超過時は、メールとチャットで通知いたします。エスカレーションは、重大度に応じて3段階で実施いたします。",
+              "jpWithRuby": "<ruby>閾値<rt>しきいち</rt></ruby><ruby>超過<rt>ちょうか</rt></ruby><ruby>時<rt>じ</rt></ruby>は、メールとチャットで<ruby>通知<rt>つうち</rt></ruby>いたします。エスカレーションは、<ruby>重大<rt>じゅうだい</rt></ruby><ruby>度<rt>ど</rt></ruby>に<ruby>応じ<rt>おうじ</rt></ruby>て3<ruby>段階<rt>だんかい</rt></ruby>で<ruby>実施<rt>じっし</rt></ruby>いたします。",
+              "zh": "超过阈值时，通过邮件和聊天工具通知。升级汇报根据严重程度分3阶段实施。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P5-P6"
+          ]
         },
         {
           "pNum": 4,
           "title": "短文 4：共识确认与Q&A收尾",
-          "theme": "共识确认与Q&A收尾",
-          "objective": "掌握在会议收尾时使用「本日のご報告は以上でございます」「設計書に反映した上で〜お送りします」进行干脆利落的交付承诺。",
+          "theme": "练习 4 · 共识确认与Q&A收尾",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第18课练习 4（P7-P8）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P7-P8",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "本日の通用機能説明について、ご質問はないでしょうか。",
               "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>の<ruby>通用<rt>つうよう</rt></ruby><ruby>機能<rt>きのう</rt></ruby><ruby>説明<rt>せつめい</rt></ruby>について、ご<ruby>質問<rt>しつもん</rt></ruby>はないでしょうか。",
-              "zh": "关于今天汇报的通用功能说明，各位还有什么疑问或需要探讨的吗？"
+              "zh": "关于今天的通用功能说明，各位有什么问题吗？"
             },
             {
               "speaker": "山田課長",
-              "jp": "今のところ問題ありません。",
-              "jpWithRuby": "<ruby>今<rt>いま</rt></ruby>のところ<ruby>問題<rt>もんだい</rt></ruby>ありません。",
-              "zh": "目前看来没有问题。"
+              "jp": "ログの検索機能はありますか。",
+              "jpWithRuby": "ログの<ruby>検索<rt>けんさく</rt></ruby><ruby>機能<rt>きのう</rt></ruby>はありますか。",
+              "zh": "有日志检索功能吗？"
             },
             {
               "speaker": "李",
-              "jp": "それでは、認証はSAML SSO、監査ログは2年間保存、異常監視は5メトリクス通知の方針でよろしいですか。",
-              "jpWithRuby": "それでは、<ruby>認証<rt>にんしょう</rt></ruby>はSAML SSO、<ruby>監査<rt>かんさ</rt></ruby>ログは2<ruby>年間<rt>ねんかん</rt></ruby><ruby>保存<rt>ほぞん</rt></ruby>、<ruby>異常<rt>いじょう</rt></ruby><ruby>監視<rt>かんし</rt></ruby>は5メトリクス<ruby>通知<rt>つうち</rt></ruby>の<ruby>方針<rt>ほうしん</rt></ruby>でよろしいですか。",
-              "zh": "那么，认证采用 SAML SSO、审计日志加密留存2年、异常监控覆盖5项指标并告警，按该方针推进可以吗？"
+              "jp": "はい、期間・ユーザー・操作種別で検索可能です。",
+              "jpWithRuby": "はい、<ruby>期間<rt>きかん</rt></ruby>・ユーザー・<ruby>操作<rt>そうさ</rt></ruby><ruby>種別<rt>しゅべつ</rt></ruby>で<ruby>検索<rt>けんさく</rt></ruby><ruby>可能<rt>かのう</rt></ruby>です。",
+              "zh": "是的，可以按时间段、用户、操作类别进行检索。"
             },
             {
               "speaker": "田中部長",
-              "jp": "はい、その方針で進めてください。",
-              "jpWithRuby": "はい、その<ruby>方針<rt>ほうしん</rt></ruby>で<ruby>進め<rt>すすめ</rt></ruby>てください。",
-              "zh": "好的，就按这个方针全力推进吧。"
+              "jp": "本件については、社内確認後、正式回答いたします。",
+              "jpWithRuby": "<ruby>本件<rt>ほんけん</rt></ruby>については、<ruby>社内<rt>しゃない</rt></ruby><ruby>確認<rt>かくにん</rt></ruby><ruby>後<rt>ご</rt></ruby>、<ruby>正式<rt>せいしき</rt></ruby><ruby>回答<rt>かいとう</rt></ruby>いたします。",
+              "zh": "关于此事，我们在公司内部确认后会正式答复。"
             },
             {
               "speaker": "李",
-              "jp": "ありがとうございます。設計書に反映し、来週水曜日の定例会までにお送りいたします。",
-              "jpWithRuby": "ありがとうございます。<ruby>設計<rt>せっけい</rt></ruby><ruby>書<rt>しょ</rt></ruby>に<ruby>反映<rt>はんえい</rt></ruby>し、<ruby>来週<rt>らいしゅう</rt></ruby><ruby>水曜<rt>すいよう</rt></ruby><ruby>日<rt>ひ</rt></ruby>の<ruby>定例<rt>ていれい</rt></ruby><ruby>会<rt>かい</rt></ruby>までにお<ruby>送り<rt>おくり</rt></ruby>いたします。",
-              "zh": "非常感谢。我将整理进设计规格书，并在下周三的例会前发送给各位。"
+              "jp": "承知しました。確認の上、正式に設計書を更新いたします。",
+              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。<ruby>確認<rt>かくにん</rt></ruby>の<ruby>上<rt>うえ</rt></ruby>、<ruby>正式<rt>せいしき</rt></ruby>に<ruby>設計<rt>せっけい</rt></ruby><ruby>書<rt>しょ</rt></ruby>を<ruby>更新<rt>こうしん</rt></ruby>いたします。",
+              "zh": "明白了。确认之后我们将正式更新设计书。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "修正が必要な点がございましたら、速やかに対応してください。",
+              "jpWithRuby": "<ruby>修正<rt>しゅうせい</rt></ruby>が<ruby>必要<rt>ひつよう</rt></ruby>な<ruby>点<rt>てん</rt></ruby>がございましたら、<ruby>速やか<rt>すみやか</rt></ruby>に<ruby>対応<rt>たいおう</rt></ruby>してください。",
+              "zh": "如果有需要修改的地方，请迅速处理。"
+            },
+            {
+              "speaker": "李",
+              "jp": "かしこまりました。速やかに対応いたします。",
+              "jpWithRuby": "かしこまりました。<ruby>速やか<rt>すみやか</rt></ruby>に<ruby>対応<rt>たいおう</rt></ruby>いたします。",
+              "zh": "明白，我们会迅速处理。"
             },
             {
               "speaker": "田中部長",
-              "jp": "本日はありがとうございました。",
-              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はありがとうございました。",
-              "zh": "今天非常感谢你的汇报。"
+              "jp": "機能実装内容について、ご了承をいただけますでしょうか。",
+              "jpWithRuby": "<ruby>機能<rt>きのう</rt></ruby><ruby>実装<rt>じっそう</rt></ruby><ruby>内容<rt>ないよう</rt></ruby>について、ご<ruby>了承<rt>りょうしょう</rt></ruby>をいただけますでしょうか。",
+              "zh": "关于功能实现内容，能得到各位的认可吗？"
             },
             {
               "speaker": "李",
-              "jp": "こちらこそ、貴重なお時間をいただき誠にありがとうございました。",
-              "jpWithRuby": "こちらこそ、<ruby>貴重<rt>きちょう</rt></ruby>なお<ruby>時間<rt>じかん</rt></ruby>をいただき<ruby>誠<rt>まこと</rt></ruby>にありがとうございました。",
-              "zh": "哪里，也非常感谢各位抽出宝贵时间，打扰了。"
+              "jp": "ありがとうございます。引き続き、よろしくお願いします。",
+              "jpWithRuby": "ありがとうございます。<ruby>引き続き<rt>ひきつづき</rt></ruby>、よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "非常感谢。接下来也请多多关照。"
+            },
+            {
+              "speaker": "李",
+              "jp": "それでは、本日の説明は以上とさせていただきます。",
+              "jpWithRuby": "それでは、<ruby>本日<rt>ほんじつ</rt></ruby>の<ruby>説明<rt>せつめい</rt></ruby>は<ruby>以上<rt>いじょう</rt></ruby>とさせていただきます。",
+              "zh": "那么，今天的说明就到此结束。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "本日はお時間をいただきまして、ありがとうございます。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はお<ruby>時間<rt>じかん</rt></ruby>をいただきまして、ありがとうございます。",
+              "zh": "今天非常感谢您抽出宝贵时间。"
+            },
+            {
+              "speaker": "李",
+              "jp": "こちらこそ、ありがとうございます。",
+              "jpWithRuby": "こちらこそ、ありがとうございます。",
+              "zh": "哪里哪里，彼此彼此，非常感谢。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P7-P8"
+          ]
         },
         {
           "pNum": 5,
-          "title": "短文 5：通用功能综合演练：全流程闭环",
-          "theme": "通用功能综合演练：全流程闭环",
-          "objective": "综合演练从架构开场、技术方案论证、客户追问承接、参数量化防线到最终式样签署的全流程闭环表达。",
+          "title": "短文 5：通用功能综合演练：认证·日志·监控·共识",
+          "theme": "练习 5 · 通用功能综合说明全流程",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第18课练习 5（P9-P10）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P9-P10",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "本日は通用機能の総合説明をさせていただきます。3機能から構成されております。",
               "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>は<ruby>通用<rt>つうよう</rt></ruby><ruby>機能<rt>きのう</rt></ruby>の<ruby>総合<rt>そうごう</rt></ruby><ruby>説明<rt>せつめい</rt></ruby>をさせていただきます。3<ruby>機能<rt>きのう</rt></ruby>から<ruby>構成<rt>こうせい</rt></ruby>されております。",
-              "zh": "今天我向各位做系统通用功能的综合汇报。主要由三大功能板块构成。"
-            },
-            {
-              "speaker": "田中部長",
-              "jp": "お願いします。",
-              "jpWithRuby": "お<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "请讲。"
-            },
-            {
-              "speaker": "李",
-              "jp": "認証はSAML SSOでAD連携、監査ログは暗号化2年保存、異常監視は5メトリクスのアラート通知でございます。",
-              "jpWithRuby": "<ruby>認証<rt>にんしょう</rt></ruby>はSAML SSOでAD<ruby>連携<rt>れんけい</rt></ruby>、<ruby>監査<rt>かんさ</rt></ruby>ログは<ruby>暗号<rt>あんごう</rt></ruby><ruby>化<rt>か</rt></ruby>2<ruby>年<rt>ねん</rt></ruby><ruby>保存<rt>ほぞん</rt></ruby>、<ruby>異常<rt>いじょう</rt></ruby><ruby>監視<rt>かんし</rt></ruby>は5メトリクスのアラート<ruby>通知<rt>つうち</rt></ruby>でございます。",
-              "zh": "认证基于 SAML SSO 与 AD 联动，审计日志全量加密留存2年，异常监控支持5大指标自动告警。"
-            },
-            {
-              "speaker": "佐藤",
-              "jp": "社内規定に完全に準拠していますね。",
-              "jpWithRuby": "<ruby>社内<rt>しゃない</rt></ruby><ruby>規定<rt>きてい</rt></ruby>に<ruby>完全<rt>かんぜん</rt></ruby>に<ruby>準拠<rt>じゅんきょ</rt></ruby>していますね。",
-              "zh": "完全契合了我们公司的内控合规基准呢。"
-            },
-            {
-              "speaker": "李",
-              "jp": "はい。セキュリティ規定に則り、セッション管理とログ保全を最優先に設計いたしました。",
-              "jpWithRuby": "はい。セキュリティ<ruby>規定<rt>きてい</rt></ruby>に<ruby>則り<rt>のっとり</rt></ruby>、セッション<ruby>管理<rt>かんり</rt></ruby>とログ<ruby>保全<rt>ほぜん</rt></ruby>を<ruby>最<rt>さい</rt></ruby><ruby>優先<rt>ゆうせん</rt></ruby>に<ruby>設計<rt>せっけい</rt></ruby>いたしました。",
-              "zh": "是的。严格遵照贵司安全规约，将 Session 会话管控与日志保全放在了最高优先级进行架构设计。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "運用面でも負荷が少なそうで助かります。",
-              "jpWithRuby": "<ruby>運用<rt>うんよう</rt></ruby><ruby>面<rt>めん</rt></ruby>でも<ruby>負荷<rt>ふか</rt></ruby>が<ruby>少な<rt>すくな</rt></ruby>そうで<ruby>助かり<rt>たすかり</rt></ruby>ます。",
-              "zh": "从实际运维角度看负担也很小，帮大忙了。"
-            },
-            {
-              "speaker": "李",
-              "jp": "ありがとうございます。それでは本日合意いただいた内容で基本設計を確定いたします。",
-              "jpWithRuby": "ありがとうございます。それでは<ruby>本日<rt>ほんじつ</rt></ruby><ruby>合意<rt>ごうい</rt></ruby>いただいた<ruby>内容<rt>ないよう</rt></ruby>で<ruby>基本<rt>きほん</rt></ruby><ruby>設計<rt>せっけい</rt></ruby>を<ruby>確定<rt>かくてい</rt></ruby>いたします。",
-              "zh": "非常感谢。那么我们将以今天达成共识的内容来最终定稿基本设计。"
+              "zh": "今天由我来进行通用功能的综合说明。由3个功能构成。"
             },
             {
               "speaker": "田中部長",
               "jp": "よろしくお願いします。",
               "jpWithRuby": "よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "拜托了，请按此推进。"
+              "zh": "拜托了。"
+            },
+            {
+              "speaker": "李",
+              "jp": "まず、認証機能は、SAML SSOによるAD連携を実装いたします。トークンは8時間有効で、30分のアイドルタイムアウトを設定いたします。",
+              "jpWithRuby": "まず、<ruby>認証<rt>にんしょう</rt></ruby><ruby>機能<rt>きのう</rt></ruby>は、SAML SSOによるAD<ruby>連携<rt>れんけい</rt></ruby>を<ruby>実装<rt>じっそう</rt></ruby>いたします。トークンは8<ruby>時間<rt>じかん</rt></ruby><ruby>有効<rt>ゆうこう</rt></ruby>で、30<ruby>分<rt>ぶん</rt></ruby>のアイドルタイムアウトを<ruby>設定<rt>せってい</rt></ruby>いたします。",
+              "zh": "首先，认证功能将实现基于SAML SSO的AD联动。令牌8小时有效，并设置30分钟的空闲超时。"
+            },
+            {
+              "speaker": "李",
+              "jp": "続いて、監査ログは、操作ログとアクセスログに分けて保存いたします。暗号化して2年間保存いたします。",
+              "jpWithRuby": "<ruby>続い<rt>つづい</rt></ruby>て、<ruby>監査<rt>かんさ</rt></ruby>ログは、<ruby>操作<rt>そうさ</rt></ruby>ログとアクセスログに<ruby>分け<rt>わけ</rt></ruby>て<ruby>保存<rt>ほぞん</rt></ruby>いたします。<ruby>暗号<rt>あんごう</rt></ruby><ruby>化<rt>か</rt></ruby>して2<ruby>年間<rt>ねんかん</rt></ruby><ruby>保存<rt>ほぞん</rt></ruby>いたします。",
+              "zh": "接下来，审计日志分为操作日志和访问日志保存。加密并保存2年。"
+            },
+            {
+              "speaker": "李",
+              "jp": "最後に、異常監視は、5つのメトリクスを監視いたします。閾値超過時は、メールとチャットで通知いたします。",
+              "jpWithRuby": "<ruby>最後<rt>さいご</rt></ruby>に、<ruby>異常<rt>いじょう</rt></ruby><ruby>監視<rt>かんし</rt></ruby>は、5つのメトリクスを<ruby>監視<rt>かんし</rt></ruby>いたします。<ruby>閾値<rt>しきいち</rt></ruby><ruby>超過<rt>ちょうか</rt></ruby><ruby>時<rt>じ</rt></ruby>は、メールとチャットで<ruby>通知<rt>つうち</rt></ruby>いたします。",
+              "zh": "最后，异常监控监控5个指标。超过阈值时通过邮件和聊天工具通知。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "エスカレーションは。",
+              "jpWithRuby": "エスカレーションは。",
+              "zh": "升级机制是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "エスカレーションは、重大度に応じて3段階で実施いたします。",
+              "jpWithRuby": "エスカレーションは、<ruby>重大<rt>じゅうだい</rt></ruby><ruby>度<rt>ど</rt></ruby>に<ruby>応じ<rt>おうじ</rt></ruby>て3<ruby>段階<rt>だんかい</rt></ruby>で<ruby>実施<rt>じっし</rt></ruby>いたします。",
+              "zh": "升级汇报根据严重程度分3阶段实施。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "機能実装内容について、ご了承をいただけますでしょうか。",
+              "jpWithRuby": "<ruby>機能<rt>きのう</rt></ruby><ruby>実装<rt>じっそう</rt></ruby><ruby>内容<rt>ないよう</rt></ruby>について、ご<ruby>了承<rt>りょうしょう</rt></ruby>をいただけますでしょうか。",
+              "zh": "关于功能实现内容，能得到您的认可吗？"
+            },
+            {
+              "speaker": "李",
+              "jp": "ありがとうございます。",
+              "jpWithRuby": "ありがとうございます。",
+              "zh": "非常感谢。"
+            },
+            {
+              "speaker": "李",
+              "jp": "それでは、本日の説明は以上とさせていただきます。",
+              "jpWithRuby": "それでは、<ruby>本日<rt>ほんじつ</rt></ruby>の<ruby>説明<rt>せつめい</rt></ruby>は<ruby>以上<rt>いじょう</rt></ruby>とさせていただきます。",
+              "zh": "那么，今天的说明就到此结束。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "本日はお時間をいただきまして、ありがとうございます。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はお<ruby>時間<rt>じかん</rt></ruby>をいただきまして、ありがとうございます。",
+              "zh": "今天非常感谢您抽出宝贵时间。"
+            },
+            {
+              "speaker": "李",
+              "jp": "こちらこそ、ありがとうございます。",
+              "jpWithRuby": "こちらこそ、ありがとうございます。",
+              "zh": "哪里哪里，非常感谢。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P9-P10"
+          ]
         }
       ],
       "grammarPoints": [
@@ -6832,7 +6922,7 @@ window.JAPANESE_KNOWLEDGE_BASE = {
       "id": "scene-19",
       "sceneNumber": 19,
       "badge": "综合测试计划",
-      "title": "场景 19：総合テスト計画の報告・合意形成",
+      "title": "场景 19：カスタマーサポートシステム総合テスト計画の報告・合意形成",
       "theme": "测试工程排期 · 5大测试类型 · 合格基准量化 · 资源协同配属",
       "domain": "品质管理与测试工程领域（QA / 测试计划）",
       "background": "受托方软件设计师李向客户方决策者田中部长、IT负责人山田课长做SFA系统测试规划正式汇报。全面汇报涵盖单体测试、结合测试、综合测试、性能测试（响应2秒内/500并发）与UAT用户验收测试5大工程，明确7周总体日程，并就「重大缺陷0件、轻微缺陷阶梯受控」的合格基准和测试环境资源配比与客户达成正式共识。",
@@ -7803,251 +7893,419 @@ window.JAPANESE_KNOWLEDGE_BASE = {
       "practiceTexts": [
         {
           "pNum": 1,
-          "title": "短文 1：测试计划概要与单体/结合/综合测试",
-          "theme": "测试计划概要与单体/结合/综合测试",
-          "objective": "掌握测试工程整体提示模式（5种类7周），清晰阐述单元测试与结合测试的职责分工与检验目标。",
+          "title": "短文 1：测试计划概要与5大测试分类",
+          "theme": "练习 1 · 测试计划概要与5大测试分类",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第19课练习 1（P11-P12）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P11-P12",
           "dialogue": [
             {
               "speaker": "李",
-              "jp": "本日は総合テスト計画についてご報告いたします。5種類のテストを7週間で実施する計画です。",
-              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>は<ruby>総合<rt>そうごう</rt></ruby>テスト<ruby>計画<rt>けいかく</rt></ruby>についてご<ruby>報告<rt>ほうこく</rt></ruby>いたします。5<ruby>種類<rt>しゅるい</rt></ruby>のテストを7<ruby>週間<rt>しゅうかん</rt></ruby>で<ruby>実施<rt>じっし</rt></ruby>する<ruby>計画<rt>けいかく</rt></ruby>です。",
-              "zh": "今天向各位汇报综合测试计划。我们计划在7周时间内系统执行5类测试。"
+              "jp": "本日は総合テスト計画についてご報告いたします。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>は<ruby>総合<rt>そうごう</rt></ruby>テスト<ruby>計画<rt>けいかく</rt></ruby>についてご<ruby>報告<rt>ほうこく</rt></ruby>いたします。",
+              "zh": "今天由我来汇报综合测试计划。"
             },
             {
               "speaker": "田中部長",
               "jp": "よろしくお願いします。",
               "jpWithRuby": "よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "请多关照，请讲。"
+              "zh": "拜托了。"
             },
             {
               "speaker": "李",
-              "jp": "まず単体テストは各モジュールを個別に検証し、開発チームが2週間で実施します。",
-              "jpWithRuby": "まず<ruby>単体<rt>たんたい</rt></ruby>テストは<ruby>各<rt>かく</rt></ruby>モジュールを<ruby>個別<rt>こべつ</rt></ruby>に<ruby>検証<rt>けんしょう</rt></ruby>し、<ruby>開発<rt>かいはつ</rt></ruby>チームが2<ruby>週間<rt>しゅうかん</rt></ruby>で<ruby>実施<rt>じっし</rt></ruby>します。",
-              "zh": "首先，单元测试负责对各个独立模块进行细粒度验证，由开发团队在2周内执行。"
+              "jp": "本テスト計画は、5種類のテストから構成されております。",
+              "jpWithRuby": "<ruby>本<rt>ほん</rt></ruby>テスト<ruby>計画<rt>けいかく</rt></ruby>は、5<ruby>種類<rt>しゅるい</rt></ruby>のテストから<ruby>構成<rt>こうせい</rt></ruby>されております。",
+              "zh": "本次测试计划由5种测试构成。"
+            },
+            {
+              "speaker": "李",
+              "jp": "まず1つ目は、単体テストです。開発チームにより実施いたします。",
+              "jpWithRuby": "まず1つ<ruby>目<rt>め</rt></ruby>は、<ruby>単体<rt>たんたい</rt></ruby>テストです。<ruby>開発<rt>かいはつ</rt></ruby>チームにより<ruby>実施<rt>じっし</rt></ruby>いたします。",
+              "zh": "首先第1个是单体测试。由开发团队实施。"
             },
             {
               "speaker": "山田課長",
-              "jp": "結合テストは。",
-              "jpWithRuby": "<ruby>結合<rt>けつごう</rt></ruby>テストは。",
-              "zh": "结合测试（集成测试）如何安排？"
+              "jp": "単体テストの期間は。",
+              "jpWithRuby": "<ruby>単体<rt>たんたい</rt></ruby>テストの<ruby>期間<rt>きかん</rt></ruby>は。",
+              "zh": "单体测试的周期是？"
             },
             {
               "speaker": "李",
-              "jp": "モジュール間連携を検証し、開発チームが1週間で実施いたします。",
-              "jpWithRuby": "モジュール<ruby>間<rt>かん</rt></ruby><ruby>連携<rt>れんけい</rt></ruby>を<ruby>検証<rt>けんしょう</rt></ruby>し、<ruby>開発<rt>かいはつ</rt></ruby>チームが1<ruby>週間<rt>しゅうかん</rt></ruby>で<ruby>実施<rt>じっし</rt></ruby>いたします。",
-              "zh": "主要验证各模块间的接口与数据联动，由开发团队在1周内完成。"
+              "jp": "2週間を予定しております。",
+              "jpWithRuby": "2<ruby>週間<rt>しゅうかん</rt></ruby>を<ruby>予定<rt>よてい</rt></ruby>しております。",
+              "zh": "预定为2周。"
             },
             {
               "speaker": "李",
-              "jp": "続いて総合テストはシステム全体の機能・非機能をテストチームが2週間で検証します。",
-              "jpWithRuby": "<ruby>続い<rt>つづい</rt></ruby>て<ruby>総合<rt>そうごう</rt></ruby>テストはシステム<ruby>全体<rt>ぜんたい</rt></ruby>の<ruby>機能<rt>きのう</rt></ruby>・<ruby>非<rt>ひ</rt></ruby><ruby>機能<rt>きのう</rt></ruby>をテストチームが2<ruby>週間<rt>しゅうかん</rt></ruby>で<ruby>検証<rt>けんしょう</rt></ruby>します。",
-              "zh": "紧接着的综合测试将由专门的测试团队在2周内对系统整体的功能与非功能性指标进行全面验证。"
+              "jp": "続いて2つ目は、結合テストです。モジュール間のインターフェースを検証いたします。",
+              "jpWithRuby": "<ruby>続い<rt>つづい</rt></ruby>て2つ<ruby>目<rt>め</rt></ruby>は、<ruby>結合<rt>けつごう</rt></ruby>テストです。モジュール<ruby>間<rt>かん</rt></ruby>のインターフェースを<ruby>検証<rt>けんしょう</rt></ruby>いたします。",
+              "zh": "接下来第2个是结合测试。验证模块间的接口。"
             },
             {
               "speaker": "田中部長",
-              "jp": "順序立ててよく整理されていますね。",
-              "jpWithRuby": "<ruby>順序<rt>じゅんじょ</rt></ruby><ruby>立て<rt>たて</rt></ruby>てよく<ruby>整理<rt>せいり</rt></ruby>されていますね。",
-              "zh": "工序安排非常井然有序、条理分明。"
+              "jp": "結合テストの期間は。",
+              "jpWithRuby": "<ruby>結合<rt>けつごう</rt></ruby>テストの<ruby>期間<rt>きかん</rt></ruby>は。",
+              "zh": "结合测试的周期是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "1週間です。",
+              "jpWithRuby": "1<ruby>週間<rt>しゅうかん</rt></ruby>です。",
+              "zh": "是1周。"
+            },
+            {
+              "speaker": "李",
+              "jp": "3つ目は、総合テストです。システム全体を検証いたします。",
+              "jpWithRuby": "3つ<ruby>目<rt>め</rt></ruby>は、<ruby>総合<rt>そうごう</rt></ruby>テストです。システム<ruby>全体<rt>ぜんたい</rt></ruby>を<ruby>検証<rt>けんしょう</rt></ruby>いたします。",
+              "zh": "第3个是综合测试。验证整个系统。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "総合テストの期間は。",
+              "jpWithRuby": "<ruby>総合<rt>そうごう</rt></ruby>テストの<ruby>期間<rt>きかん</rt></ruby>は。",
+              "zh": "综合测试的周期是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "2週間です。",
+              "jpWithRuby": "2<ruby>週間<rt>しゅうかん</rt></ruby>です。",
+              "zh": "是2周。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "承知しました。続きは後ほど。",
+              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。<ruby>続き<rt>つづき</rt></ruby>は<ruby>後ほど<rt>のちほど</rt></ruby>。",
+              "zh": "明白了。后续内容稍后听取。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P11-P12"
+          ]
         },
         {
           "pNum": 2,
-          "title": "短文 2：性能测试与UAT说明・商务敬语",
-          "theme": "性能测试与UAT说明・商务敬语",
-          "objective": "熟练运用「〜秒以内」「〜同時アクセス」量化指标说明性能防线，并用最高敬语「お客様に検証していただきます」引导客户UAT。",
+          "title": "短文 2：性能测试与UAT验收说明",
+          "theme": "练习 2 · 性能测试与UAT验收说明",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第19课练习 2（P13-P14）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P13-P14",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "さて、次に性能テストとUATについて説明いたします。",
               "jpWithRuby": "さて、<ruby>次<rt>つぎ</rt></ruby>に<ruby>性能<rt>せいのう</rt></ruby>テストとUATについて<ruby>説明<rt>せつめい</rt></ruby>いたします。",
-              "zh": "接下来，我向各位汇报性能测试与用户验收测试（UAT）的安排。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "性能テストの具体的な目標値はどのようになっていますか。",
-              "jpWithRuby": "<ruby>性能<rt>せいのう</rt></ruby>テストの<ruby>具体<rt>ぐたい</rt></ruby><ruby>的<rt>てき</rt></ruby>な<ruby>目標<rt>もくひょう</rt></ruby><ruby>値<rt>ち</rt></ruby>はどのようになっていますか。",
-              "zh": "性能测试设定的具体目标指标值是怎样的？"
-            },
-            {
-              "speaker": "李",
-              "jp": "レスポンスタイム2秒以内、スループット500ユーザー同時アクセスを目標として検証いたします。",
-              "jpWithRuby": "レスポンスタイム2<ruby>秒<rt>びょう</rt></ruby><ruby>以内<rt>いない</rt></ruby>、スループット500ユーザー<ruby>同時<rt>どうじ</rt></ruby>アクセスを<ruby>目標<rt>もくひょう</rt></ruby>として<ruby>検証<rt>けんしょう</rt></ruby>いたします。",
-              "zh": "我们将以系统响应时间在2秒以内、支持500名用户同时并发访问作为准出目标进行验证。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "ピーク時の負荷はどうですか。",
-              "jpWithRuby": "ピーク<ruby>時<rt>じ</rt></ruby>の<ruby>負荷<rt>ふか</rt></ruby>はどうですか。",
-              "zh": "高峰期的峰值负载测试是如何考量的？"
-            },
-            {
-              "speaker": "李",
-              "jp": "ピーク時の1.5倍の負荷をかけるストレステストも合わせて実施いたします。",
-              "jpWithRuby": "ピーク<ruby>時<rt>じ</rt></ruby>の1.5<ruby>倍<rt>ばい</rt></ruby>の<ruby>負荷<rt>ふか</rt></ruby>をかけるストレステストも<ruby>合わせ<rt>あわせ</rt></ruby>て<ruby>実施<rt>じっし</rt></ruby>いたします。",
-              "zh": "我们也会同步执行施加日常峰值1.5倍极限压力的压力测试（Stress Test）。"
-            },
-            {
-              "speaker": "李",
-              "jp": "そして最終工程として、お客様に実際の業務シナリオに沿ってUATを実施していただきます。",
-              "jpWithRuby": "そして<ruby>最終<rt>さいしゅう</rt></ruby><ruby>工程<rt>こうてい</rt></ruby>として、お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby>に<ruby>実際<rt>じっさい</rt></ruby>の<ruby>業務<rt>ぎょうむ</rt></ruby>シナリオに<ruby>沿っ<rt>そっ</rt></ruby>てUATを<ruby>実施<rt>じっし</rt></ruby>していただきます。",
-              "zh": "最后作为最终验收工程，将请贵司业务人员按照真实的实际业务场景开展 UAT 验收。"
+              "zh": "那么，接下来我来说明性能测试和UAT。"
             },
             {
               "speaker": "田中部長",
-              "jp": "了解しました。営業現場のキーマンをアサインして準備しておきます。",
-              "jpWithRuby": "<ruby>了解<rt>りょうかい</rt></ruby>しました。<ruby>営業<rt>えいぎょう</rt></ruby><ruby>現場<rt>げんば</rt></ruby>のキーマンをアサインして<ruby>準備<rt>じゅんび</rt></ruby>しておきます。",
-              "zh": "了解了。我们会提前协调指派一线营业部门的骨干业务人员做好测试准备。"
+              "jp": "はい、お願いします。",
+              "jpWithRuby": "はい、お<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "好的，拜托了。"
+            },
+            {
+              "speaker": "李",
+              "jp": "4つ目は、性能テストです。500ユーザーで2秒以内の応答を検証いたします。",
+              "jpWithRuby": "4つ<ruby>目<rt>め</rt></ruby>は、<ruby>性能<rt>せいのう</rt></ruby>テストです。500ユーザーで2<ruby>秒<rt>びょう</rt></ruby><ruby>以内<rt>いない</rt></ruby>の<ruby>応答<rt>おうとう</rt></ruby>を<ruby>検証<rt>けんしょう</rt></ruby>いたします。",
+              "zh": "第4个是性能测试。验证500用户并发下2秒以内的响应。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "性能目標は。",
+              "jpWithRuby": "<ruby>性能<rt>せいのう</rt></ruby><ruby>目標<rt>もくひょう</rt></ruby>は。",
+              "zh": "性能目标是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "500ユーザーで2秒以内です。",
+              "jpWithRuby": "500ユーザーで2<ruby>秒<rt>びょう</rt></ruby><ruby>以内<rt>いない</rt></ruby>です。",
+              "zh": "是500用户下2秒以内。"
+            },
+            {
+              "speaker": "李",
+              "jp": "5つ目は、UATです。お客様に実施していただきます。",
+              "jpWithRuby": "5つ<ruby>目<rt>め</rt></ruby>は、UATです。お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby>に<ruby>実施<rt>じっし</rt></ruby>していただきます。",
+              "zh": "第5个是UAT（用户验收测试）。由客户方进行实施。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "UATの期間は。",
+              "jpWithRuby": "UATの<ruby>期間<rt>きかん</rt></ruby>は。",
+              "zh": "UAT的周期是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "1週間です。",
+              "jpWithRuby": "1<ruby>週間<rt>しゅうかん</rt></ruby>です。",
+              "zh": "是1周。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "テスト全体の期間は。",
+              "jpWithRuby": "テスト<ruby>全体<rt>ぜんたい</rt></ruby>の<ruby>期間<rt>きかん</rt></ruby>は。",
+              "zh": "测试整体的总周期是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "テスト期間は合計7週間です。",
+              "jpWithRuby": "テスト<ruby>期間<rt>きかん</rt></ruby>は<ruby>合計<rt>ごうけい</rt></ruby>7<ruby>週間<rt>しゅうかん</rt></ruby>です。",
+              "zh": "测试周期总计为7周。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "承知しました。",
+              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。",
+              "zh": "明白了。"
+            },
+            {
+              "speaker": "李",
+              "jp": "恐れ入りますが、UATのご参加をお願いします。",
+              "jpWithRuby": "<ruby>恐れ入り<rt>おそれいり</rt></ruby>ますが、UATのご<ruby>参加<rt>さんか</rt></ruby>をお<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "非常抱歉劳烦，还请届时参加UAT测试。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P13-P14"
+          ]
         },
         {
           "pNum": 3,
-          "title": "短文 3：测试日程与合格基准量化说明",
-          "theme": "测试日程与合格基准量化说明",
-          "objective": "学习阐释测试重叠并行期的环境资源约束（リソース配分にご配慮をお願いします），并逐一阐明零重大缺陷准出基准。",
+          "title": "短文 3：测试工期排期与量化合格基准",
+          "theme": "练习 3 · 测试工期排期与量化合格基准",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第19课练习 3（P15-P16）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P15-P16",
           "dialogue": [
             {
               "speaker": "李",
-              "jp": "テスト全体のスケジュールは、合計7週間です。開発完了後、直ちに開始いたします。",
-              "jpWithRuby": "テスト<ruby>全体<rt>ぜんたい</rt></ruby>のスケジュールは、<ruby>合計<rt>ごうけい</rt></ruby>7<ruby>週間<rt>しゅうかん</rt></ruby>です。<ruby>開発<rt>かいはつ</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby><ruby>後<rt>ご</rt></ruby>、<ruby>直ちに<rt>ただちに</rt></ruby><ruby>開始<rt>かいし</rt></ruby>いたします。",
-              "zh": "整体测试工期总计为7周。在开发工程告竣后即刻启动。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "リソース配分での注意点はありますか。",
-              "jpWithRuby": "リソース<ruby>配分<rt>はいぶん</rt></ruby>での<ruby>注意<rt>ちゅうい</rt></ruby><ruby>点<rt>てん</rt></ruby>はありますか。",
-              "zh": "在测试资源环境调配上有什么需要注意的地方吗？"
-            },
-            {
-              "speaker": "李",
-              "jp": "総合テストと性能テストが並行いたしますので、検証環境の配分にご配慮をお願いいたします。",
-              "jpWithRuby": "<ruby>総合<rt>そうごう</rt></ruby>テストと<ruby>性能<rt>せいのう</rt></ruby>テストが<ruby>並行<rt>へいこう</rt></ruby>いたしますので、<ruby>検証<rt>けんしょう</rt></ruby><ruby>環境<rt>かんきょう</rt></ruby>の<ruby>配分<rt>はいぶん</rt></ruby>にご<ruby>配慮<rt>はいりょ</rt></ruby>をお<ruby>願い<rt>ねがい</rt></ruby>いたします。",
-              "zh": "由于综合测试与性能压测会存在时间重叠并行，还请贵司在测试验证环境的资源划分上予以关照配合。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "分かりました。合格基準はどう設定されていますか。",
-              "jpWithRuby": "<ruby>分かり<rt>わかり</rt></ruby>ました。<ruby>合格<rt>ごうかく</rt></ruby><ruby>基準<rt>きじゅん</rt></ruby>はどう<ruby>設定<rt>せってい</rt></ruby>されていますか。",
-              "zh": "明白了。那么验收合格准出基准是如何设定的呢？"
-            },
-            {
-              "speaker": "李",
-              "jp": "単体・結合は重大欠陥0件・軽微10件以下、総合テストは重大0件・軽微20件以下と定めております。",
-              "jpWithRuby": "<ruby>単体<rt>たんたい</rt></ruby>・<ruby>結合<rt>けつごう</rt></ruby>は<ruby>重大<rt>じゅうだい</rt></ruby><ruby>欠陥<rt>けっかん</rt></ruby>0<ruby>件<rt>けん</rt></ruby>・<ruby>軽微<rt>けいび</rt></ruby>10<ruby>件<rt>けん</rt></ruby><ruby>以下<rt>いか</rt></ruby>、<ruby>総合<rt>そうごう</rt></ruby>テストは<ruby>重大<rt>じゅうだい</rt></ruby>0<ruby>件<rt>けん</rt></ruby>・<ruby>軽微<rt>けいび</rt></ruby>20<ruby>件<rt>けん</rt></ruby><ruby>以下<rt>いか</rt></ruby>と<ruby>定め<rt>さだめ</rt></ruby>ております。",
-              "zh": "单体与结合测试要求阻断性重大缺陷0件、轻微缺陷在10件以下；综合测试要求重大缺陷0件、轻微缺陷在20件以下。"
+              "jp": "テスト全体のスケジュールは、合計7週間です。",
+              "jpWithRuby": "テスト<ruby>全体<rt>ぜんたい</rt></ruby>のスケジュールは、<ruby>合計<rt>ごうけい</rt></ruby>7<ruby>週間<rt>しゅうかん</rt></ruby>です。",
+              "zh": "测试整体的排期总共为7周。"
             },
             {
               "speaker": "田中部長",
-              "jp": "明確な合格基準ですね。これなら品質を客観的に評価できます。",
-              "jpWithRuby": "<ruby>明確<rt>めいかく</rt></ruby>な<ruby>合格<rt>ごうかく</rt></ruby><ruby>基準<rt>きじゅん</rt></ruby>ですね。これなら<ruby>品質<rt>ひんしつ</rt></ruby>を<ruby>客観<rt>きゃっかん</rt></ruby><ruby>的<rt>てき</rt></ruby>に<ruby>評価<rt>ひょうか</rt></ruby>できます。",
-              "zh": "准出标准非常明确量化。这样就能客观公正地评判软件交付质量了。"
+              "jp": "内訳は。",
+              "jpWithRuby": "<ruby>内訳<rt>うちわけ</rt></ruby>は。",
+              "zh": "具体明细是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "単体テストは2週間、結合テストは1週間、総合テストは2週間です。",
+              "jpWithRuby": "<ruby>単体<rt>たんたい</rt></ruby>テストは2<ruby>週間<rt>しゅうかん</rt></ruby>、<ruby>結合<rt>けつごう</rt></ruby>テストは1<ruby>週間<rt>しゅうかん</rt></ruby>、<ruby>総合<rt>そうごう</rt></ruby>テストは2<ruby>週間<rt>しゅうかん</rt></ruby>です。",
+              "zh": "单体测试2周，结合测试1周，综合测试2周。"
+            },
+            {
+              "speaker": "李",
+              "jp": "性能テストは1週間、UATは1週間です。",
+              "jpWithRuby": "<ruby>性能<rt>せいのう</rt></ruby>テストは1<ruby>週間<rt>しゅうかん</rt></ruby>、UATは1<ruby>週間<rt>しゅうかん</rt></ruby>です。",
+              "zh": "性能测试1周，UAT为1周。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "合格基準は。",
+              "jpWithRuby": "<ruby>合格<rt>ごうかく</rt></ruby><ruby>基準<rt>きじゅん</rt></ruby>は。",
+              "zh": "合格标准是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "合格基準につきましては、単体・結合テストは重大0、軽微10以下です。",
+              "jpWithRuby": "<ruby>合格<rt>ごうかく</rt></ruby><ruby>基準<rt>きじゅん</rt></ruby>につきましては、<ruby>単体<rt>たんたい</rt></ruby>・<ruby>結合<rt>けつごう</rt></ruby>テストは<ruby>重大<rt>じゅうだい</rt></ruby>0、<ruby>軽微<rt>けいび</rt></ruby>10<ruby>以下<rt>いか</rt></ruby>です。",
+              "zh": "关于合格标准，单体和结合测试为重大缺陷0个，轻微缺陷10个以下。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "総合テストの基準は。",
+              "jpWithRuby": "<ruby>総合<rt>そうごう</rt></ruby>テストの<ruby>基準<rt>きじゅん</rt></ruby>は。",
+              "zh": "综合测试的标准是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "総合テストは重大0、軽微20以下です。",
+              "jpWithRuby": "<ruby>総合<rt>そうごう</rt></ruby>テストは<ruby>重大<rt>じゅうだい</rt></ruby>0、<ruby>軽微<rt>けいび</rt></ruby>20<ruby>以下<rt>いか</rt></ruby>です。",
+              "zh": "综合测试为重大缺陷0个，轻微缺陷20个以下。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "性能テストの基準は。",
+              "jpWithRuby": "<ruby>性能<rt>せいのう</rt></ruby>テストの<ruby>基準<rt>きじゅん</rt></ruby>は。",
+              "zh": "性能测试的标准是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "性能テストは、2秒以内・500ユーザーです。ストレステストは、1.5倍の負荷で実施いたします。",
+              "jpWithRuby": "<ruby>性能<rt>せいのう</rt></ruby>テストは、2<ruby>秒<rt>びょう</rt></ruby><ruby>以内<rt>いない</rt></ruby>・500ユーザーです。ストレステストは、1.5<ruby>倍<rt>ばい</rt></ruby>の<ruby>負荷<rt>ふか</rt></ruby>で<ruby>実施<rt>じっし</rt></ruby>いたします。",
+              "zh": "性能测试是500用户下2秒以内。压力测试将以1.5倍负载实施。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "UATの合格基準は。",
+              "jpWithRuby": "UATの<ruby>合格<rt>ごうかく</rt></ruby><ruby>基準<rt>きじゅん</rt></ruby>は。",
+              "zh": "UAT的合格标准是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "UATは、お客様の承認といたします。",
+              "jpWithRuby": "UATは、お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby>の<ruby>承認<rt>しょうにん</rt></ruby>といたします。",
+              "zh": "UAT以获得客户的正式认可为准。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P15-P16"
+          ]
         },
         {
           "pNum": 4,
-          "title": "短文 4：共识确认与Q&A收尾",
-          "theme": "共识确认与Q&A收尾",
-          "objective": "掌握就测试计划达成共识并锁定正式计划书交付的职业收尾闭环。",
+          "title": "短文 4：测试计划答疑与共识认可",
+          "theme": "练习 4 · 测试计划答疑与共识认可",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第19课练习 4（P17-P18）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P17-P18",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "本日のテスト計画について、ご質問はないでしょうか。",
               "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>のテスト<ruby>計画<rt>けいかく</rt></ruby>について、ご<ruby>質問<rt>しつもん</rt></ruby>はないでしょうか。",
-              "zh": "针对今天的测试计划，各位还有什么疑问或需要探讨确认的吗？"
-            },
-            {
-              "speaker": "田中部長",
-              "jp": "合格基準も妥当ですし、このスケジュールで問題ありません。",
-              "jpWithRuby": "<ruby>合格<rt>ごうかく</rt></ruby><ruby>基準<rt>きじゅん</rt></ruby>も<ruby>妥当<rt>だとう</rt></ruby>ですし、このスケジュールで<ruby>問題<rt>もんだい</rt></ruby>ありません。",
-              "zh": "准出基准很合理，整体排期也完全没有问题。"
-            },
-            {
-              "speaker": "李",
-              "jp": "それでは、5種類のテストを7週間で実施する方針で合意とさせていただきます。よろしいでしょうか。",
-              "jpWithRuby": "それでは、5<ruby>種類<rt>しゅるい</rt></ruby>のテストを7<ruby>週間<rt>しゅうかん</rt></ruby>で<ruby>実施<rt>じっし</rt></ruby>する<ruby>方針<rt>ほうしん</rt></ruby>で<ruby>合意<rt>ごうい</rt></ruby>とさせていただきます。よろしいでしょうか。",
-              "zh": "那么，我们将以在7周内分步落实5类测试的既定方针正式达成共识，您看可以吗？"
-            },
-            {
-              "speaker": "田中部長",
-              "jp": "はい、その方針で進めてください。",
-              "jpWithRuby": "はい、その<ruby>方針<rt>ほうしん</rt></ruby>で<ruby>進め<rt>すすめ</rt></ruby>てください。",
-              "zh": "好的，就按这个方针稳步推进吧。"
-            },
-            {
-              "speaker": "李",
-              "jp": "ありがとうございます。詳細なテスト計画書を取りまとめ、来週初めにお送りいたします。",
-              "jpWithRuby": "ありがとうございます。<ruby>詳細<rt>しょうさい</rt></ruby>なテスト<ruby>計画<rt>けいかく</rt></ruby><ruby>書<rt>しょ</rt></ruby>を<ruby>取りまとめ<rt>とりまとめ</rt></ruby>、<ruby>来週<rt>らいしゅう</rt></ruby><ruby>初め<rt>はじめ</rt></ruby>にお<ruby>送り<rt>おくり</rt></ruby>いたします。",
-              "zh": "非常感谢。我将整理出详尽的测试工程计划书，于下周初呈送给各位。"
+              "zh": "关于今天的测试计划，各位有什么问题吗？"
             },
             {
               "speaker": "山田課長",
-              "jp": "よろしくお願いします。",
-              "jpWithRuby": "よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "拜托了，辛苦。"
+              "jp": "ストレステストの負荷は変更可能ですか。",
+              "jpWithRuby": "ストレステストの<ruby>負荷<rt>ふか</rt></ruby>は<ruby>変更<rt>へんこう</rt></ruby><ruby>可能<rt>かのう</rt></ruby>ですか。",
+              "zh": "压力测试的负载可以调整吗？"
+            },
+            {
+              "speaker": "李",
+              "jp": "はい、1.5倍から2倍まで変更可能です。",
+              "jpWithRuby": "はい、1.5<ruby>倍<rt>ばい</rt></ruby>から2<ruby>倍<rt>ばい</rt></ruby>まで<ruby>変更<rt>へんこう</rt></ruby><ruby>可能<rt>かのう</rt></ruby>です。",
+              "zh": "是的，可以从1.5倍调整到2倍。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "本件については、社内確認後、正式回答いたします。",
+              "jpWithRuby": "<ruby>本件<rt>ほんけん</rt></ruby>については、<ruby>社内<rt>しゃない</rt></ruby><ruby>確認<rt>かくにん</rt></ruby><ruby>後<rt>ご</rt></ruby>、<ruby>正式<rt>せいしき</rt></ruby><ruby>回答<rt>かいとう</rt></ruby>いたします。",
+              "zh": "关于此事，我们在公司内部确认后正式答复。"
+            },
+            {
+              "speaker": "李",
+              "jp": "承知しました。確認の上、正式にテスト計画書を更新いたします。",
+              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。<ruby>確認<rt>かくにん</rt></ruby>の<ruby>上<rt>うえ</rt></ruby>、<ruby>正式<rt>せいしき</rt></ruby>にテスト<ruby>計画<rt>けいかく</rt></ruby><ruby>書<rt>しょ</rt></ruby>を<ruby>更新<rt>こうしん</rt></ruby>いたします。",
+              "zh": "明白了。确认后我们将正式更新测试计划书。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "修正が必要な点がございましたら、速やかに対応してください。",
+              "jpWithRuby": "<ruby>修正<rt>しゅうせい</rt></ruby>が<ruby>必要<rt>ひつよう</rt></ruby>な<ruby>点<rt>てん</rt></ruby>がございましたら、<ruby>速やか<rt>すみやか</rt></ruby>に<ruby>対応<rt>たいおう</rt></ruby>してください。",
+              "zh": "如果有需要修改的地方，请迅速对应。"
+            },
+            {
+              "speaker": "李",
+              "jp": "かしこまりました。速やかに対応いたします。",
+              "jpWithRuby": "かしこまりました。<ruby>速やか<rt>すみやか</rt></ruby>に<ruby>対応<rt>たいおう</rt></ruby>いたします。",
+              "zh": "明白，我们会迅速处理。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "テスト計画について、ご了承をいただけますでしょうか。",
+              "jpWithRuby": "テスト<ruby>計画<rt>けいかく</rt></ruby>について、ご<ruby>了承<rt>りょうしょう</rt></ruby>をいただけますでしょうか。",
+              "zh": "关于测试计划，能得到您的认可吗？"
+            },
+            {
+              "speaker": "李",
+              "jp": "ありがとうございます。引き続き、よろしくお願いします。",
+              "jpWithRuby": "ありがとうございます。<ruby>引き続き<rt>ひきつづき</rt></ruby>、よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "非常感谢。接下来也请多多关照。"
+            },
+            {
+              "speaker": "李",
+              "jp": "それでは、本日のご報告は以上とさせていただきます。",
+              "jpWithRuby": "それでは、<ruby>本日<rt>ほんじつ</rt></ruby>のご<ruby>報告<rt>ほうこく</rt></ruby>は<ruby>以上<rt>いじょう</rt></ruby>とさせていただきます。",
+              "zh": "那么，今天的汇报就到此结束。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "本日はお時間をいただきまして、ありがとうございます。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はお<ruby>時間<rt>じかん</rt></ruby>をいただきまして、ありがとうございます。",
+              "zh": "今天非常感谢您抽出宝贵时间。"
+            },
+            {
+              "speaker": "李",
+              "jp": "こちらこそ、ありがとうございます。",
+              "jpWithRuby": "こちらこそ、ありがとうございます。",
+              "zh": "哪里哪里，非常感谢。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P17-P18"
+          ]
         },
         {
           "pNum": 5,
-          "title": "短文 5：测试计划综合演练：5大测试全流程",
-          "theme": "测试计划综合演练：5大测试全流程",
-          "objective": "综合演练从测试类型分工、指标量化、环境协同到验收签字的全流程对日软件QA沟通闭环。",
+          "title": "短文 5：综合测试计划全流程综合演练",
+          "theme": "练习 5 · 综合测试计划全流程演练",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第19课练习 5（P19-P20）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P19-P20",
           "dialogue": [
             {
               "speaker": "李",
-              "jp": "本日は総合テスト計画の総合報告をさせていただきます。5種類のテストを7週間で実施いたします。",
-              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>は<ruby>総合<rt>そうごう</rt></ruby>テスト<ruby>計画<rt>けいかく</rt></ruby>の<ruby>総合<rt>そうごう</rt></ruby><ruby>報告<rt>ほうこく</rt></ruby>をさせていただきます。5<ruby>種類<rt>しゅるい</rt></ruby>のテストを7<ruby>週間<rt>しゅうかん</rt></ruby>で<ruby>実施<rt>じっし</rt></ruby>いたします。",
-              "zh": "今天向各位做综合测试工程的全面报告。我们将通过7周周期系统完成5大类测试。"
+              "jp": "本日は総合テスト計画の総合報告をさせていただきます。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>は<ruby>総合<rt>そうごう</rt></ruby>テスト<ruby>計画<rt>けいかく</rt></ruby>の<ruby>総合<rt>そうごう</rt></ruby><ruby>報告<rt>ほうこく</rt></ruby>をさせていただきます。",
+              "zh": "今天由我来进行综合测试计划的总体汇报。"
             },
             {
               "speaker": "田中部長",
-              "jp": "お願いします。",
-              "jpWithRuby": "お<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "请讲。"
+              "jp": "よろしくお願いします。",
+              "jpWithRuby": "よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "拜托了。"
             },
             {
               "speaker": "李",
-              "jp": "単体・結合・総合・性能・UATを段階的に実施し、重大欠陥0件を徹底いたします。",
-              "jpWithRuby": "<ruby>単体<rt>たんたい</rt></ruby>・<ruby>結合<rt>けつごう</rt></ruby>・<ruby>総合<rt>そうごう</rt></ruby>・<ruby>性能<rt>せいのう</rt></ruby>・UATを<ruby>段階<rt>だんかい</rt></ruby><ruby>的<rt>てき</rt></ruby>に<ruby>実施<rt>じっし</rt></ruby>し、<ruby>重大<rt>じゅうだい</rt></ruby><ruby>欠陥<rt>けっかん</rt></ruby>0<ruby>件<rt>けん</rt></ruby>を<ruby>徹底<rt>てってい</rt></ruby>いたします。",
-              "zh": "我们将阶梯式推进单体、结合、综合、性能及UAT，严守阻断性重大缺陷0件的红线。"
+              "jp": "本テスト計画は、5種類のテストから構成されております。",
+              "jpWithRuby": "<ruby>本<rt>ほん</rt></ruby>テスト<ruby>計画<rt>けいかく</rt></ruby>は、5<ruby>種類<rt>しゅるい</rt></ruby>のテストから<ruby>構成<rt>こうせい</rt></ruby>されております。",
+              "zh": "本次测试计划由5种测试构成。"
+            },
+            {
+              "speaker": "李",
+              "jp": "単体テストは2週間、開発チームにより実施いたします。結合テストは1週間、モジュール間のインターフェースを検証いたします。",
+              "jpWithRuby": "<ruby>単体<rt>たんたい</rt></ruby>テストは2<ruby>週間<rt>しゅうかん</rt></ruby>、<ruby>開発<rt>かいはつ</rt></ruby>チームにより<ruby>実施<rt>じっし</rt></ruby>いたします。<ruby>結合<rt>けつごう</rt></ruby>テストは1<ruby>週間<rt>しゅうかん</rt></ruby>、モジュール<ruby>間<rt>かん</rt></ruby>のインターフェースを<ruby>検証<rt>けんしょう</rt></ruby>いたします。",
+              "zh": "单体测试2周，由开发团队实施。结合测试1周，验证模块间接口。"
+            },
+            {
+              "speaker": "李",
+              "jp": "総合テストは2週間、システム全体を検証いたします。性能テストは1週間、500ユーザーで2秒以内を検証いたします。",
+              "jpWithRuby": "<ruby>総合<rt>そうごう</rt></ruby>テストは2<ruby>週間<rt>しゅうかん</rt></ruby>、システム<ruby>全体<rt>ぜんたい</rt></ruby>を<ruby>検証<rt>けんしょう</rt></ruby>いたします。<ruby>性能<rt>せいのう</rt></ruby>テストは1<ruby>週間<rt>しゅうかん</rt></ruby>、500ユーザーで2<ruby>秒<rt>びょう</rt></ruby><ruby>以内<rt>いない</rt></ruby>を<ruby>検証<rt>けんしょう</rt></ruby>いたします。",
+              "zh": "综合测试2周，验证系统整体。性能测试1周，验证500用户下2秒以内。"
+            },
+            {
+              "speaker": "李",
+              "jp": "UATは1週間、お客様に実施していただきます。テスト期間は合計7週間です。",
+              "jpWithRuby": "UATは1<ruby>週間<rt>しゅうかん</rt></ruby>、お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby>に<ruby>実施<rt>じっし</rt></ruby>していただきます。テスト<ruby>期間<rt>きかん</rt></ruby>は<ruby>合計<rt>ごうけい</rt></ruby>7<ruby>週間<rt>しゅうかん</rt></ruby>です。",
+              "zh": "UAT为1周，由客户实施。测试周期合计为7周。"
             },
             {
               "speaker": "山田課長",
-              "jp": "UATはお客様側でのシナリオ検証ですね。",
-              "jpWithRuby": "UATはお<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby><ruby>側<rt>がわ</rt></ruby>でのシナリオ<ruby>検証<rt>けんしょう</rt></ruby>ですね。",
-              "zh": "UAT 是指由我们客户方按实际业务流进行场景化端到端核验对吧。"
+              "jp": "合格基準は。",
+              "jpWithRuby": "<ruby>合格<rt>ごうかく</rt></ruby><ruby>基準<rt>きじゅん</rt></ruby>は。",
+              "zh": "合格标准是？"
             },
             {
               "speaker": "李",
-              "jp": "はい、業務部門の皆様に操作していただき、最終承認をいただく流れとなります。",
-              "jpWithRuby": "はい、<ruby>業務<rt>ぎょうむ</rt></ruby><ruby>部門<rt>ぶもん</rt></ruby>の<ruby>皆<rt>みな</rt></ruby><ruby>様<rt>さま</rt></ruby>に<ruby>操作<rt>そうさ</rt></ruby>していただき、<ruby>最終<rt>さいしゅう</rt></ruby><ruby>承認<rt>しょうにん</rt></ruby>をいただく<ruby>流れ<rt>ながれ</rt></ruby>となります。",
-              "zh": "是的，由一线业务部门的各位老师亲自上手实操，并以此作为最终上线验收审批的依据。"
+              "jp": "単体・結合は重大0・軽微10以下、総合は重大0・軽微20以下です。性能は2秒以内・500ユーザー、UATはお客様の承認です。",
+              "jpWithRuby": "<ruby>単体<rt>たんたい</rt></ruby>・<ruby>結合<rt>けつごう</rt></ruby>は<ruby>重大<rt>じゅうだい</rt></ruby>0・<ruby>軽微<rt>けいび</rt></ruby>10<ruby>以下<rt>いか</rt></ruby>、<ruby>総合<rt>そうごう</rt></ruby>は<ruby>重大<rt>じゅうだい</rt></ruby>0・<ruby>軽微<rt>けいび</rt></ruby>20<ruby>以下<rt>いか</rt></ruby>です。<ruby>性能<rt>せいのう</rt></ruby>は2<ruby>秒<rt>びょう</rt></ruby><ruby>以内<rt>いない</rt></ruby>・500ユーザー、UATはお<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby>の<ruby>承認<rt>しょうにん</rt></ruby>です。",
+              "zh": "单体结合为重大0轻微10以下，综合为重大0轻微20以下。性能为2秒以内500用户，UAT为客户认可。"
             },
             {
               "speaker": "田中部長",
-              "jp": "非常に万全なテスト体制ですね。期待しています。",
-              "jpWithRuby": "<ruby>非常<rt>ひじょう</rt></ruby>に<ruby>万全<rt>ばんぜん</rt></ruby>なテスト<ruby>体制<rt>たいせい</rt></ruby>ですね。<ruby>期待<rt>きたい</rt></ruby>しています。",
-              "zh": "测试体制非常严密完备，我们充满期待。"
+              "jp": "テスト計画について、ご了承をいただけますでしょうか。",
+              "jpWithRuby": "テスト<ruby>計画<rt>けいかく</rt></ruby>について、ご<ruby>了承<rt>りょうしょう</rt></ruby>をいただけますでしょうか。",
+              "zh": "关于测试计划，能得到您的认可吗？"
             },
             {
               "speaker": "李",
-              "jp": "ありがとうございます。品質最優先で推進いたします。",
-              "jpWithRuby": "ありがとうございます。<ruby>品質<rt>ひんしつ</rt></ruby><ruby>最<rt>さい</rt></ruby><ruby>優先<rt>ゆうせん</rt></ruby>で<ruby>推進<rt>すいしん</rt></ruby>いたします。",
-              "zh": "非常感谢，我们将以质量为最高准绳全力以赴。"
+              "jp": "ありがとうございます。",
+              "jpWithRuby": "ありがとうございます。",
+              "zh": "非常感谢。"
+            },
+            {
+              "speaker": "李",
+              "jp": "それでは、本日のご報告は以上とさせていただきます。",
+              "jpWithRuby": "それでは、<ruby>本日<rt>ほんじつ</rt></ruby>のご<ruby>報告<rt>ほうこく</rt></ruby>は<ruby>以上<rt>いじょう</rt></ruby>とさせていただきます。",
+              "zh": "那么，今天的汇报就到此结束。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "本日はお時間をいただきまして、ありがとうございます。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はお<ruby>時間<rt>じかん</rt></ruby>をいただきまして、ありがとうございます。",
+              "zh": "今天非常感谢您抽出宝贵时间。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P19-P20"
+          ]
         }
       ],
       "grammarPoints": [
@@ -8221,7 +8479,7 @@ window.JAPANESE_KNOWLEDGE_BASE = {
       "id": "scene-20",
       "sceneNumber": 20,
       "badge": "故障恢复协商",
-      "title": "场景 20：本番障害復旧状況の報告・復旧方針協議",
+      "title": "场景 20：本番障害・データベース接続枯渇復旧状況報告・復旧方針協議",
       "theme": "生产环境突发事故 · 初动排查 · 两种恢复方针对比 · 危机公关与致歉",
       "domain": "系统运维与应急响应领域（Incident Management / 故障应对）",
       "background": "客户服务系统在本日14:32发生数据库连接池枯竭重大突发生产故障。受托方李在完成第一轮抢修后，第一时间向客户方田中部长、山田课长进行事故初动报告。李冷静客观通报集计批处理未释放连接的故障根因，汇报重启AP、停用故障批处理并扩容连接池的初动举措，进而呈现「即时恢复」与「3天彻底排查实施恒久对策后再恢复」两大方案并给出专业建议，顺利获得客户理解。",
@@ -9340,257 +9598,425 @@ window.JAPANESE_KNOWLEDGE_BASE = {
       "practiceTexts": [
         {
           "pNum": 1,
-          "title": "短文 1：故障发生报告与状况详细说明",
-          "theme": "故障发生报告与状况详细说明",
-          "objective": "掌握重大生产故障的第一时间结构化通报法（发生时间、现象、根因、影响范围、数据安全性）。",
+          "title": "短文 1：生产故障初动报告与原因影响说明",
+          "theme": "练习 1 · 生产故障初动报告与原因影响说明",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第20课练习 1（P21-P22）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P21-P22",
           "dialogue": [
             {
               "speaker": "李",
-              "jp": "本日はシステム故障について、ご報告を申し上げます。本日14時32分に障害が発生いたしました。",
-              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はシステム<ruby>故障<rt>こしょう</rt></ruby>について、ご<ruby>報告<rt>ほうこく</rt></ruby>を<ruby>申し上げ<rt>もうしあげ</rt></ruby>ます。<ruby>本日<rt>ほんじつ</rt></ruby>14<ruby>時<rt>じ</rt></ruby>32<ruby>分<rt>ふん</rt></ruby>に<ruby>障害<rt>しょうがい</rt></ruby>が<ruby>発生<rt>はっせい</rt></ruby>いたしました。",
-              "zh": "今天就生产系统突发故障向各位领导做紧急通报。系统于今日14点32分发生了异常中断故障。"
+              "jp": "本日はシステム故障について、ご報告を申し上げます。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はシステム<ruby>故障<rt>こしょう</rt></ruby>について、ご<ruby>報告<rt>ほうこく</rt></ruby>を<ruby>申し上げ<rt>もうしあげ</rt></ruby>ます。",
+              "zh": "今天由我就系统故障向各位进行汇报。"
             },
             {
               "speaker": "田中部長",
-              "jp": "状況はどうなっていますか。",
-              "jpWithRuby": "<ruby>状況<rt>じょうきょう</rt></ruby>はどうなっていますか。",
-              "zh": "目前的现场实际状况如何？"
+              "jp": "はい、お願いします。",
+              "jpWithRuby": "はい、お<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "好的，请讲。"
             },
             {
               "speaker": "李",
-              "jp": "データベースの接続プールが枯渇し、新規アクセスがタイムアウトする事象が発生いたしました。",
-              "jpWithRuby": "データベースの<ruby>接続<rt>せつぞく</rt></ruby>プールが<ruby>枯渇<rt>こかつ</rt></ruby>し、<ruby>新規<rt>しんき</rt></ruby>アクセスがタイムアウトする<ruby>事象<rt>じしょう</rt></ruby>が<ruby>発生<rt>はっせい</rt></ruby>いたしました。",
-              "zh": "数据库连接池资源发生耗尽枯竭，导致新发起的业务访问全部出现超时报错。"
+              "jp": "故障は、本日14時32分に発生いたしました。",
+              "jpWithRuby": "<ruby>故障<rt>こしょう</rt></ruby>は、<ruby>本日<rt>ほんじつ</rt></ruby>14<ruby>時<rt>じ</rt></ruby>32<ruby>分<rt>ふん</rt></ruby>に<ruby>発生<rt>はっせい</rt></ruby>いたしました。",
+              "zh": "故障于今天14点32分发生。"
             },
             {
               "speaker": "山田課長",
-              "jp": "影響規模はどのくらいですか。",
-              "jpWithRuby": "<ruby>影響<rt>えいきょう</rt></ruby><ruby>規模<rt>きぼ</rt></ruby>はどのくらいですか。",
-              "zh": "波及的影响规模大概有多大？"
+              "jp": "原因は何ですか。",
+              "jpWithRuby": "<ruby>原因<rt>げんいん</rt></ruby>は<ruby>何<rt>なん</rt></ruby>ですか。",
+              "zh": "原因是什么？"
             },
             {
               "speaker": "李",
-              "jp": "約1時間30分にわたり全ユーザーに影響が及び、約300件のアクセスが失敗いたしました。",
-              "jpWithRuby": "<ruby>約<rt>やく</rt></ruby>1<ruby>時間<rt>じかん</rt></ruby>30<ruby>分<rt>ふん</rt></ruby>にわたり<ruby>全<rt>ぜん</rt></ruby>ユーザーに<ruby>影響<rt>えいきょう</rt></ruby>が<ruby>及び<rt>および</rt></ruby>、<ruby>約<rt>やく</rt></ruby>300<ruby>件<rt>けん</rt></ruby>のアクセスが<ruby>失敗<rt>しっぱい</rt></ruby>いたしました。",
-              "zh": "故障持续波及全量在线用户约1小时30分钟，累计导致约300笔用户请求失败。"
-            },
-            {
-              "speaker": "李",
-              "jp": "なお、データベース上の重要データの破損や消失は一切確認されておりません。",
-              "jpWithRuby": "なお、データベース<ruby>上<rt>じょう</rt></ruby>の<ruby>重要<rt>じゅうよう</rt></ruby>データの<ruby>破損<rt>はそん</rt></ruby>や<ruby>消失<rt>しょうしつ</rt></ruby>は<ruby>一切<rt>いっさい</rt></ruby><ruby>確認<rt>かくにん</rt></ruby>されておりません。",
-              "zh": "值得确认的是，数据库内的核心业务数据并未出现任何损坏或丢失情况。"
+              "jp": "故障の原因は、接続プール枯渇です。",
+              "jpWithRuby": "<ruby>故障<rt>こしょう</rt></ruby>の<ruby>原因<rt>げんいん</rt></ruby>は、<ruby>接続<rt>せつぞく</rt></ruby>プール<ruby>枯渇<rt>こかつ</rt></ruby>です。",
+              "zh": "故障原因是数据库连接池耗尽。"
             },
             {
               "speaker": "田中部長",
-              "jp": "データの無事は確認できたのですね。原因の究明を急いでください。",
-              "jpWithRuby": "データの<ruby>無事<rt>ぶじ</rt></ruby>は<ruby>確認<rt>かくにん</rt></ruby>できたのですね。<ruby>原因<rt>げんいん</rt></ruby>の<ruby>究明<rt>きゅうめい</rt></ruby>を<ruby>急い<rt>いそい</rt></ruby>でください。",
-              "zh": "确认核心数据完好无损就好。请务必抓紧时间查明故障根本诱因。"
+              "jp": "詳細を教えてください。",
+              "jpWithRuby": "<ruby>詳細<rt>しょうさい</rt></ruby>を<ruby>教え<rt>おしえ</rt></ruby>てください。",
+              "zh": "请告知详情。"
+            },
+            {
+              "speaker": "李",
+              "jp": "接続プールの上限は100に対して、120の要求が発生いたしました。",
+              "jpWithRuby": "<ruby>接続<rt>せつぞく</rt></ruby>プールの<ruby>上限<rt>じょうげん</rt></ruby>は100に<ruby>対し<rt>たいし</rt></ruby>て、120の<ruby>要求<rt>ようきゅう</rt></ruby>が<ruby>発生<rt>はっせい</rt></ruby>いたしました。",
+              "zh": "连接池上限为100，却产生了120个并发请求。"
+            },
+            {
+              "speaker": "李",
+              "jp": "原因は、バッチ処理の不具合です。バッチ処理が接続を解放せず保持しておりました。",
+              "jpWithRuby": "<ruby>原因<rt>げんいん</rt></ruby>は、バッチ<ruby>処理<rt>しょり</rt></ruby>の<ruby>不<rt>ふ</rt></ruby><ruby>具合<rt>ぐあい</rt></ruby>です。バッチ<ruby>処理<rt>しょり</rt></ruby>が<ruby>接続<rt>せつぞく</rt></ruby>を<ruby>解放<rt>かいほう</rt></ruby>せず<ruby>保持<rt>ほじ</rt></ruby>しておりました。",
+              "zh": "原因是批处理程序的Bug。批处理未释放连接一直占有着。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "影響範囲は。",
+              "jpWithRuby": "<ruby>影響<rt>えいきょう</rt></ruby><ruby>範囲<rt>はんい</rt></ruby>は。",
+              "zh": "影响范围是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "影響範囲は、全ユーザーです。",
+              "jpWithRuby": "<ruby>影響<rt>えいきょう</rt></ruby><ruby>範囲<rt>はんい</rt></ruby>は、<ruby>全<rt>ぜん</rt></ruby>ユーザーです。",
+              "zh": "影响范围是全体用户。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "影響時間は。",
+              "jpWithRuby": "<ruby>影響<rt>えいきょう</rt></ruby><ruby>時間<rt>じかん</rt></ruby>は。",
+              "zh": "影响时间是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "影響時間は、約1.5時間でございました。アクセス500件、うち300件がタイムアウトいたしました。",
+              "jpWithRuby": "<ruby>影響<rt>えいきょう</rt></ruby><ruby>時間<rt>じかん</rt></ruby>は、<ruby>約<rt>やく</rt></ruby>1.5<ruby>時間<rt>じかん</rt></ruby>でございました。アクセス500<ruby>件<rt>けん</rt></ruby>、うち300<ruby>件<rt>けん</rt></ruby>がタイムアウトいたしました。",
+              "zh": "影响时间约为1.5小时。总访问500件，其中300件发生了超时。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "承知しました。復旧状況を教えてください。",
+              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。<ruby>復旧<rt>ふっきゅう</rt></ruby><ruby>状況<rt>じょうきょう</rt></ruby>を<ruby>教え<rt>おしえ</rt></ruby>てください。",
+              "zh": "明白了。请告诉我恢复情况。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P21-P22"
+          ]
         },
         {
           "pNum": 2,
-          "title": "短文 2：初动应对说明与高级敬语",
-          "theme": "初动应对说明与高级敬语",
-          "objective": "学会汇报应急处置动作（AP重启、批处理中止、热补丁修复、连接池扩容），运用高阶敬语致歉与稳控客户情绪。",
+          "title": "短文 2：故障应急处置3步法与道歉",
+          "theme": "练习 2 · 故障应急处置3步法与道歉",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第20课练习 2（P23-P24）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P23-P24",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "さて、次に復旧対応について説明いたします。",
               "jpWithRuby": "さて、<ruby>次<rt>つぎ</rt></ruby>に<ruby>復旧<rt>ふっきゅう</rt></ruby><ruby>対応<rt>たいおう</rt></ruby>について<ruby>説明<rt>せつめい</rt></ruby>いたします。",
-              "zh": "接下来，我向各位汇报目前的故障应急处置与恢复措施。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "現在どのような初動対応を取りましたか。",
-              "jpWithRuby": "<ruby>現在<rt>げんざい</rt></ruby>どのような<ruby>初動<rt>しょどう</rt></ruby><ruby>対応<rt>たいおう</rt></ruby>を<ruby>取り<rt>とり</rt></ruby>ましたか。",
-              "zh": "目前现场第一时间采取了哪些初期应急处置动作？"
-            },
-            {
-              "speaker": "李",
-              "jp": "まずAPサーバーを再起動して接続をリセットし、システムの応答を一時回復させました。",
-              "jpWithRuby": "まずAPサーバーを<ruby>再<rt>さい</rt></ruby><ruby>起動<rt>きどう</rt></ruby>して<ruby>接続<rt>せつぞく</rt></ruby>をリセットし、システムの<ruby>応答<rt>おうとう</rt></ruby>を<ruby>一時<rt>いちじ</rt></ruby><ruby>回復<rt>かいふく</rt></ruby>させました。",
-              "zh": "首先重启了应用（AP）服务器重置了连接会话，使系统的业务响应得到了暂时性恢复。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "原因となったバッチはどうなっていますか。",
-              "jpWithRuby": "<ruby>原因<rt>げんいん</rt></ruby>となったバッチはどうなっていますか。",
-              "zh": "引发问题的那个后台批处理任务目前怎样了？"
-            },
-            {
-              "speaker": "李",
-              "jp": "当該バッチを直ちに停止し、緊急修正パッチを適用いたしました。",
-              "jpWithRuby": "<ruby>当該<rt>とうがい</rt></ruby>バッチを<ruby>直ちに<rt>ただちに</rt></ruby><ruby>停止<rt>ていし</rt></ruby>し、<ruby>緊急<rt>きんきゅう</rt></ruby><ruby>修正<rt>しゅうせい</rt></ruby>パッチを<ruby>適用<rt>てきよう</rt></ruby>いたしました。",
-              "zh": "已在第一时间紧急中止了该批处理进程，并紧急打上了修复补丁。"
-            },
-            {
-              "speaker": "李",
-              "jp": "さらに接続プールの上限を150へ拡張し、当面のリソース枯渇を防止しております。",
-              "jpWithRuby": "さらに<ruby>接続<rt>せつぞく</rt></ruby>プールの<ruby>上限<rt>じょうげん</rt></ruby>を150へ<ruby>拡張<rt>かくちょう</rt></ruby>し、<ruby>当面<rt>とうめん</rt></ruby>のリソース<ruby>枯渇<rt>こかつ</rt></ruby>を<ruby>防止<rt>ぼうし</rt></ruby>しております。",
-              "zh": "此外，已将数据库连接池上限临时扩充至150，有力防范了近期的资源再次枯竭。"
+              "zh": "那么，接下来我来说明恢复处理措施。"
             },
             {
               "speaker": "田中部長",
-              "jp": "迅速な初動ですね。ご苦労様でした。",
-              "jpWithRuby": "<ruby>迅速<rt>じんそく</rt></ruby>な<ruby>初動<rt>しょどう</rt></ruby>ですね。ご<ruby>苦労<rt>くろう</rt></ruby><ruby>様<rt>さま</rt></ruby>でした。",
-              "zh": "初期应急响应非常迅捷妥当，辛苦你们了。"
+              "jp": "はい、お願いします。",
+              "jpWithRuby": "はい、お<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "好的，拜托了。"
+            },
+            {
+              "speaker": "李",
+              "jp": "復旧対応は、3つの対応を実施いたしました。",
+              "jpWithRuby": "<ruby>復旧<rt>ふっきゅう</rt></ruby><ruby>対応<rt>たいおう</rt></ruby>は、3つの<ruby>対応<rt>たいおう</rt></ruby>を<ruby>実施<rt>じっし</rt></ruby>いたしました。",
+              "zh": "恢复处置共实施了3项应对措施。"
+            },
+            {
+              "speaker": "李",
+              "jp": "1つ目は、AP再起動です。",
+              "jpWithRuby": "1つ<ruby>目<rt>め</rt></ruby>は、AP<ruby>再<rt>さい</rt></ruby><ruby>起動<rt>きどう</rt></ruby>です。",
+              "zh": "第1项是应用服务器（AP）重启。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "2つ目は。",
+              "jpWithRuby": "2つ<ruby>目<rt>め</rt></ruby>は。",
+              "zh": "第2项是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "2つ目は、バッチ停止と緊急パッチの適用です。",
+              "jpWithRuby": "2つ<ruby>目<rt>め</rt></ruby>は、バッチ<ruby>停止<rt>ていし</rt></ruby>と<ruby>緊急<rt>きんきゅう</rt></ruby>パッチの<ruby>適用<rt>てきよう</rt></ruby>です。",
+              "zh": "第2项是暂停批处理并应用紧急补丁。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "3つ目は。",
+              "jpWithRuby": "3つ<ruby>目<rt>め</rt></ruby>は。",
+              "zh": "第3项是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "3つ目は、プール上限の100から150への変更です。",
+              "jpWithRuby": "3つ<ruby>目<rt>め</rt></ruby>は、プール<ruby>上限<rt>じょうげん</rt></ruby>の100から150への<ruby>変更<rt>へんこう</rt></ruby>です。",
+              "zh": "第3项是将连接池上限从100变更到150。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "復旧は完了しましたか。",
+              "jpWithRuby": "<ruby>復旧<rt>ふっきゅう</rt></ruby>は<ruby>完了<rt>かんりょう</rt></ruby>しましたか。",
+              "zh": "恢复工作完成了吗？"
+            },
+            {
+              "speaker": "李",
+              "jp": "はい、これら3つの対応により、復旧を完了いたしました。",
+              "jpWithRuby": "はい、これら3つの<ruby>対応<rt>たいおう</rt></ruby>により、<ruby>復旧<rt>ふっきゅう</rt></ruby>を<ruby>完了<rt>かんりょう</rt></ruby>いたしました。",
+              "zh": "是的，通过这3项措施，恢复工作已完成。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "再発防止は。",
+              "jpWithRuby": "<ruby>再発<rt>さいはつ</rt></ruby><ruby>防止<rt>ぼうし</rt></ruby>は。",
+              "zh": "再发防止对策是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "今後の再発防止につきましては、全力で取り組みます。ご迷惑をおかけしましたこと、深くお詫びを申し上げます。",
+              "jpWithRuby": "<ruby>今後<rt>こんご</rt></ruby>の<ruby>再発<rt>さいはつ</rt></ruby><ruby>防止<rt>ぼうし</rt></ruby>につきましては、<ruby>全力<rt>ぜんりょく</rt></ruby>で<ruby>取り組み<rt>とりくみ</rt></ruby>ます。ご<ruby>迷惑<rt>めいわく</rt></ruby>をおかけしましたこと、<ruby>深く<rt>ふかく</rt></ruby>お<ruby>詫び<rt>わび</rt></ruby>を<ruby>申し上げ<rt>もうしあげ</rt></ruby>ます。",
+              "zh": "关于今后的防止再发，我们将全力以赴推进。给贵方造成了巨大的麻烦，在此深表歉意。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P23-P24"
+          ]
         },
         {
           "pNum": 3,
-          "title": "短文 3：恢复方针对比与利弊协商",
-          "theme": "恢复方针对比与利弊协商",
-          "objective": "熟练运用方案对比话术（1つ目が即時復旧、2つ目が恒久対策完了後復旧），从容阐述各自利弊与建议推荐。",
+          "title": "短文 3：恢复方案两案对比与技术决策",
+          "theme": "练习 3 · 恢复方案两案对比与技术决策",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第20课练习 3（P25-P26）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P25-P26",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "復旧方針については、2つの案がございます。",
               "jpWithRuby": "<ruby>復旧<rt>ふっきゅう</rt></ruby><ruby>方針<rt>ほうしん</rt></ruby>については、2つの<ruby>案<rt>あん</rt></ruby>がございます。",
-              "zh": "关于系统的最终恢复方针，我们准备了2套应对方案。"
+              "zh": "关于恢复方针，我们准备了2个方案。"
             },
             {
               "speaker": "田中部長",
-              "jp": "2つの案の違いを教えてください。",
-              "jpWithRuby": "2つの<ruby>案<rt>あん</rt></ruby>の<ruby>違い<rt>ちがい</rt></ruby>を<ruby>教え<rt>おしえ</rt></ruby>てください。",
-              "zh": "请为我们说明这两套方案的核心差异是什么。"
+              "jp": "説明してください。",
+              "jpWithRuby": "<ruby>説明<rt>せつめい</rt></ruby>してください。",
+              "zh": "请解释一下。"
             },
             {
               "speaker": "李",
-              "jp": "案1は緊急対応完了による即時復旧で、本日中に通常稼働へ戻せますが、恒久対策は別途となります。",
-              "jpWithRuby": "<ruby>案<rt>あん</rt></ruby>1は<ruby>緊急<rt>きんきゅう</rt></ruby><ruby>対応<rt>たいおう</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby>による<ruby>即時<rt>そくじ</rt></ruby><ruby>復旧<rt>ふっきゅう</rt></ruby>で、<ruby>本日<rt>ほんじつ</rt></ruby><ruby>中<rt>ちゅう</rt></ruby>に<ruby>通常<rt>つうじょう</rt></ruby><ruby>稼働<rt>かどう</rt></ruby>へ<ruby>戻せ<rt>もどせ</rt></ruby>ますが、<ruby>恒久<rt>こうきゅう</rt></ruby><ruby>対策<rt>たいさく</rt></ruby>は<ruby>別途<rt>べっと</rt></ruby>となります。",
-              "zh": "方案1是依托现有的应急措施立即恢复上线，今天内即可回归日常运行，但根治性永久对策需要后续另行安排。"
-            },
-            {
-              "speaker": "李",
-              "jp": "案2は接続解放改修と負荷試験を完遂した後に全面復旧する案で、3日間の制限稼働を要します。",
-              "jpWithRuby": "<ruby>案<rt>あん</rt></ruby>2は<ruby>接続<rt>せつぞく</rt></ruby><ruby>解放<rt>かいほう</rt></ruby><ruby>改修<rt>かいしゅう</rt></ruby>と<ruby>負荷<rt>ふか</rt></ruby><ruby>試験<rt>しけん</rt></ruby>を<ruby>完遂<rt>かんすい</rt></ruby>した<ruby>後<rt>あと</rt></ruby>に<ruby>全面<rt>ぜんめん</rt></ruby><ruby>復旧<rt>ふっきゅう</rt></ruby>する<ruby>案<rt>あん</rt></ruby>で、3<ruby>日間<rt>かかん</rt></ruby>の<ruby>制限<rt>せいげん</rt></ruby><ruby>稼働<rt>かどう</rt></ruby>を<ruby>要し<rt>ようし</rt></ruby>ます。",
-              "zh": "方案2是在彻底完成连接释放逻辑重构并做完充分压测后再全面复原，这需要经历为期3天的限制性运行。"
+              "jp": "1つ目は、即時復旧です。恒久対策を別途実施いたします。",
+              "jpWithRuby": "1つ<ruby>目<rt>め</rt></ruby>は、<ruby>即時<rt>そくじ</rt></ruby><ruby>復旧<rt>ふっきゅう</rt></ruby>です。<ruby>恒久<rt>こうきゅう</rt></ruby><ruby>対策<rt>たいさく</rt></ruby>を<ruby>別途<rt>べっと</rt></ruby><ruby>実施<rt>じっし</rt></ruby>いたします。",
+              "zh": "第1案是立即恢复。永久对策另行实施。"
             },
             {
               "speaker": "山田課長",
-              "jp": "李さんとしてはどちらを推奨されますか。",
-              "jpWithRuby": "<ruby>李<rt>り</rt></ruby>さんとしてはどちらを<ruby>推奨<rt>すいしょう</rt></ruby>されますか。",
-              "zh": "以李经理的技术顾问视角，更推荐哪一种方案呢？"
+              "jp": "2つ目は。",
+              "jpWithRuby": "2つ<ruby>目<rt>め</rt></ruby>は。",
+              "zh": "第2案是？"
             },
             {
               "speaker": "李",
-              "jp": "システムの重要性と再発防止を考慮しますと、案2の恒久対策完了後復旧を強く推奨いたします。",
-              "jpWithRuby": "システムの<ruby>重要<rt>じゅうよう</rt></ruby><ruby>性<rt>せい</rt></ruby>と<ruby>再発<rt>さいはつ</rt></ruby><ruby>防止<rt>ぼうし</rt></ruby>を<ruby>考慮<rt>こうりょ</rt></ruby>しますと、<ruby>案<rt>あん</rt></ruby>2の<ruby>恒久<rt>こうきゅう</rt></ruby><ruby>対策<rt>たいさく</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby><ruby>後<rt>ご</rt></ruby><ruby>復旧<rt>ふっきゅう</rt></ruby>を<ruby>強く<rt>つよく</rt></ruby><ruby>推奨<rt>すいしょう</rt></ruby>いたします。",
-              "zh": "兼顾本系统的核心业务重要性与彻底防止故障二次复发，我强烈推荐采用方案2，待永久措施就绪后再全面恢复。"
+              "jp": "2つ目は、恒久対策完了後復旧です。3日間の制限稼働を前提といたします。",
+              "jpWithRuby": "2つ<ruby>目<rt>め</rt></ruby>は、<ruby>恒久<rt>こうきゅう</rt></ruby><ruby>対策<rt>たいさく</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby><ruby>後<rt>ご</rt></ruby><ruby>復旧<rt>ふっきゅう</rt></ruby>です。3<ruby>日間<rt>かかん</rt></ruby>の<ruby>制限<rt>せいげん</rt></ruby><ruby>稼働<rt>かどう</rt></ruby>を<ruby>前提<rt>ぜんてい</rt></ruby>といたします。",
+              "zh": "第2案是永久对策完成后再恢复。以3天的限制运行为前提。"
             },
             {
               "speaker": "田中部長",
-              "jp": "同感です。中途半端な再開で再発するより、3日かけて根本から直しましょう。",
-              "jpWithRuby": "<ruby>同感<rt>どうかん</rt></ruby>です。<ruby>中途<rt>ちゅうと</rt></ruby><ruby>半端<rt>はんぱ</rt></ruby>な<ruby>再開<rt>さいかい</rt></ruby>で<ruby>再発<rt>さいはつ</rt></ruby>するより、3<ruby>日<rt>か</rt></ruby>かけて<ruby>根本<rt>こんぽん</rt></ruby>から<ruby>直し<rt>なおし</rt></ruby>ましょう。",
-              "zh": "我完全赞同。与其草率重启导致二次暴雷，不如踏踏实实用这3天从根子上彻底解决。"
+              "jp": "推奨はどちらですか。",
+              "jpWithRuby": "<ruby>推奨<rt>すいしょう</rt></ruby>はどちらですか。",
+              "zh": "你们推荐哪个？"
+            },
+            {
+              "speaker": "李",
+              "jp": "本件につきましては、後者案を推奨いたします。",
+              "jpWithRuby": "<ruby>本件<rt>ほんけん</rt></ruby>につきましては、<ruby>後者<rt>こうしゃ</rt></ruby><ruby>案<rt>あん</rt></ruby>を<ruby>推奨<rt>すいしょう</rt></ruby>いたします。",
+              "zh": "关于此事，我们推荐后者方案。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "推奨理由は。",
+              "jpWithRuby": "<ruby>推奨<rt>すいしょう</rt></ruby><ruby>理由<rt>りゆう</rt></ruby>は。",
+              "zh": "推荐理由是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "恒久対策による確実な復旧が可能なためです。",
+              "jpWithRuby": "<ruby>恒久<rt>こうきゅう</rt></ruby><ruby>対策<rt>たいさく</rt></ruby>による<ruby>確実<rt>かくじつ</rt></ruby>な<ruby>復旧<rt>ふっきゅう</rt></ruby>が<ruby>可能<rt>かのう</rt></ruby>なためです。",
+              "zh": "因为通过永久对策能够实现切实稳妥的恢复。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "3日間の制限稼働の内容は。",
+              "jpWithRuby": "3<ruby>日間<rt>かかん</rt></ruby>の<ruby>制限<rt>せいげん</rt></ruby><ruby>稼働<rt>かどう</rt></ruby>の<ruby>内容<rt>ないよう</rt></ruby>は。",
+              "zh": "3天限制运行的具体内容是？"
+            },
+            {
+              "speaker": "李",
+              "jp": "バッチ処理を夜間に限定し、日中の接続負荷を抑制いたします。",
+              "jpWithRuby": "バッチ<ruby>処理<rt>しょり</rt></ruby>を<ruby>夜間<rt>やかん</rt></ruby>に<ruby>限定<rt>げんてい</rt></ruby>し、<ruby>日中<rt>にっちゅう</rt></ruby>の<ruby>接続<rt>せつぞく</rt></ruby><ruby>負荷<rt>ふか</rt></ruby>を<ruby>抑制<rt>よくせい</rt></ruby>いたします。",
+              "zh": "将批处理限定在夜间运行，抑制白天的连接负载。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "承知しました。ご判断をお伺いします。",
+              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。ご<ruby>判断<rt>はんだん</rt></ruby>をお<ruby>伺い<rt>うかがい</rt></ruby>します。",
+              "zh": "明白了。我们来做研判。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P25-P26"
+          ]
         },
         {
           "pNum": 4,
-          "title": "短文 4：概括与共识确认・Q&A收尾",
-          "theme": "概括与共识确认・Q&A收尾",
-          "objective": "掌握故障汇报结束时的正式汇报闭环、正式调查报告提交承诺（明日までに提出）与郑重致歉表达。",
+          "title": "短文 4：恢复方针确认与后续承诺",
+          "theme": "练习 4 · 恢复方针确认与后续承诺",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第20课练习 4（P27-P28）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P27-P28",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "本日の故障報告について、ご質問はないでしょうか。",
               "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>の<ruby>故障<rt>こしょう</rt></ruby><ruby>報告<rt>ほうこく</rt></ruby>について、ご<ruby>質問<rt>しつもん</rt></ruby>はないでしょうか。",
-              "zh": "关于今天的故障应急汇报，各位领导还有什么要询问的吗？"
+              "zh": "关于今天的故障报告，各位有什么问题吗？"
             },
             {
               "speaker": "山田課長",
-              "jp": "恒久対策のスケジュール詳細を教えてください。",
-              "jpWithRuby": "<ruby>恒久<rt>こうきゅう</rt></ruby><ruby>対策<rt>たいさく</rt></ruby>のスケジュール<ruby>詳細<rt>しょうさい</rt></ruby>を<ruby>教え<rt>おしえ</rt></ruby>てください。",
-              "zh": "请告诉我们永久治理对策的具体推进时间表。"
+              "jp": "恒久対策の完了予定は。",
+              "jpWithRuby": "<ruby>恒久<rt>こうきゅう</rt></ruby><ruby>対策<rt>たいさく</rt></ruby>の<ruby>完了<rt>かんりょう</rt></ruby><ruby>予定<rt>よてい</rt></ruby>は。",
+              "zh": "永久对策的预计完成时间是？"
             },
             {
               "speaker": "李",
-              "jp": "明日午前に修正パッチの検証を完了し、明後日に負荷試験、3日目の朝に全面復旧を予定しております。",
-              "jpWithRuby": "<ruby>明日<rt>あす</rt></ruby><ruby>午前<rt>ごぜん</rt></ruby>に<ruby>修正<rt>しゅうせい</rt></ruby>パッチの<ruby>検証<rt>けんしょう</rt></ruby>を<ruby>完了<rt>かんりょう</rt></ruby>し、<ruby>明後日<rt>みょうごにち</rt></ruby>に<ruby>負荷<rt>ふか</rt></ruby><ruby>試験<rt>しけん</rt></ruby>、3<ruby>日<rt>か</rt></ruby><ruby>目<rt>め</rt></ruby>の<ruby>朝<rt>あさ</rt></ruby>に<ruby>全面<rt>ぜんめん</rt></ruby><ruby>復旧<rt>ふっきゅう</rt></ruby>を<ruby>予定<rt>よてい</rt></ruby>しております。",
-              "zh": "计划明天上午完成修复补丁验证，后天完成全链路压测，第三天早晨全面恢复日常正式运行。"
+              "jp": "3日後の完了を予定しております。",
+              "jpWithRuby": "3<ruby>日<rt>か</rt></ruby><ruby>後<rt>ご</rt></ruby>の<ruby>完了<rt>かんりょう</rt></ruby>を<ruby>予定<rt>よてい</rt></ruby>しております。",
+              "zh": "预定3天后完成。"
             },
             {
               "speaker": "田中部長",
-              "jp": "進捗状況は毎日17時にメールで共有してください。",
-              "jpWithRuby": "<ruby>進捗<rt>しんちょく</rt></ruby><ruby>状況<rt>じょうきょう</rt></ruby>は<ruby>毎日<rt>まいにち</rt></ruby>17<ruby>時<rt>じ</rt></ruby>にメールで<ruby>共有<rt>きょうゆう</rt></ruby>してください。",
-              "zh": "后续进展请在每天下午17点整通过邮件向我们同步汇报。"
+              "jp": "本件については、社内確認後、正式回答いたします。",
+              "jpWithRuby": "<ruby>本件<rt>ほんけん</rt></ruby>については、<ruby>社内<rt>しゃない</rt></ruby><ruby>確認<rt>かくにん</rt></ruby><ruby>後<rt>ご</rt></ruby>、<ruby>正式<rt>せいしき</rt></ruby><ruby>回答<rt>かいとう</rt></ruby>いたします。",
+              "zh": "关于此事，我们在公司内部确认后正式答复。"
             },
             {
               "speaker": "李",
-              "jp": "承知いたしました。毎日定刻に進捗をご報告申し上げます。",
-              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>いたしました。<ruby>毎日<rt>まいにち</rt></ruby><ruby>定刻<rt>ていこく</rt></ruby>に<ruby>進捗<rt>しんちょく</rt></ruby>をご<ruby>報告<rt>ほうこく</rt></ruby><ruby>申し上げ<rt>もうしあげ</rt></ruby>ます。",
-              "zh": "遵命，我们定会严格按照规定时刻每天向各位通报最新进展。"
+              "jp": "承知しました。確認の上、正式に復旧方針を確定いたします。",
+              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。<ruby>確認<rt>かくにん</rt></ruby>の<ruby>上<rt>うえ</rt></ruby>、<ruby>正式<rt>せいしき</rt></ruby>に<ruby>復旧<rt>ふっきゅう</rt></ruby><ruby>方針<rt>ほうしん</rt></ruby>を<ruby>確定<rt>かくてい</rt></ruby>いたします。",
+              "zh": "明白了。确认后我们将正式确定恢复方针。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "修正が必要な点がございましたら、速やかに対応してください。",
+              "jpWithRuby": "<ruby>修正<rt>しゅうせい</rt></ruby>が<ruby>必要<rt>ひつよう</rt></ruby>な<ruby>点<rt>てん</rt></ruby>がございましたら、<ruby>速やか<rt>すみやか</rt></ruby>に<ruby>対応<rt>たいおう</rt></ruby>してください。",
+              "zh": "如果有需要修正的地方，请迅速处理。"
             },
             {
               "speaker": "李",
-              "jp": "詳細な障害報告書をまとめ、明日正午までにお送りいたします。多大なご心配をおかけし誠に申し訳ございませんでした。",
-              "jpWithRuby": "<ruby>詳細<rt>しょうさい</rt></ruby>な<ruby>障害<rt>しょうがい</rt></ruby><ruby>報告<rt>ほうこく</rt></ruby><ruby>書<rt>しょ</rt></ruby>をまとめ、<ruby>明日<rt>あす</rt></ruby><ruby>正午<rt>しょうご</rt></ruby>までにお<ruby>送り<rt>おくり</rt></ruby>いたします。<ruby>多大<rt>ただい</rt></ruby>なご<ruby>心配<rt>しんぱい</rt></ruby>をおかけし<ruby>誠<rt>まこと</rt></ruby>に<ruby>申し訳<rt>もうしわけ</rt></ruby>ございませんでした。",
-              "zh": "详尽的故障调查根因分析报告将在明日中午前呈送二位。给各位带来巨大担忧，再次深表歉意。"
+              "jp": "かしこまりました。速やかに対応いたします。",
+              "jpWithRuby": "かしこまりました。<ruby>速やか<rt>すみやか</rt></ruby>に<ruby>対応<rt>たいおう</rt></ruby>いたします。",
+              "zh": "明白，我们会迅速处理。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "復旧方針について、ご了承をいただけますでしょうか。",
+              "jpWithRuby": "<ruby>復旧<rt>ふっきゅう</rt></ruby><ruby>方針<rt>ほうしん</rt></ruby>について、ご<ruby>了承<rt>りょうしょう</rt></ruby>をいただけますでしょうか。",
+              "zh": "关于恢复方针，能得到您的认可吗？"
+            },
+            {
+              "speaker": "李",
+              "jp": "ありがとうございます。引き続き、よろしくお願いします。",
+              "jpWithRuby": "ありがとうございます。<ruby>引き続き<rt>ひきつづき</rt></ruby>、よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "非常感谢。接下来也请多多关照。"
+            },
+            {
+              "speaker": "李",
+              "jp": "それでは、本日のご報告は以上とさせていただきます。",
+              "jpWithRuby": "それでは、<ruby>本日<rt>ほんじつ</rt></ruby>のご<ruby>報告<rt>ほうこく</rt></ruby>は<ruby>以上<rt>いじょう</rt></ruby>とさせていただきます。",
+              "zh": "那么，今天的汇报就到此结束。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "本日はお時間をいただきまして、ありがとうございます。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はお<ruby>時間<rt>じかん</rt></ruby>をいただきまして、ありがとうございます。",
+              "zh": "今天非常感谢您抽出时间。"
+            },
+            {
+              "speaker": "李",
+              "jp": "ご迷惑をおかけしましたこと、改めてお詫びを申し上げます。",
+              "jpWithRuby": "ご<ruby>迷惑<rt>めいわく</rt></ruby>をおかけしましたこと、<ruby>改めて<rt>あらためて</rt></ruby>お<ruby>詫び<rt>わび</rt></ruby>を<ruby>申し上げ<rt>もうしあげ</rt></ruby>ます。",
+              "zh": "给贵方添了诸多麻烦，在此再次致以诚挚的歉意。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P27-P28"
+          ]
         },
         {
           "pNum": 5,
-          "title": "短文 5：生产故障综合汇报：发生➜原因➜对策➜方针➜共识",
-          "theme": "生产故障综合汇报：发生➜原因➜对策➜方针➜共识",
-          "objective": "综合演练生产故障危机公关全流程：开场致歉 ➜ 故障现象 ➜ 技术根因 ➜ 初动三板斧 ➜ 恒久方针对比 ➜ 客户拍板 ➜ 结案承诺。",
+          "title": "短文 5：事故应对全流程综合演练",
+          "theme": "练习 5 · 事故应对全流程综合演练",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第20课练习 5（P29-P30）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P29-P30",
           "dialogue": [
             {
               "speaker": "李",
-              "jp": "本日はシステム故障について、ご報告を申し上げます。多大なるご迷惑をおかけし深くお詫び申し上げます。",
-              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はシステム<ruby>故障<rt>こしょう</rt></ruby>について、ご<ruby>報告<rt>ほうこく</rt></ruby>を<ruby>申し上げ<rt>もうしあげ</rt></ruby>ます。<ruby>多大<rt>ただい</rt></ruby>なるご<ruby>迷惑<rt>めいわく</rt></ruby>をおかけし<ruby>深く<rt>ふかく</rt></ruby>お<ruby>詫び<rt>わび</rt></ruby><ruby>申し上げ<rt>もうしあげ</rt></ruby>ます。",
-              "zh": "今天就本次系统故障做正式综合汇报。给贵司业务造成重大困扰，在此致以最深切的歉意。"
+              "jp": "本日はシステム故障について、ご報告を申し上げます。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はシステム<ruby>故障<rt>こしょう</rt></ruby>について、ご<ruby>報告<rt>ほうこく</rt></ruby>を<ruby>申し上げ<rt>もうしあげ</rt></ruby>ます。",
+              "zh": "今天由我就系统故障向各位进行汇报。"
             },
             {
               "speaker": "田中部長",
-              "jp": "説明をお願いします。",
-              "jpWithRuby": "<ruby>説明<rt>せつめい</rt></ruby>をお<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "请做具体说明。"
+              "jp": "よろしくお願いします。",
+              "jpWithRuby": "よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "拜托了。"
             },
             {
               "speaker": "李",
-              "jp": "接続プール枯渇により一部停止しましたが、AP再起動とパッチ適用により現在は安定稼働しております。",
-              "jpWithRuby": "<ruby>接続<rt>せつぞく</rt></ruby>プール<ruby>枯渇<rt>こかつ</rt></ruby>により<ruby>一部<rt>いちぶ</rt></ruby><ruby>停止<rt>ていし</rt></ruby>しましたが、AP<ruby>再<rt>さい</rt></ruby><ruby>起動<rt>きどう</rt></ruby>とパッチ<ruby>適用<rt>てきよう</rt></ruby>により<ruby>現在<rt>げんざい</rt></ruby>は<ruby>安定<rt>あんてい</rt></ruby><ruby>稼働<rt>かどう</rt></ruby>しております。",
-              "zh": "此前因连接池耗尽导致部分服务中断，通过重启AP服务与紧急打上补丁，目前系统已恢复平稳受控运行。"
+              "jp": "故障は、本日14時32分に発生いたしました。原因は、接続プール枯渇です。",
+              "jpWithRuby": "<ruby>故障<rt>こしょう</rt></ruby>は、<ruby>本日<rt>ほんじつ</rt></ruby>14<ruby>時<rt>じ</rt></ruby>32<ruby>分<rt>ふん</rt></ruby>に<ruby>発生<rt>はっせい</rt></ruby>いたしました。<ruby>原因<rt>げんいん</rt></ruby>は、<ruby>接続<rt>せつぞく</rt></ruby>プール<ruby>枯渇<rt>こかつ</rt></ruby>です。",
+              "zh": "故障于今天14点32分发生。原因是连接池耗尽。"
+            },
+            {
+              "speaker": "李",
+              "jp": "バッチ処理の不具合により、接続が解放されず枯渇いたしました。",
+              "jpWithRuby": "バッチ<ruby>処理<rt>しょり</rt></ruby>の<ruby>不<rt>ふ</rt></ruby><ruby>具合<rt>ぐあい</rt></ruby>により、<ruby>接続<rt>せつぞく</rt></ruby>が<ruby>解放<rt>かいほう</rt></ruby>されず<ruby>枯渇<rt>こかつ</rt></ruby>いたしました。",
+              "zh": "由于批处理程序的缺陷，连接未被释放导致耗尽。"
+            },
+            {
+              "speaker": "李",
+              "jp": "影響範囲は全ユーザー、影響時間は約1.5時間でございました。",
+              "jpWithRuby": "<ruby>影響<rt>えいきょう</rt></ruby><ruby>範囲<rt>はんい</rt></ruby>は<ruby>全<rt>ぜん</rt></ruby>ユーザー、<ruby>影響<rt>えいきょう</rt></ruby><ruby>時間<rt>じかん</rt></ruby>は<ruby>約<rt>やく</rt></ruby>1.5<ruby>時間<rt>じかん</rt></ruby>でございました。",
+              "zh": "影响范围是全体用户，影响时间约为1.5小时。"
             },
             {
               "speaker": "山田課長",
-              "jp": "恒久対策を最優先で進める方針で一致しましたね。",
-              "jpWithRuby": "<ruby>恒久<rt>こうきゅう</rt></ruby><ruby>対策<rt>たいさく</rt></ruby>を<ruby>最<rt>さい</rt></ruby><ruby>優先<rt>ゆうせん</rt></ruby>で<ruby>進める<rt>すすめる</rt></ruby><ruby>方針<rt>ほうしん</rt></ruby>で<ruby>一致<rt>いっち</rt></ruby>しましたね。",
-              "zh": "双方已经一致达成了以永久根治对策为最高优先级推进的方针，对吧。"
+              "jp": "復旧対応は。",
+              "jpWithRuby": "<ruby>復旧<rt>ふっきゅう</rt></ruby><ruby>対応<rt>たいおう</rt></ruby>は。",
+              "zh": "恢复应对是？"
             },
             {
               "speaker": "李",
-              "jp": "はい。3日間の機能制限稼働を経て、万全の状態で通常稼働へ復帰いたします。",
-              "jpWithRuby": "はい。3<ruby>日間<rt>かかん</rt></ruby>の<ruby>機能<rt>きのう</rt></ruby><ruby>制限<rt>せいげん</rt></ruby><ruby>稼働<rt>かどう</rt></ruby>を<ruby>経<rt>へ</rt></ruby>て、<ruby>万全<rt>ばんぜん</rt></ruby>の<ruby>状態<rt>じょうたい</rt></ruby>で<ruby>通常<rt>つうじょう</rt></ruby><ruby>稼働<rt>かどう</rt></ruby>へ<ruby>復帰<rt>ふっき</rt></ruby>いたします。",
-              "zh": "是的。在平稳度过这3天的功能限制期后，系统将以万全之姿全面回归正式日常运转。"
+              "jp": "AP再起動・バッチ停止+緊急パッチ・プール上限100→150の3対応を実施し、復旧を完了いたしました。",
+              "jpWithRuby": "AP<ruby>再<rt>さい</rt></ruby><ruby>起動<rt>きどう</rt></ruby>・バッチ<ruby>停止<rt>ていし</rt></ruby>+<ruby>緊急<rt>きんきゅう</rt></ruby>パッチ・プール<ruby>上限<rt>じょうげん</rt></ruby>100→150の3<ruby>対応<rt>たいおう</rt></ruby>を<ruby>実施<rt>じっし</rt></ruby>し、<ruby>復旧<rt>ふっきゅう</rt></ruby>を<ruby>完了<rt>かんりょう</rt></ruby>いたしました。",
+              "zh": "实施了AP重启、暂停批处理加紧急补丁、连接池上限100改150这3项对策，已完成了恢复。"
             },
             {
               "speaker": "田中部長",
-              "jp": "頼みましたよ。再発防止を徹底してください。",
-              "jpWithRuby": "<ruby>頼み<rt>たのみ</rt></ruby>ましたよ。<ruby>再発<rt>さいはつ</rt></ruby><ruby>防止<rt>ぼうし</rt></ruby>を<ruby>徹底<rt>てってい</rt></ruby>してください。",
-              "zh": "全拜托你们了，请务必把彻底杜绝复发的各项防线筑牢。"
+              "jp": "復旧方針は。",
+              "jpWithRuby": "<ruby>復旧<rt>ふっきゅう</rt></ruby><ruby>方針<rt>ほうしん</rt></ruby>は。",
+              "zh": "恢复方针是？"
             },
             {
               "speaker": "李",
-              "jp": "全力を尽くして対応いたします。",
-              "jpWithRuby": "<ruby>全力<rt>ぜんりょく</rt></ruby>を<ruby>尽くし<rt>つくし</rt></ruby>て<ruby>対応<rt>たいおう</rt></ruby>いたします。",
-              "zh": "我们必当竭尽全力，妥善落实到位。"
+              "jp": "即時復旧と恒久対策完了後復旧の2案がございます。本件は後者案を推奨いたします。",
+              "jpWithRuby": "<ruby>即時<rt>そくじ</rt></ruby><ruby>復旧<rt>ふっきゅう</rt></ruby>と<ruby>恒久<rt>こうきゅう</rt></ruby><ruby>対策<rt>たいさく</rt></ruby><ruby>完了<rt>かんりょう</rt></ruby><ruby>後<rt>ご</rt></ruby><ruby>復旧<rt>ふっきゅう</rt></ruby>の2<ruby>案<rt>あん</rt></ruby>がございます。<ruby>本件<rt>ほんけん</rt></ruby>は<ruby>後者<rt>こうしゃ</rt></ruby><ruby>案<rt>あん</rt></ruby>を<ruby>推奨<rt>すいしょう</rt></ruby>いたします。",
+              "zh": "有立即恢复和永久对策完成后恢复2个方案。本案我们推荐后者方案。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "復旧方針について、ご了承をいただけますでしょうか。",
+              "jpWithRuby": "<ruby>復旧<rt>ふっきゅう</rt></ruby><ruby>方針<rt>ほうしん</rt></ruby>について、ご<ruby>了承<rt>りょうしょう</rt></ruby>をいただけますでしょうか。",
+              "zh": "关于恢复方针，能得到您的认可吗？"
+            },
+            {
+              "speaker": "李",
+              "jp": "ありがとうございます。それでは、本日のご報告は以上とさせていただきます。",
+              "jpWithRuby": "ありがとうございます。それでは、<ruby>本日<rt>ほんじつ</rt></ruby>のご<ruby>報告<rt>ほうこく</rt></ruby>は<ruby>以上<rt>いじょう</rt></ruby>とさせていただきます。",
+              "zh": "非常感谢。那么，今天的汇报就到此结束。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "本日はお時間をいただきまして、ありがとうございます。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はお<ruby>時間<rt>じかん</rt></ruby>をいただきまして、ありがとうございます。",
+              "zh": "今天非常感谢您抽出时间。"
+            },
+            {
+              "speaker": "李",
+              "jp": "ご迷惑をおかけしましたこと、改めてお詫びを申し上げます。",
+              "jpWithRuby": "ご<ruby>迷惑<rt>めいわく</rt></ruby>をおかけしましたこと、<ruby>改めて<rt>あらためて</rt></ruby>お<ruby>詫び<rt>わび</rt></ruby>を<ruby>申し上げ<rt>もうしあげ</rt></ruby>ます。",
+              "zh": "给贵司造成的困扰，再次深表歉意。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P29-P30"
+          ]
         }
       ],
       "grammarPoints": [
@@ -9764,7 +10190,7 @@ window.JAPANESE_KNOWLEDGE_BASE = {
       "id": "scene-21",
       "sceneNumber": 21,
       "badge": "物流DX调研",
-      "title": "场景 21：物流配送管理系统需求调研",
+      "title": "场景 21：物流配送管理システム（WMS/TMS）業務現状ヒアリング",
       "theme": "配送状态不透明 · 人工经验排车低效 · 路线缺乏优化与空驶率高",
       "domain": "需求定义领域（物流与供应链数字化转型）",
       "background": "客户方物流部门长期面临配送途中货物状态无法实时掌握、派车全凭老师傅经验手工调度、配送路线未最优化导致2成空驶等三大瓶颈。田中部长的经典回答在此场景中诞生！",
@@ -11827,293 +12253,371 @@ window.JAPANESE_KNOWLEDGE_BASE = {
       "practiceTexts": [
         {
           "pNum": 1,
-          "title": "短文 1：系统化需求说明：3大功能复句表述",
-          "theme": "系统化需求说明：3大功能复句表述",
-          "objective": "掌握用长复句完整交代“现状痛点 ➜ 技术手段 ➜ 业务目标”的对日需求分析核心表达，熟练运用GPS数据更新频度（30秒）进行定量说服。",
+          "title": "短文 1：系统化需求说明：3大功能复句表述与多句连接",
+          "theme": "练习 1 · 系统化需求说明：3大功能复句表述与多句连接",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第22课练习 1（P31-P32）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P31-P32",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "それでは、前回ヒアリングした内容に基づきまして、システム化の方向性をご説明します。",
               "jpWithRuby": "それでは、<ruby>前回<rt>ぜんかい</rt></ruby>ヒアリングした<ruby>内容<rt>ないよう</rt></ruby>に<ruby>基づき<rt>もとづき</rt></ruby>まして、システム<ruby>化<rt>か</rt></ruby>の<ruby>方向<rt>ほうこう</rt></ruby><ruby>性<rt>せい</rt></ruby>をご<ruby>説明<rt>せつめい</rt></ruby>します。",
-              "zh": "那么，立足于上次向各位调研听取的内容，今天我来汇报系统化落地的总体建设方向。"
+              "zh": "那么，基于上次调研的内容，我来说明系统化方向。"
             },
             {
               "speaker": "田中部長",
               "jp": "はい、お願いします。",
               "jpWithRuby": "はい、お<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "好的，请讲。"
+              "zh": "好的，请。"
             },
             {
               "speaker": "李",
               "jp": "配送追跡の可視化につきましては、GPSデータを活用してリアルタイムに荷物の位置を把握する機能を実装します。",
               "jpWithRuby": "<ruby>配送<rt>はいそう</rt></ruby><ruby>追跡<rt>ついせき</rt></ruby>の<ruby>可視<rt>かし</rt></ruby><ruby>化<rt>か</rt></ruby>につきましては、GPSデータを<ruby>活用<rt>かつよう</rt></ruby>してリアルタイムに<ruby>荷物<rt>にもつ</rt></ruby>の<ruby>位置<rt>いち</rt></ruby>を<ruby>把握<rt>はあく</rt></ruby>する<ruby>機能<rt>きのう</rt></ruby>を<ruby>実装<rt>じっそう</rt></ruby>します。",
-              "zh": "在物流配送可视化方面，我们将利用 GPS 定位数据，开发实时掌控货物在途物理位置的核心功能。"
+              "zh": "关于配送追踪可视化，我们将实现利用GPS数据实时把握货物位置的功能。"
             },
             {
               "speaker": "山田課長",
-              "jp": "GPSデータの更新頻度はどのくらいになりますか。",
-              "jpWithRuby": "GPSデータの<ruby>更新<rt>こうしん</rt></ruby><ruby>頻度<rt>ひんど</rt></ruby>はどのくらいになりますか。",
-              "zh": "GPS 数据的刷新频率大概是多长时间一次呢？"
+              "jp": "はい、そこなんですが、GPSデータの更新頻度はどのくらいになりますか。",
+              "jpWithRuby": "はい、そこなんですが、GPSデータの<ruby>更新<rt>こうしん</rt></ruby><ruby>頻度<rt>ひんど</rt></ruby>はどのくらいになりますか。",
+              "zh": "好的，正好想问，GPS数据的更新频率是多少？"
             },
             {
               "speaker": "李",
               "jp": "ご質問ありがとうございます。GPSデータは30秒ごとに受信し、リアルタイムに荷物の位置を更新します。",
               "jpWithRuby": "ご<ruby>質問<rt>しつもん</rt></ruby>ありがとうございます。GPSデータは30<ruby>秒<rt>びょう</rt></ruby>ごとに<ruby>受信<rt>じゅしん</rt></ruby>し、リアルタイムに<ruby>荷物<rt>にもつ</rt></ruby>の<ruby>位置<rt>いち</rt></ruby>を<ruby>更新<rt>こうしん</rt></ruby>します。",
-              "zh": "感谢您的提问。GPS 数据将按每30秒一次的高频进行接收，并实时更新包裹地图坐标。"
+              "zh": "非常感谢您的提问。GPS数据每30秒接收一次，实时更新货物位置。"
             },
             {
               "speaker": "山田課長",
               "jp": "30秒なら十分ですね。",
               "jpWithRuby": "30<ruby>秒<rt>びょう</rt></ruby>なら<ruby>十分<rt>じゅうぶん</rt></ruby>ですね。",
-              "zh": "30秒的话精度完全足够了。"
+              "zh": "30秒的话就足够了。"
             },
             {
               "speaker": "李",
-              "jp": "次に、配車の自動化につきましては、アルゴリズムにより自動化することで、所要時間を2時間から30分に短縮します。",
-              "jpWithRuby": "<ruby>次<rt>つぎ</rt></ruby>に、<ruby>配車<rt>はいしゃ</rt></ruby>の<ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>につきましては、アルゴリズムにより<ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>することで、<ruby>所要<rt>しょよう</rt></ruby><ruby>時間<rt>じかん</rt></ruby>を2<ruby>時間<rt>じかん</rt></ruby>から30<ruby>分<rt>ふん</rt></ruby>に<ruby>短縮<rt>たんしゅく</rt></ruby>します。",
-              "zh": "其次在智能派车自动化方面，通过算法智能运算，将每天原本耗时2小时的人工作业大幅压缩至30分钟。"
+              "jp": "次に、配車の自動化につきましては、現在手作業で行っている配車作業をアルゴリズムにより自動化することで、大幅な効率向上を実現します。所要時間は現在2時間から30分に短縮される見込みです。",
+              "jpWithRuby": "<ruby>次<rt>つぎ</rt></ruby>に、<ruby>配車<rt>はいしゃ</rt></ruby>の<ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>につきましては、<ruby>現在<rt>げんざい</rt></ruby><ruby>手<rt>て</rt></ruby><ruby>作業<rt>さぎょう</rt></ruby>で<ruby>行っ<rt>いっ</rt></ruby>ている<ruby>配車<rt>はいしゃ</rt></ruby><ruby>作業<rt>さぎょう</rt></ruby>をアルゴリズムにより<ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>することで、<ruby>大幅<rt>おおはば</rt></ruby>な<ruby>効率<rt>こうりつ</rt></ruby><ruby>向上<rt>こうじょう</rt></ruby>を<ruby>実現<rt>じつげん</rt></ruby>します。<ruby>所要<rt>しょよう</rt></ruby><ruby>時間<rt>じかん</rt></ruby>は<ruby>現在<rt>げんざい</rt></ruby>2<ruby>時間<rt>じかん</rt></ruby>から30<ruby>分<rt>ふん</rt></ruby>に<ruby>短縮<rt>たんしゅく</rt></ruby>される<ruby>見込み<rt>みこみ</rt></ruby>です。",
+              "zh": "接下来，关于配车自动化，通过算法将现在手工作业的配车作业自动化，实现效率的大幅提升。所需时间预计从现在的2小时缩短到30分钟左右。"
             },
             {
               "speaker": "田中部長",
               "jp": "2時間から30分はすごいですね。",
               "jpWithRuby": "2<ruby>時間<rt>じかん</rt></ruby>から30<ruby>分<rt>ふん</rt></ruby>はすごいですね。",
-              "zh": "从2小时缩减到30分钟，这个成效太显著了。"
+              "zh": "从2小时缩短到30分钟太厉害了。"
             },
             {
               "speaker": "李",
-              "jp": "さらに、お客様向けの荷物追跡画面をご提供します。ウェブブラウザからアクセス可能です。",
-              "jpWithRuby": "さらに、お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby><ruby>向け<rt>むけ</rt></ruby>の<ruby>荷物<rt>にもつ</rt></ruby><ruby>追跡<rt>ついせき</rt></ruby><ruby>画面<rt>がめん</rt></ruby>をご<ruby>提供<rt>ていきょう</rt></ruby>します。ウェブブラウザからアクセス<ruby>可能<rt>かのう</rt></ruby>です。",
-              "zh": "此外，我们还将面向终端客户提供专属的物流轨迹查询界面，直接通过网页浏览器即可随时查阅。"
+              "jp": "さらに、お客様向けの荷物追跡画面をご提供します。ウェブブラウザからアクセス可能で、荷物の配送状況がご確認いただけます。",
+              "jpWithRuby": "さらに、お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby><ruby>向け<rt>むけ</rt></ruby>の<ruby>荷物<rt>にもつ</rt></ruby><ruby>追跡<rt>ついせき</rt></ruby><ruby>画面<rt>がめん</rt></ruby>をご<ruby>提供<rt>ていきょう</rt></ruby>します。ウェブブラウザからアクセス<ruby>可能<rt>かのう</rt></ruby>で、<ruby>荷物<rt>にもつ</rt></ruby>の<ruby>配送<rt>はいそう</rt></ruby><ruby>状況<rt>じょうきょう</rt></ruby>がご<ruby>確認<rt>かくにん</rt></ruby>いただけます。",
+              "zh": "此外，我们还提供面向客户的货物追踪画面。可以通过Web浏览器访问，能够确认货物的配送情况。"
             },
             {
               "speaker": "田中部長",
-              "jp": "お客様からも見えるのは非常に良いですね。",
-              "jpWithRuby": "お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby>からも<ruby>見える<rt>みえる</rt></ruby>のは<ruby>非常<rt>ひじょう</rt></ruby>に<ruby>良い<rt>よい</rt></ruby>ですね。",
-              "zh": "客户也能直接看到进度，这个体验非常棒。"
+              "jp": "お客様からも見えるのは良いですね。",
+              "jpWithRuby": "お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby>からも<ruby>見える<rt>みえる</rt></ruby>のは<ruby>良い<rt>よい</rt></ruby>ですね。",
+              "zh": "客户也能看到这很好。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P31-P32"
+          ]
         },
         {
           "pNum": 2,
-          "title": "短文 2：顺接逆接连接表达：因果与转折",
-          "theme": "顺接逆接连接表达：因果与转折",
-          "objective": "熟练掌握「〜することで、〜できます（顺接）」与「〜ものの、〜が必要です / ただし〜（逆接）」的交替运用，严谨阐述开发工期与网络延迟回退机制。",
+          "title": "短文 2：顺接逆接连接表达：需求说明中的因果与转折",
+          "theme": "练习 2 · 顺接与逆接连接表达：因果与转折",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第22课练习 2（P33-P34）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P33-P34",
           "dialogue": [
             {
               "speaker": "李",
-              "jp": "それでは、各機能の詳細についてご説明します。まず配車作業を自動化することで、作業時間を30分に短縮できます。",
-              "jpWithRuby": "それでは、<ruby>各<rt>かく</rt></ruby><ruby>機能<rt>きのう</rt></ruby>の<ruby>詳細<rt>しょうさい</rt></ruby>についてご<ruby>説明<rt>せつめい</rt></ruby>します。まず<ruby>配車<rt>はいしゃ</rt></ruby><ruby>作業<rt>さぎょう</rt></ruby>を<ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>することで、<ruby>作業<rt>さぎょう</rt></ruby><ruby>時間<rt>じかん</rt></ruby>を30<ruby>分<rt>ふん</rt></ruby>に<ruby>短縮<rt>たんしゅく</rt></ruby>できます。",
-              "zh": "那么，我来详细汇报各项子功能的具体实现。首先通过派车调度自动化，可将日常作业时间缩减至30分钟。"
+              "jp": "それでは、各機能の詳細についてご説明します。まず配車作業を自動化することで、作業時間を2時間から30分に短縮できます。",
+              "jpWithRuby": "それでは、<ruby>各<rt>かく</rt></ruby><ruby>機能<rt>きのう</rt></ruby>の<ruby>詳細<rt>しょうさい</rt></ruby>についてご<ruby>説明<rt>せつめい</rt></ruby>します。まず<ruby>配車<rt>はいしゃ</rt></ruby><ruby>作業<rt>さぎょう</rt></ruby>を<ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>することで、<ruby>作業<rt>さぎょう</rt></ruby><ruby>時間<rt>じかん</rt></ruby>を2<ruby>時間<rt>じかん</rt></ruby>から30<ruby>分<rt>ふん</rt></ruby>に<ruby>短縮<rt>たんしゅく</rt></ruby>できます。",
+              "zh": "那么，我来说明各功能的详情。首先通过配车作业自动化，可以将作业时间从2小时缩短到30分钟。"
             },
             {
               "speaker": "山田課長",
               "jp": "それは大きいですね。",
               "jpWithRuby": "それは<ruby>大きい<rt>おおきい</rt></ruby>ですね。",
-              "zh": "这确实是一大突破。"
+              "zh": "那影响很大啊。"
             },
             {
               "speaker": "李",
-              "jp": "はい。ただし、効果は大きいものの、導入までに開発期間が約3週間必要です。",
-              "jpWithRuby": "はい。ただし、<ruby>効果<rt>こうか</rt></ruby>は<ruby>大きい<rt>おおきい</rt></ruby>ものの、<ruby>導入<rt>どうにゅう</rt></ruby>までに<ruby>開発<rt>かいはつ</rt></ruby><ruby>期間<rt>きかん</rt></ruby>が<ruby>約<rt>やく</rt></ruby>3<ruby>週間<rt>しゅうかん</rt></ruby><ruby>必要<rt>ひつよう</rt></ruby>です。",
-              "zh": "是的。不过虽然业务成效显著，但该模块开发预计需要大约3周的工期。"
+              "jp": "はい。ただし、配車自動化の効果は大きいものの、導入までに開発期間が約3週間必要です。",
+              "jpWithRuby": "はい。ただし、<ruby>配車<rt>はいしゃ</rt></ruby><ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>の<ruby>効果<rt>こうか</rt></ruby>は<ruby>大きい<rt>おおきい</rt></ruby>ものの、<ruby>導入<rt>どうにゅう</rt></ruby>までに<ruby>開発<rt>かいはつ</rt></ruby><ruby>期間<rt>きかん</rt></ruby>が<ruby>約<rt>やく</rt></ruby>3<ruby>週間<rt>しゅうかん</rt></ruby><ruby>必要<rt>ひつよう</rt></ruby>です。",
+              "zh": "是的。但是，虽然配车自动化的效果很大，但到导入为止需要约3周的开发期间。"
             },
             {
               "speaker": "田中部長",
               "jp": "3週間なら問題ありません。",
               "jpWithRuby": "3<ruby>週間<rt>しゅうかん</rt></ruby>なら<ruby>問題<rt>もんだい</rt></ruby>ありません。",
-              "zh": "3周的话完全在可接受范围内。"
+              "zh": "3周的话没问题。"
             },
             {
               "speaker": "李",
-              "jp": "ありがとうございます。次に、GPSデータを活用することで、リアルタイムの状況把握が可能となります。",
-              "jpWithRuby": "ありがとうございます。<ruby>次<rt>つぎ</rt></ruby>に、GPSデータを<ruby>活用<rt>かつよう</rt></ruby>することで、リアルタイムの<ruby>状況<rt>じょうきょう</rt></ruby><ruby>把握<rt>はあく</rt></ruby>が<ruby>可能<rt>かのう</rt></ruby>となります。",
-              "zh": "非常感谢。接着通过深度运用 GPS 数据，可以实现全链路在途状态的实时掌控。"
+              "jp": "ありがとうございます。次に、GPSデータを活用することで、リアルタイムの配送状況把握が可能となります。",
+              "jpWithRuby": "ありがとうございます。<ruby>次<rt>つぎ</rt></ruby>に、GPSデータを<ruby>活用<rt>かつよう</rt></ruby>することで、リアルタイムの<ruby>配送<rt>はいそう</rt></ruby><ruby>状況<rt>じょうきょう</rt></ruby><ruby>把握<rt>はあく</rt></ruby>が<ruby>可能<rt>かのう</rt></ruby>となります。",
+              "zh": "谢谢。接下来，通过利用GPS数据，可以实时把握配送情况。"
             },
             {
               "speaker": "山田課長",
-              "jp": "通信環境が悪い山間部などでの遅延はどう対応しますか。",
-              "jpWithRuby": "<ruby>通信<rt>つうしん</rt></ruby><ruby>環境<rt>かんきょう</rt></ruby>が<ruby>悪い<rt>わるい</rt></ruby><ruby>山間<rt>さんかん</rt></ruby><ruby>部<rt>ぶ</rt></ruby>などでの<ruby>遅延<rt>ちえん</rt></ruby>はどう<ruby>対応<rt>たいおう</rt></ruby>しますか。",
-              "zh": "如果在信号较差的山区等偏远地段发生网络通信延迟，系统是如何应对的呢？"
+              "jp": "GPSデータは30秒ごとに受信するとおっしゃっていましたね。",
+              "jpWithRuby": "GPSデータは30<ruby>秒<rt>びょう</rt></ruby>ごとに<ruby>受信<rt>じゅしん</rt></ruby>するとおっしゃっていましたね。",
+              "zh": "您说过GPS数据每30秒接收一次吧。"
             },
             {
               "speaker": "李",
-              "jp": "通信遅延が生じる可能性がございますので、遅延時のフォールバック機能も実装します。",
-              "jpWithRuby": "<ruby>通信<rt>つうしん</rt></ruby><ruby>遅延<rt>ちえん</rt></ruby>が<ruby>生じる<rt>しょうじる</rt></ruby><ruby>可能<rt>かのう</rt></ruby><ruby>性<rt>せい</rt></ruby>がございますので、<ruby>遅延<rt>ちえん</rt></ruby><ruby>時<rt>じ</rt></ruby>のフォールバック<ruby>機能<rt>きのう</rt></ruby>も<ruby>実装<rt>じっそう</rt></ruby>します。",
-              "zh": "考虑到确实存在通信延迟的可能性，我们特意设计了网络降级时的 Fallback 离线回退与重试机制。"
+              "jp": "はい、30秒ごとに受信します。ただし、通信環境によっては遅延が生じる可能性がございますので、遅延時のフォールバック機能も実装します。",
+              "jpWithRuby": "はい、30<ruby>秒<rt>びょう</rt></ruby>ごとに<ruby>受信<rt>じゅしん</rt></ruby>します。ただし、<ruby>通信<rt>つうしん</rt></ruby><ruby>環境<rt>かんきょう</rt></ruby>によっては<ruby>遅延<rt>ちえん</rt></ruby>が<ruby>生じる<rt>しょうじる</rt></ruby><ruby>可能<rt>かのう</rt></ruby><ruby>性<rt>せい</rt></ruby>がございますので、<ruby>遅延<rt>ちえん</rt></ruby><ruby>時<rt>じ</rt></ruby>のフォールバック<ruby>機能<rt>きのう</rt></ruby>も<ruby>実装<rt>じっそう</rt></ruby>します。",
+              "zh": "是的，每30秒接收。但是，根据通信环境可能会产生延迟，因此也会实现延迟时的回退功能。"
             },
             {
               "speaker": "山田課長",
               "jp": "それは助かります。",
               "jpWithRuby": "それは<ruby>助かり<rt>たすかり</rt></ruby>ます。",
-              "zh": "考虑得这么周全就太省心了。"
+              "zh": "那太有帮助了。"
             },
             {
               "speaker": "李",
-              "jp": "配車アルゴリズムは荷物量だけでなく、配送先の分布も考慮し、燃料費の削減にもつながります。",
-              "jpWithRuby": "<ruby>配車<rt>はいしゃ</rt></ruby>アルゴリズムは<ruby>荷物<rt>にもつ</rt></ruby><ruby>量<rt>りょう</rt></ruby>だけでなく、<ruby>配送<rt>はいそう</rt></ruby><ruby>先<rt>さき</rt></ruby>の<ruby>分布<rt>ぶんぷ</rt></ruby>も<ruby>考慮<rt>こうりょ</rt></ruby>し、<ruby>燃料<rt>ねんりょう</rt></ruby><ruby>費<rt>ひ</rt></ruby>の<ruby>削減<rt>さくげん</rt></ruby>にもつながります。",
-              "zh": "派车算法不仅权衡货物装载体积，还会综合考量送货网点分布密度，从而有效节约车队整体油耗支出。"
+              "jp": "配車アルゴリズムは荷物量だけでなく、配送先の分布も考慮します。また、配送ルート最適化により不要な走行を削減します。また、燃料費の削減にもつながります。",
+              "jpWithRuby": "<ruby>配車<rt>はいしゃ</rt></ruby>アルゴリズムは<ruby>荷物<rt>にもつ</rt></ruby><ruby>量<rt>りょう</rt></ruby>だけでなく、<ruby>配送<rt>はいそう</rt></ruby><ruby>先<rt>さき</rt></ruby>の<ruby>分布<rt>ぶんぷ</rt></ruby>も<ruby>考慮<rt>こうりょ</rt></ruby>します。また、<ruby>配送<rt>はいそう</rt></ruby>ルート<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>により<ruby>不要<rt>ふよう</rt></ruby>な<ruby>走行<rt>そうこう</rt></ruby>を<ruby>削減<rt>さくげん</rt></ruby>します。また、<ruby>燃料<rt>ねんりょう</rt></ruby><ruby>費<rt>ひ</rt></ruby>の<ruby>削減<rt>さくげん</rt></ruby>にもつながります。",
+              "zh": "配车算法不仅考虑货物量，还考虑配送目的地的分布。另外，通过配送路线优化削减空驶。同时，也有助于削减燃料费。"
             },
             {
               "speaker": "田中部長",
-              "jp": "走行削減と燃料費削減の両面で助かりますね。",
-              "jpWithRuby": "<ruby>走行<rt>そうこう</rt></ruby><ruby>削減<rt>さくげん</rt></ruby>と<ruby>燃料<rt>ねんりょう</rt></ruby><ruby>費<rt>ひ</rt></ruby><ruby>削減<rt>さくげん</rt></ruby>の<ruby>両面<rt>りょうめん</rt></ruby>で<ruby>助かり<rt>たすかり</rt></ruby>ますね。",
-              "zh": "既能减少无效行驶里程又能节省油费，两全其美。"
+              "jp": "不要な走行削減と燃料費削減の両方があるのは良いですね。",
+              "jpWithRuby": "<ruby>不要<rt>ふよう</rt></ruby>な<ruby>走行<rt>そうこう</rt></ruby><ruby>削減<rt>さくげん</rt></ruby>と<ruby>燃料<rt>ねんりょう</rt></ruby><ruby>費<rt>ひ</rt></ruby><ruby>削減<rt>さくげん</rt></ruby>の<ruby>両方<rt>りょうほう</rt></ruby>があるのは<ruby>良い<rt>よい</rt></ruby>ですね。",
+              "zh": "既能减少无效行驶又能节省燃料费，两者兼备很好。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P33-P34"
+          ]
         },
         {
           "pNum": 3,
-          "title": "短文 3：回答客户提问：技术细节与定制项",
-          "theme": "回答客户提问：技术细节与定制项",
-          "objective": "掌握肯定承接客户提问的金句（ご質問ありがとうございます）以及针对算法精度、定制扩展等进阶需求的回应技巧。",
+          "title": "短文 3：回答客户提问：技术细节与定制项说明",
+          "theme": "练习 3 · 回答客户提问：技术细节与定制项说明",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第22课练习 3（P35-P36）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P35-P36",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "それでは、システム化の方針についてご質問がございましたら、お答えします。",
               "jpWithRuby": "それでは、システム<ruby>化<rt>か</rt></ruby>の<ruby>方針<rt>ほうしん</rt></ruby>についてご<ruby>質問<rt>しつもん</rt></ruby>がございましたら、お<ruby>答え<rt>こたえ</rt></ruby>します。",
-              "zh": "那么，针对系统化的整体建设方针，如果各位还有什么问题，我随时为您解答。"
+              "zh": "那么，关于系统化方针如果有问题，我来回答。"
             },
             {
               "speaker": "山田課長",
-              "jp": "配車アルゴリズムの精度はどのくらいですか。",
-              "jpWithRuby": "<ruby>配車<rt>はいしゃ</rt></ruby>アルゴリズムの<ruby>精度<rt>せいど</rt></ruby>はどのくらいですか。",
-              "zh": "智能派车算法的运算匹配精度大概能达到什么水平？"
+              "jp": "配車アルゴリズムの精度はどのくらいになりますか。",
+              "jpWithRuby": "<ruby>配車<rt>はいしゃ</rt></ruby>アルゴリズムの<ruby>精度<rt>せいど</rt></ruby>はどのくらいになりますか。",
+              "zh": "配车算法的精度会到多少？"
             },
             {
               "speaker": "李",
-              "jp": "ご質問ありがとうございます。過去の配送実績データを学習させ、95%以上の精度で最適な配車案を出力できます。",
-              "jpWithRuby": "ご<ruby>質問<rt>しつもん</rt></ruby>ありがとうございます。<ruby>過去<rt>かこ</rt></ruby>の<ruby>配送<rt>はいそう</rt></ruby><ruby>実績<rt>じっせき</rt></ruby>データを<ruby>学習<rt>がくしゅう</rt></ruby>させ、95%<ruby>以上<rt>いじょう</rt></ruby>の<ruby>精度<rt>せいど</rt></ruby>で<ruby>最適<rt>さいてき</rt></ruby>な<ruby>配車<rt>はいしゃ</rt></ruby><ruby>案<rt>あん</rt></ruby>を<ruby>出力<rt>しゅつりょく</rt></ruby>できます。",
-              "zh": "非常感谢您的提问。通过学习以往大量的历史实绩运单数据，系统能以95%以上的准确率输出最优派车方案。"
+              "jp": "ご質問ありがとうございます。配車アルゴリズムの精度につきましては、過去3年分の配送実績データを学習することで向上します。導入後3ヶ月で95%以上の精度を目指します。",
+              "jpWithRuby": "ご<ruby>質問<rt>しつもん</rt></ruby>ありがとうございます。<ruby>配車<rt>はいしゃ</rt></ruby>アルゴリズムの<ruby>精度<rt>せいど</rt></ruby>につきましては、<ruby>過去<rt>かこ</rt></ruby>3<ruby>年<rt>ねん</rt></ruby><ruby>分<rt>ぶん</rt></ruby>の<ruby>配送<rt>はいそう</rt></ruby><ruby>実績<rt>じっせき</rt></ruby>データを<ruby>学習<rt>がくしゅう</rt></ruby>することで<ruby>向上<rt>こうじょう</rt></ruby>します。<ruby>導入<rt>どうにゅう</rt></ruby><ruby>後<rt>ご</rt></ruby>3<ruby>ヶ月<rt>かげつ</rt></ruby>で95%<ruby>以上<rt>いじょう</rt></ruby>の<ruby>精度<rt>せいど</rt></ruby>を<ruby>目指し<rt>めざし</rt></ruby>ます。",
+              "zh": "非常感谢您的提问。关于配车算法的精度，通过学习过去3年的配送实绩数据来提升。导入后3个月以95%以上的精度为目标。"
             },
             {
               "speaker": "山田課長",
-              "jp": "手動での微調整は可能ですか。",
-              "jpWithRuby": "<ruby>手動<rt>しゅどう</rt></ruby>での<ruby>微<rt>び</rt></ruby><ruby>調整<rt>ちょうせい</rt></ruby>は<ruby>可能<rt>かのう</rt></ruby>ですか。",
-              "zh": "一线调度员后续还能进行人工手动微调吗？"
+              "jp": "95%以上なら実用ですね。",
+              "jpWithRuby": "95%<ruby>以上<rt>いじょう</rt></ruby>なら<ruby>実用<rt>じつよう</rt></ruby>ですね。",
+              "zh": "95%以上的话就很实用了。"
             },
             {
               "speaker": "李",
-              "jp": "はい、可能です。アルゴリズムが提案した結果を画面上で確認し、ドラッグ＆ドロップで手動変更いただけます。",
-              "jpWithRuby": "はい、<ruby>可能<rt>かのう</rt></ruby>です。アルゴリズムが<ruby>提案<rt>ていあん</rt></ruby>した<ruby>結果<rt>けっか</rt></ruby>を<ruby>画面<rt>がめん</rt></ruby><ruby>上<rt>じょう</rt></ruby>で<ruby>確認<rt>かくにん</rt></ruby>し、ドラッグ＆ドロップで<ruby>手動<rt>しゅどう</rt></ruby><ruby>変更<rt>へんこう</rt></ruby>いただけます。",
-              "zh": "是的，完全可以。调度员在界面上确认算法推荐方案后，可以通过简单的拖拽手势轻松完成手动微调。"
+              "jp": "ありがとうございます。お客様向け追跡画面のアクセス方法につきましては、配車番号と電話番号を入力していただく形式となります。",
+              "jpWithRuby": "ありがとうございます。お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby><ruby>向け<rt>むけ</rt></ruby><ruby>追跡<rt>ついせき</rt></ruby><ruby>画面<rt>がめん</rt></ruby>のアクセス<ruby>方法<rt>ほうほう</rt></ruby>につきましては、<ruby>配車<rt>はいしゃ</rt></ruby><ruby>番号<rt>ばんごう</rt></ruby>と<ruby>電話<rt>でんわ</rt></ruby><ruby>番号<rt>ばんごう</rt></ruby>を<ruby>入力<rt>にゅうりょく</rt></ruby>していただく<ruby>形式<rt>けいしき</rt></ruby>となります。",
+              "zh": "谢谢。关于面向客户追踪画面的访问方式，是输入配车编号和电话号码的形式。"
             },
             {
               "speaker": "田中部長",
-              "jp": "現場の裁量も残せるのは安心ですね。",
-              "jpWithRuby": "<ruby>現場<rt>げんば</rt></ruby>の<ruby>裁量<rt>さいりょう</rt></ruby>も<ruby>残せる<rt>のこせる</rt></ruby>のは<ruby>安心<rt>あんしん</rt></ruby>ですね。",
-              "zh": "依然保留了一线调度员的主观经验与裁量权，这样大家用起来就踏实多了。"
+              "jp": "配車番号と電話番号ですね。わかりやすいですね。",
+              "jpWithRuby": "<ruby>配車<rt>はいしゃ</rt></ruby><ruby>番号<rt>ばんごう</rt></ruby>と<ruby>電話<rt>でんわ</rt></ruby><ruby>番号<rt>ばんごう</rt></ruby>ですね。わかりやすいですね。",
+              "zh": "配车编号和电话号码啊。很容易理解。"
             },
             {
               "speaker": "李",
-              "jp": "はい、自動化と現場のノウハウを融合した運用を実現いたします。",
-              "jpWithRuby": "はい、<ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>と<ruby>現場<rt>げんば</rt></ruby>のノウハウを<ruby>融合<rt>ゆうごう</rt></ruby>した<ruby>運用<rt>うんよう</rt></ruby>を<ruby>実現<rt>じつげん</rt></ruby>いたします。",
-              "zh": "是的，这正是我们旨在实现的‘智能算法自动化与一线实战经验相融合’的人机协同体系。"
+              "jp": "ご心配の点はございますでしょうか。追加でご説明すべき点がございましたらお申し付けください。",
+              "jpWithRuby": "ご<ruby>心配<rt>しんぱい</rt></ruby>の<ruby>点<rt>てん</rt></ruby>はございますでしょうか。<ruby>追加<rt>ついか</rt></ruby>でご<ruby>説明<rt>せつめい</rt></ruby>すべき<ruby>点<rt>てん</rt></ruby>がございましたらお<ruby>申し付け<rt>もうしつけ</rt></ruby>ください。",
+              "zh": "有什么担心的地方吗？如果有需要补充说明的地方请提出。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "GPSデータの通信量はどのくらいになりますか。",
+              "jpWithRuby": "GPSデータの<ruby>通信<rt>つうしん</rt></ruby><ruby>量<rt>りょう</rt></ruby>はどのくらいになりますか。",
+              "zh": "GPS数据的通信量大概是多少？"
+            },
+            {
+              "speaker": "李",
+              "jp": "ご質問の件につきまして、以下の通りお答えします。GPSデータの通信量は1日約50MB程度を見込んでおります。",
+              "jpWithRuby": "ご<ruby>質問<rt>しつもん</rt></ruby>の<ruby>件<rt>けん</rt></ruby>につきまして、<ruby>以下<rt>いか</rt></ruby>の<ruby>通り<rt>とおり</rt></ruby>お<ruby>答え<rt>こたえ</rt></ruby>します。GPSデータの<ruby>通信<rt>つうしん</rt></ruby><ruby>量<rt>りょう</rt></ruby>は1<ruby>日<rt>にち</rt></ruby><ruby>約<rt>やく</rt></ruby>50MB<ruby>程度<rt>ていど</rt></ruby>を<ruby>見込ん<rt>みこん</rt></ruby>でおります。",
+              "zh": "关于您的问题，我如下回答。GPS数据的通信量预计1天约50MB左右。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "50MBなら問題ありません。",
+              "jpWithRuby": "50MBなら<ruby>問題<rt>もんだい</rt></ruby>ありません。",
+              "zh": "50MB的话没问题。"
+            },
+            {
+              "speaker": "李",
+              "jp": "ご希望があればカスタマイズもしますが、いかがでしょうか。",
+              "jpWithRuby": "ご<ruby>希望<rt>きぼう</rt></ruby>があればカスタマイズもしますが、いかがでしょうか。",
+              "zh": "如果有希望也可以定制，您看如何？"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "今のところは特になしで、お願いします。",
+              "jpWithRuby": "<ruby>今<rt>いま</rt></ruby>のところは<ruby>特に<rt>とくに</rt></ruby>なしで、お<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "目前没有特别要求，就按这样来。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P35-P36"
+          ]
         },
         {
           "pNum": 4,
-          "title": "短文 4：共识确认与敬语收尾：3大需求正式合意",
-          "theme": "共识确认与敬语收尾：3大需求正式合意",
-          "objective": "学习在需求梳理完毕后，把配送追溯、自动排车、客户终端查件三大功能做结构化总结并宣布迈向分析设计阶段。",
+          "title": "短文 4：共识确认与敬语收尾：3大功能需求正式合意",
+          "theme": "练习 4 · 共识确认与敬语收尾：3大功能需求正式合意",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第22课练习 4（P37-P38）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P37-P38",
           "dialogue": [
             {
               "speaker": "李",
               "jp": "それでは、本日の確認内容を整理させていただきます。",
               "jpWithRuby": "それでは、<ruby>本日<rt>ほんじつ</rt></ruby>の<ruby>確認<rt>かくにん</rt></ruby><ruby>内容<rt>ないよう</rt></ruby>を<ruby>整理<rt>せいり</rt></ruby>させていただきます。",
-              "zh": "那么，我来对今天探讨并确认的核心内容做一下梳理归纳。"
+              "zh": "那么，我来整理今天的确认内容。"
             },
             {
               "speaker": "田中部長",
               "jp": "はい、お願いします。",
               "jpWithRuby": "はい、お<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "好的，请讲。"
+              "zh": "好的，请。"
             },
             {
               "speaker": "李",
-              "jp": "1つ目が配送追跡可視化、2つ目が配車自動化、3つ目がお客様向け追跡画面の3要件で合意とさせていただきます。",
-              "jpWithRuby": "1つ<ruby>目<rt>め</rt></ruby>が<ruby>配送<rt>はいそう</rt></ruby><ruby>追跡<rt>ついせき</rt></ruby><ruby>可視<rt>かし</rt></ruby><ruby>化<rt>か</rt></ruby>、2つ<ruby>目<rt>め</rt></ruby>が<ruby>配車<rt>はいしゃ</rt></ruby><ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>、3つ<ruby>目<rt>め</rt></ruby>がお<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby><ruby>向け<rt>むけ</rt></ruby><ruby>追跡<rt>ついせき</rt></ruby><ruby>画面<rt>がめん</rt></ruby>の3<ruby>要件<rt>ようけん</rt></ruby>で<ruby>合意<rt>ごうい</rt></ruby>とさせていただきます。",
-              "zh": "第1项是物流在途跟踪可视化，第2项是智能派车调度自动化，第3项是面向终端客户的轨迹查询界面。我们以这3大核心要件正式达成共识。"
+              "jp": "配送追跡可視化につきましては、GPSデータを30秒ごとに受信し、リアルタイムに荷物の位置を把握する機能を実装するということでよろしいですか。",
+              "jpWithRuby": "<ruby>配送<rt>はいそう</rt></ruby><ruby>追跡<rt>ついせき</rt></ruby><ruby>可視<rt>かし</rt></ruby><ruby>化<rt>か</rt></ruby>につきましては、GPSデータを30<ruby>秒<rt>びょう</rt></ruby>ごとに<ruby>受信<rt>じゅしん</rt></ruby>し、リアルタイムに<ruby>荷物<rt>にもつ</rt></ruby>の<ruby>位置<rt>いち</rt></ruby>を<ruby>把握<rt>はあく</rt></ruby>する<ruby>機能<rt>きのう</rt></ruby>を<ruby>実装<rt>じっそう</rt></ruby>するということでよろしいですか。",
+              "zh": "关于配送追踪可视化，实现每30秒接收GPS数据、实时把握货物位置的功能，这样可以吗？"
             },
             {
-              "speaker": "田中部長",
-              "jp": "はい、その3点で間違いありません。",
-              "jpWithRuby": "はい、その3<ruby>点<rt>てん</rt></ruby>で<ruby>間違い<rt>まちがい</rt></ruby>ありません。",
-              "zh": "是的，正是这3个要点，完全准确。"
+              "speaker": "山田課長",
+              "jp": "はい、それで結構です。",
+              "jpWithRuby": "はい、それで<ruby>結構<rt>けっこう</rt></ruby>です。",
+              "zh": "好的，这样就可以了。"
             },
             {
               "speaker": "李",
-              "jp": "ありがとうございます。来週までに要件定義の確認書をお持ちし、分析設計へ進めます。",
-              "jpWithRuby": "ありがとうございます。<ruby>来週<rt>らいしゅう</rt></ruby>までに<ruby>要件<rt>ようけん</rt></ruby><ruby>定義<rt>ていぎ</rt></ruby>の<ruby>確認<rt>かくにん</rt></ruby><ruby>書<rt>しょ</rt></ruby>をお<ruby>持ち<rt>もち</rt></ruby>し、<ruby>分析<rt>ぶんせき</rt></ruby><ruby>設計<rt>せっけい</rt></ruby>へ<ruby>進め<rt>すすめ</rt></ruby>ます。",
-              "zh": "非常感谢。我将在下周前把正式的需求定义确认书送达二位过目，随后平稳推进至下一阶段的分析设计。"
+              "jp": "配車自動化につきましては、アルゴリズムにより2時間の作業を30分に短縮するということでお間違いないでしょうか。",
+              "jpWithRuby": "<ruby>配車<rt>はいしゃ</rt></ruby><ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>につきましては、アルゴリズムにより2<ruby>時間<rt>じかん</rt></ruby>の<ruby>作業<rt>さぎょう</rt></ruby>を30<ruby>分<rt>ふん</rt></ruby>に<ruby>短縮<rt>たんしゅく</rt></ruby>するということでお<ruby>間違い<rt>まちがい</rt></ruby>ないでしょうか。",
+              "zh": "关于配车自动化，通过算法将2小时作业缩短到30分钟，这一点没有错吧？"
             },
             {
               "speaker": "田中部長",
-              "jp": "楽しみに待っています。よろしくお願いします。",
-              "jpWithRuby": "<ruby>楽しみ<rt>たのしみ</rt></ruby>に<ruby>待っ<rt>まっ</rt></ruby>ています。よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "我们非常期待，后续就拜托你们了。"
+              "jp": "はい、間違いありません。",
+              "jpWithRuby": "はい、<ruby>間違い<rt>まちがい</rt></ruby>ありません。",
+              "zh": "是的，没有错。"
+            },
+            {
+              "speaker": "李",
+              "jp": "お客様向け荷物追跡画面につきましては、ウェブブラウザからアクセス可能とするということでよろしいですか。",
+              "jpWithRuby": "お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby><ruby>向け<rt>むけ</rt></ruby><ruby>荷物<rt>にもつ</rt></ruby><ruby>追跡<rt>ついせき</rt></ruby><ruby>画面<rt>がめん</rt></ruby>につきましては、ウェブブラウザからアクセス<ruby>可能<rt>かのう</rt></ruby>とするということでよろしいですか。",
+              "zh": "关于面向客户的货物追踪画面，可以从Web浏览器访问，这样可以吗？"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "はい、お願いします。",
+              "jpWithRuby": "はい、お<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "好的，拜托了。"
+            },
+            {
+              "speaker": "李",
+              "jp": "ありがとうございます。以上3つの機能について、ご確認いただいた内容ということで合意とさせていただきます。",
+              "jpWithRuby": "ありがとうございます。<ruby>以上<rt>いじょう</rt></ruby>3つの<ruby>機能<rt>きのう</rt></ruby>について、ご<ruby>確認<rt>かくにん</rt></ruby>いただいた<ruby>内容<rt>ないよう</rt></ruby>ということで<ruby>合意<rt>ごうい</rt></ruby>とさせていただきます。",
+              "zh": "谢谢。以上3个功能，以您确认的内容作为共识合意。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "はい、合意です。",
+              "jpWithRuby": "はい、<ruby>合意<rt>ごうい</rt></ruby>です。",
+              "zh": "好的，达成共识。"
+            },
+            {
+              "speaker": "李",
+              "jp": "本日はお時間をいただきまして、誠にありがとうございました。次回は来週となりますが、詳細設計のご説明をさせていただきたく思います。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はお<ruby>時間<rt>じかん</rt></ruby>をいただきまして、<ruby>誠<rt>まこと</rt></ruby>にありがとうございました。<ruby>次回<rt>じかい</rt></ruby>は<ruby>来週<rt>らいしゅう</rt></ruby>となりますが、<ruby>詳細<rt>しょうさい</rt></ruby><ruby>設計<rt>せっけい</rt></ruby>のご<ruby>説明<rt>せつめい</rt></ruby>をさせていただきたく<ruby>思い<rt>おもい</rt></ruby>ます。",
+              "zh": "今天非常感谢您抽出时间。下次是下周，我想进行详细设计的说明。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "はい、来週でお願いします。それでは、引き続きよろしくお願いします。",
+              "jpWithRuby": "はい、<ruby>来週<rt>らいしゅう</rt></ruby>でお<ruby>願い<rt>ねがい</rt></ruby>します。それでは、<ruby>引き続き<rt>ひきつづき</rt></ruby>よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "好的，下周吧。那么，今后也请继续关照。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P37-P38"
+          ]
         },
         {
           "pNum": 5,
-          "title": "短文 5：综合演练：从需求说明到共识形成全流程",
-          "theme": "综合演练：从需求说明到共识形成全流程",
-          "objective": "综合演练WMS物流数字化项目的全套商务对话：痛点唤醒 ➜ 指标量化 ➜ 客户即兴提问 ➜ 方案扩展 ➜ 成果固化。",
+          "title": "短文 5：综合演练：从需求说明到共识形成的完整流程",
+          "theme": "练习 5 · 综合演练：从需求说明到共识形成全流程",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第22课练习 5（P39-P40）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P39-P40",
           "dialogue": [
             {
               "speaker": "李",
-              "jp": "それでは、物流DXに向けたシステム化の方向性をご説明します。",
-              "jpWithRuby": "それでは、<ruby>物流<rt>ぶつりゅう</rt></ruby>DXに<ruby>向け<rt>むけ</rt></ruby>たシステム<ruby>化<rt>か</rt></ruby>の<ruby>方向<rt>ほうこう</rt></ruby><ruby>性<rt>せい</rt></ruby>をご<ruby>説明<rt>せつめい</rt></ruby>します。",
-              "zh": "那么，我来向各位汇报迈向现代智慧物流数字化转型（DX）的系统化建设方向。"
+              "jp": "それでは、システム化の方向性をご説明します。配送追跡の可視化につきましては、GPSデータを活用してリアルタイムに荷物の位置を把握する機能を実装します。",
+              "jpWithRuby": "それでは、システム<ruby>化<rt>か</rt></ruby>の<ruby>方向<rt>ほうこう</rt></ruby><ruby>性<rt>せい</rt></ruby>をご<ruby>説明<rt>せつめい</rt></ruby>します。<ruby>配送<rt>はいそう</rt></ruby><ruby>追跡<rt>ついせき</rt></ruby>の<ruby>可視<rt>かし</rt></ruby><ruby>化<rt>か</rt></ruby>につきましては、GPSデータを<ruby>活用<rt>かつよう</rt></ruby>してリアルタイムに<ruby>荷物<rt>にもつ</rt></ruby>の<ruby>位置<rt>いち</rt></ruby>を<ruby>把握<rt>はあく</rt></ruby>する<ruby>機能<rt>きのう</rt></ruby>を<ruby>実装<rt>じっそう</rt></ruby>します。",
+              "zh": "那么，我来说明系统化方向。关于配送追踪可视化，我们将实现利用GPS数据实时把握货物位置的功能。"
             },
             {
               "speaker": "田中部長",
-              "jp": "お願いします。",
-              "jpWithRuby": "お<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "请讲。"
+              "jp": "はい、お願いします。",
+              "jpWithRuby": "はい、お<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "好的，请。"
             },
             {
               "speaker": "李",
-              "jp": "GPSによるリアルタイム位置把握とアルゴリズムによる配車時間の大幅短縮を目指します。",
-              "jpWithRuby": "GPSによるリアルタイム<ruby>位置<rt>いち</rt></ruby><ruby>把握<rt>はあく</rt></ruby>とアルゴリズムによる<ruby>配車<rt>はいしゃ</rt></ruby><ruby>時間<rt>じかん</rt></ruby>の<ruby>大幅<rt>おおはば</rt></ruby><ruby>短縮<rt>たんしゅく</rt></ruby>を<ruby>目指し<rt>めざし</rt></ruby>ます。",
-              "zh": "我们旨在通过 GPS 实现毫秒级在途轨迹掌控，并借助智能算法实现派车作业耗时的大幅度压缩。"
+              "jp": "配車作業を自動化することで、作業時間を2時間から30分に短縮できます。ただし、配車自動化の効果は大きいものの、導入までに開発期間が約3週間必要です。",
+              "jpWithRuby": "<ruby>配車<rt>はいしゃ</rt></ruby><ruby>作業<rt>さぎょう</rt></ruby>を<ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>することで、<ruby>作業<rt>さぎょう</rt></ruby><ruby>時間<rt>じかん</rt></ruby>を2<ruby>時間<rt>じかん</rt></ruby>から30<ruby>分<rt>ふん</rt></ruby>に<ruby>短縮<rt>たんしゅく</rt></ruby>できます。ただし、<ruby>配車<rt>はいしゃ</rt></ruby><ruby>自動<rt>じどう</rt></ruby><ruby>化<rt>か</rt></ruby>の<ruby>効果<rt>こうか</rt></ruby>は<ruby>大きい<rt>おおきい</rt></ruby>ものの、<ruby>導入<rt>どうにゅう</rt></ruby>までに<ruby>開発<rt>かいはつ</rt></ruby><ruby>期間<rt>きかん</rt></ruby>が<ruby>約<rt>やく</rt></ruby>3<ruby>週間<rt>しゅうかん</rt></ruby><ruby>必要<rt>ひつよう</rt></ruby>です。",
+              "zh": "通过配车作业自动化，可以将作业时间从2小时缩短到30分钟。但是，虽然配车自动化的效果很大，但到导入为止需要约3周的开发期间。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "3週間なら問題ありません。",
+              "jpWithRuby": "3<ruby>週間<rt>しゅうかん</rt></ruby>なら<ruby>問題<rt>もんだい</rt></ruby>ありません。",
+              "zh": "3周的话没问题。"
+            },
+            {
+              "speaker": "李",
+              "jp": "良いご質問がございましたらお答えします。",
+              "jpWithRuby": "<ruby>良い<rt>よい</rt></ruby>ご<ruby>質問<rt>しつもん</rt></ruby>がございましたらお<ruby>答え<rt>こたえ</rt></ruby>します。",
+              "zh": "如果有好问题我来回答。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "配車アルゴリズムは荷物量だけでなく、配送先の分布も考慮しますか。",
+              "jpWithRuby": "<ruby>配車<rt>はいしゃ</rt></ruby>アルゴリズムは<ruby>荷物<rt>にもつ</rt></ruby><ruby>量<rt>りょう</rt></ruby>だけでなく、<ruby>配送<rt>はいそう</rt></ruby><ruby>先<rt>さき</rt></ruby>の<ruby>分布<rt>ぶんぷ</rt></ruby>も<ruby>考慮<rt>こうりょ</rt></ruby>しますか。",
+              "zh": "配车算法不仅考虑货物量，还考虑配送目的地的分布吗？"
+            },
+            {
+              "speaker": "李",
+              "jp": "はい、考慮します。それでは、本日の確認内容を整理させていただきます。以上3つの機能について、ご確認いただいた内容ということで合意とさせていただきます。",
+              "jpWithRuby": "はい、<ruby>考慮<rt>こうりょ</rt></ruby>します。それでは、<ruby>本日<rt>ほんじつ</rt></ruby>の<ruby>確認<rt>かくにん</rt></ruby><ruby>内容<rt>ないよう</rt></ruby>を<ruby>整理<rt>せいり</rt></ruby>させていただきます。<ruby>以上<rt>いじょう</rt></ruby>3つの<ruby>機能<rt>きのう</rt></ruby>について、ご<ruby>確認<rt>かくにん</rt></ruby>いただいた<ruby>内容<rt>ないよう</rt></ruby>ということで<ruby>合意<rt>ごうい</rt></ruby>とさせていただきます。",
+              "zh": "是的，考虑。那么，我来整理今天的确认内容。以上3个功能，以您确认的内容作为共识合意。"
             },
             {
               "speaker": "田中部長",
-              "jp": "お客様向けの画面も盛り込んでくれたのがありがたいですね。",
-              "jpWithRuby": "お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby><ruby>向け<rt>むけ</rt></ruby>の<ruby>画面<rt>がめん</rt></ruby>も<ruby>盛り込ん<rt>もりこん</rt></ruby>でくれたのがありがたいですね。",
-              "zh": "很感谢你们把面向终客的查件界面也一并纳入了首期范围。"
+              "jp": "はい、合意です。",
+              "jpWithRuby": "はい、<ruby>合意<rt>ごうい</rt></ruby>です。",
+              "zh": "好的，达成共识。"
             },
             {
               "speaker": "李",
-              "jp": "お客様の利便性向上とともに、御社への電話問い合わせも約4割削減できる見込みです。",
-              "jpWithRuby": "お<ruby>客<rt>きゃく</rt></ruby><ruby>様<rt>さま</rt></ruby>の<ruby>利便<rt>りべん</rt></ruby><ruby>性<rt>せい</rt></ruby><ruby>向上<rt>こうじょう</rt></ruby>とともに、<ruby>御社<rt>おんしゃ</rt></ruby>への<ruby>電話<rt>でんわ</rt></ruby><ruby>問い合わせ<rt>といあわせ</rt></ruby>も<ruby>約<rt>やく</rt></ruby>4<ruby>割<rt>わり</rt></ruby><ruby>削減<rt>さくげん</rt></ruby>できる<ruby>見込み<rt>みこみ</rt></ruby>です。",
-              "zh": "在大幅提升客户满意度的同时，预计还能为贵司呼叫中心分流减少大约40%的催件电话咨询量。"
-            },
-            {
-              "speaker": "田中部長",
-              "jp": "素晴らしい効果ですね。この内容で進めましょう。",
-              "jpWithRuby": "<ruby>素晴らしい<rt>すばらしい</rt></ruby><ruby>効果<rt>こうか</rt></ruby>ですね。この<ruby>内容<rt>ないよう</rt></ruby>で<ruby>進め<rt>すすめ</rt></ruby>ましょう。",
-              "zh": "成效十分惊人，我们就坚定按这个方案推进吧。"
-            },
-            {
-              "speaker": "李",
-              "jp": "ありがとうございます。分析設計フェーズを着実に推進してまいります。",
-              "jpWithRuby": "ありがとうございます。<ruby>分析<rt>ぶんせき</rt></ruby><ruby>設計<rt>せっけい</rt></ruby>フェーズを<ruby>着実<rt>ちゃくじつ</rt></ruby>に<ruby>推進<rt>すいしん</rt></ruby>してまいります。",
-              "zh": "非常感谢二位，我们将扎扎实实推进分析与详细设计阶段的各项工作。"
+              "jp": "本日はお時間をいただきまして、誠にありがとうございました。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>はお<ruby>時間<rt>じかん</rt></ruby>をいただきまして、<ruby>誠<rt>まこと</rt></ruby>にありがとうございました。",
+              "zh": "今天非常感谢您抽出时间。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P39-P40"
+          ]
         }
       ],
       "grammarPoints": [
@@ -12297,7 +12801,7 @@ window.JAPANESE_KNOWLEDGE_BASE = {
       "id": "scene-23",
       "sceneNumber": 23,
       "badge": "物流需求变更",
-      "title": "场景 23：物流システム要件変更・CR交渉",
+      "title": "场景 23：物流システム要件変更協議（交通情報API・ルート最適化CR）",
       "theme": "需求变更管理 (CR) · 影响范围结构化拆解 · 工时工期严谨评估 · 两阶段(Phasing)交付双赢谈判",
       "domain": "范围与变更管理领域（Scope Management / CR谈判）",
       "background": "开发中途客户方决策者田中部长临时提出追加全新诉求：希望系统能联动外部实时交通状况API，自动推荐最优配送路径。受托方李迅速而沉稳地接下诉求，严密复述确认客户意图，进而从底层算法引擎、外部接口联动、既存系统改造3大维度严谨测算出追加5人周工数以及导致原定8月末上线延期至9月末的现实风险。李巧妙提出分期交付（Phasing）方案，不仅保住了原定期限，更为增量升级赢得了合理周期，达成教科书般的CR谈判共识。",
@@ -13077,153 +13581,87 @@ window.JAPANESE_KNOWLEDGE_BASE = {
       "practiceTexts": [
         {
           "pNum": 1,
-          "title": "短文 1：变更要求确认：路线优化追加听取与复述",
-          "theme": "变更要求确认：路线优化追加听取与复述",
-          "objective": "掌握在接到客户临时变更诉求时，规范复述要旨（〜機能ですね）并深入探询外部交通API技术设想的听取技巧。",
+          "title": "短文 1：变更要求确认：路线优化追加需求听取与复述",
+          "theme": "练习 1 · 变更要求确认：路线优化追加需求听取与复述",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第23课练习 1（P41-P42）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P41-P42",
           "dialogue": [
             {
               "speaker": "田中部長",
               "jp": "実は、追加でお願いしたい機能があるのですが。交通状況に基づいて最適な配送ルートを推奨する機能を追加したいです。",
               "jpWithRuby": "<ruby>実<rt>じつ</rt></ruby>は、<ruby>追加<rt>ついか</rt></ruby>でお<ruby>願い<rt>ねがい</rt></ruby>したい<ruby>機能<rt>きのう</rt></ruby>があるのですが。<ruby>交通<rt>こうつう</rt></ruby><ruby>状況<rt>じょうきょう</rt></ruby>に<ruby>基づい<rt>もとづい</rt></ruby>て<ruby>最適<rt>さいてき</rt></ruby>な<ruby>配送<rt>はいそう</rt></ruby>ルートを<ruby>推奨<rt>すいしょう</rt></ruby>する<ruby>機能<rt>きのう</rt></ruby>を<ruby>追加<rt>ついか</rt></ruby>したいです。",
-              "zh": "其实，我们内部商量后有一项新功能想追加拜托你们：希望能追加一个根据实时路况推荐最优行驶路线的功能。"
+              "zh": "其实，有一项追加功能想要拜托你们。希望能追加根据交通状况推荐最佳配送路线的功能。"
             },
             {
               "speaker": "李",
               "jp": "ご要望ありがとうございます。交通状況に基づき最適な配送ルートを推奨する機能ですね。",
               "jpWithRuby": "ご<ruby>要望<rt>ようぼう</rt></ruby>ありがとうございます。<ruby>交通<rt>こうつう</rt></ruby><ruby>状況<rt>じょうきょう</rt></ruby>に<ruby>基づき<rt>もとづき</rt></ruby><ruby>最適<rt>さいてき</rt></ruby>な<ruby>配送<rt>はいそう</rt></ruby>ルートを<ruby>推奨<rt>すいしょう</rt></ruby>する<ruby>機能<rt>きのう</rt></ruby>ですね。",
-              "zh": "非常感谢部长的提议。您指的是基于实时道路通行状况智能推荐最优配送路径的功能对吧。"
+              "zh": "非常感谢您的需求提出。是根据交通状况推荐最佳配送路线的功能对吧。"
             },
             {
               "speaker": "田中部長",
-              "jp": "はい、そうです。競合他社に負けないためにも必須と考えています。",
-              "jpWithRuby": "はい、そうです。<ruby>競合<rt>きょうごう</rt></ruby><ruby>他社<rt>たしゃ</rt></ruby>に<ruby>負け<rt>まけ</rt></ruby>ないためにも<ruby>必須<rt>ひっす</rt></ruby>と<ruby>考え<rt>かんがえ</rt></ruby>ています。",
-              "zh": "是的，没错。为了在激烈的同业竞争中不落下风，我们认为这项功能必不可少。"
+              "jp": "はい、そうです。",
+              "jpWithRuby": "はい、そうです。",
+              "zh": "是的，没错。"
             },
             {
               "speaker": "李",
-              "jp": "承知いたしました。交通情報APIにつきましては、どのサービスの利用を想定されていますか。",
-              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>いたしました。<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>APIにつきましては、どのサービスの<ruby>利用<rt>りよう</rt></ruby>を<ruby>想定<rt>そうてい</rt></ruby>されていますか。",
-              "zh": "明白了。关于外部交通路况信息 API，贵司目前倾向于采用哪家服务商呢？"
+              "jp": "現在の配車機能に、交通情報APIから取得した情報に基づきルートを推奨する機能を追加したいというご要望ですね。",
+              "jpWithRuby": "<ruby>現在<rt>げんざい</rt></ruby>の<ruby>配車<rt>はいしゃ</rt></ruby><ruby>機能<rt>きのう</rt></ruby>に、<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>APIから<ruby>取得<rt>しゅとく</rt></ruby>した<ruby>情報<rt>じょうほう</rt></ruby>に<ruby>基づき<rt>もとづき</rt></ruby>ルートを<ruby>推奨<rt>すいしょう</rt></ruby>する<ruby>機能<rt>きのう</rt></ruby>を<ruby>追加<rt>ついか</rt></ruby>したいというご<ruby>要望<rt>ようぼう</rt></ruby>ですね。",
+              "zh": "是在现有的配车功能中，追加基于从交通信息API获取的信息来推荐路线的功能，是这样的需求吧。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "はい、その通りです。",
+              "jpWithRuby": "はい、その<ruby>通り<rt>とおり</rt></ruby>です。",
+              "zh": "是的，正是如此。"
+            },
+            {
+              "speaker": "李",
+              "jp": "交通情報APIにつきましては、どのサービスの利用を想定されていますか。",
+              "jpWithRuby": "<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>APIにつきましては、どのサービスの<ruby>利用<rt>りよう</rt></ruby>を<ruby>想定<rt>そうてい</rt></ruby>されていますか。",
+              "zh": "关于交通信息API，贵司预定使用哪家服务呢？"
             },
             {
               "speaker": "山田課長",
               "jp": "Google Maps APIか、あるいは国内の交通情報サービスを想定しています。",
               "jpWithRuby": "Google Maps APIか、あるいは<ruby>国内<rt>こくない</rt></ruby>の<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>サービスを<ruby>想定<rt>そうてい</rt></ruby>しています。",
-              "zh": "我们初步考虑接入 Google Maps API，或者采用日本本土专业的交通路况数据云服务。"
+              "zh": "预计是Google Maps API，或者国内的交通信息服务。"
             },
             {
               "speaker": "李",
-              "jp": "承知しました。API仕様の調査も含め、影響範囲を精査してご報告いたします。",
-              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。API<ruby>仕様<rt>しよう</rt></ruby>の<ruby>調査<rt>ちょうさ</rt></ruby>も<ruby>含め<rt>ふくめ</rt></ruby>、<ruby>影響<rt>えいきょう</rt></ruby><ruby>範囲<rt>はんい</rt></ruby>を<ruby>精査<rt>せいさ</rt></ruby>してご<ruby>報告<rt>ほうこく</rt></ruby>いたします。",
-              "zh": "明白了。包含第三方 API 的接口规约调研在内，我会全面排查评估波及的影响范围并向二位汇报。"
+              "jp": "承知しました。追加開発の所要工数は、ルート最適化エンジン3週、交通情報API連携1週、既存配車機能組み込み1週と認識しています。合計5週の追加開発期間が必要ということでよろしいですか。",
+              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。<ruby>追加<rt>ついか</rt></ruby><ruby>開発<rt>かいはつ</rt></ruby>の<ruby>所要<rt>しょよう</rt></ruby><ruby>工数<rt>こうすう</rt></ruby>は、ルート<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>エンジン3<ruby>週<rt>しゅう</rt></ruby>、<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>API<ruby>連携<rt>れんけい</rt></ruby>1<ruby>週<rt>しゅう</rt></ruby>、<ruby>既存<rt>きそん</rt></ruby><ruby>配車<rt>はいしゃ</rt></ruby><ruby>機能<rt>きのう</rt></ruby><ruby>組み込み<rt>くみこみ</rt></ruby>1<ruby>週<rt>しゅう</rt></ruby>と<ruby>認識<rt>にんしき</rt></ruby>しています。<ruby>合計<rt>ごうけい</rt></ruby>5<ruby>週<rt>しゅう</rt></ruby>の<ruby>追加<rt>ついか</rt></ruby><ruby>開発<rt>かいはつ</rt></ruby><ruby>期間<rt>きかん</rt></ruby>が<ruby>必要<rt>ひつよう</rt></ruby>ということでよろしいですか。",
+              "zh": "明白了。追加开发的所需工时，我们评估为路线优化引擎3周、交通信息API联动1周、现有配车功能嵌入1周。总共需要5周的追加开发周期，这样可以吗？"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "5週ですか。少し長いですね。",
+              "jpWithRuby": "5<ruby>週<rt>しゅう</rt></ruby>ですか。<ruby>少し<rt>すこし</rt></ruby><ruby>長い<rt>ながい</rt></ruby>ですね。",
+              "zh": "5周吗。稍微有点长啊。"
+            },
+            {
+              "speaker": "李",
+              "jp": "ご要望の背景につきましては、配送遅延の削減と燃料費の節約がございますね。それでは、影響範囲についてご説明します。",
+              "jpWithRuby": "ご<ruby>要望<rt>ようぼう</rt></ruby>の<ruby>背景<rt>はいけい</rt></ruby>につきましては、<ruby>配送<rt>はいそう</rt></ruby><ruby>遅延<rt>ちえん</rt></ruby>の<ruby>削減<rt>さくげん</rt></ruby>と<ruby>燃料<rt>ねんりょう</rt></ruby><ruby>費<rt>ひ</rt></ruby>の<ruby>節約<rt>せつやく</rt></ruby>がございますね。それでは、<ruby>影響<rt>えいきょう</rt></ruby><ruby>範囲<rt>はんい</rt></ruby>についてご<ruby>説明<rt>せつめい</rt></ruby>します。",
+              "zh": "关于需求的背景，存在减少配送延迟和节约燃料费用的考量对吧。那么，接下来由我来说明影响范围。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P41-P42"
+          ]
         },
         {
           "pNum": 2,
-          "title": "短文 2：影响范围分段说明：3项变更与工数结构化表述",
-          "theme": "影响范围分段说明：3项变更与工数结构化表述",
-          "objective": "熟练掌握「影響範囲につきまして3点に分けて説明します」的结构化表达，将追加工数（5人周）拆解至具体技术模块。",
-          "dialogue": [
-            {
-              "speaker": "山田課長",
-              "jp": "今回のルート最適化機能を追加する場合、工数はどのくらいになりますか。",
-              "jpWithRuby": "<ruby>今回<rt>こんかい</rt></ruby>のルート<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby><ruby>機能<rt>きのう</rt></ruby>を<ruby>追加<rt>ついか</rt></ruby>する<ruby>場合<rt>ばあい</rt></ruby>、<ruby>工数<rt>こうすう</rt></ruby>はどのくらいになりますか。",
-              "zh": "如果本次确实追加路线优化功能，大概会增加多少人月工期呢？"
-            },
-            {
-              "speaker": "李",
-              "jp": "影響範囲につきまして3点に分けてご説明します。",
-              "jpWithRuby": "<ruby>影響<rt>えいきょう</rt></ruby><ruby>範囲<rt>はんい</rt></ruby>につきまして3<ruby>点<rt>てん</rt></ruby>に<ruby>分け<rt>わけ</rt></ruby>てご<ruby>説明<rt>せつめい</rt></ruby>します。",
-              "zh": "针对变更带来的波及影响范围，我分3个技术层面为二位做详细阐述。"
-            },
-            {
-              "speaker": "李",
-              "jp": "1つ目はルート最適化エンジンの新規開発で約3週間、2つ目は交通情報API連携で約1週間です。",
-              "jpWithRuby": "1つ<ruby>目<rt>め</rt></ruby>はルート<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>エンジンの<ruby>新規<rt>しんき</rt></ruby><ruby>開発<rt>かいはつ</rt></ruby>で<ruby>約<rt>やく</rt></ruby>3<ruby>週間<rt>しゅうかん</rt></ruby>、2つ<ruby>目<rt>め</rt></ruby>は<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>API<ruby>連携<rt>れんけい</rt></ruby>で<ruby>約<rt>やく</rt></ruby>1<ruby>週間<rt>しゅうかん</rt></ruby>です。",
-              "zh": "第1点是新建路径优化核心计算引擎，预计需要约3周；第2点是对接外部交通路况 API，约需1周。"
-            },
-            {
-              "speaker": "李",
-              "jp": "3つ目は既存の配車機能への組み込みで約1週間、合計で約5週間の追加工数が見込まれます。",
-              "jpWithRuby": "3つ<ruby>目<rt>め</rt></ruby>は<ruby>既存<rt>きそん</rt></ruby>の<ruby>配車<rt>はいしゃ</rt></ruby><ruby>機能<rt>きのう</rt></ruby>への<ruby>組み込み<rt>くみこみ</rt></ruby>で<ruby>約<rt>やく</rt></ruby>1<ruby>週間<rt>しゅうかん</rt></ruby>、<ruby>合計<rt>ごうけい</rt></ruby>で<ruby>約<rt>やく</rt></ruby>5<ruby>週間<rt>しゅうかん</rt></ruby>の<ruby>追加<rt>ついか</rt></ruby><ruby>工数<rt>こうすう</rt></ruby>が<ruby>見込ま<rt>みこま</rt></ruby>れます。",
-              "zh": "第3点是将算法模块嵌入现有的派车核心流程中，约需1周。三项合计预计需要额外增加约5周的开发周期。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "合計5週間ですか。やはり相応の工数がかかりますね。",
-              "jpWithRuby": "<ruby>合計<rt>ごうけい</rt></ruby>5<ruby>週間<rt>しゅうかん</rt></ruby>ですか。やはり<ruby>相応<rt>そうおう</rt></ruby>の<ruby>工数<rt>こうすう</rt></ruby>がかかりますね。",
-              "zh": "总共要5周吗。果然牵扯的系统工作量不小啊。"
-            },
-            {
-              "speaker": "李",
-              "jp": "はい。リアルタイムの再計算処理を伴うため、慎重な設計が必要となります。",
-              "jpWithRuby": "はい。リアルタイムの<ruby>再<rt>さい</rt></ruby><ruby>計算<rt>けいさん</rt></ruby><ruby>処理<rt>しょり</rt></ruby>を<ruby>伴う<rt>ともなう</rt></ruby>ため、<ruby>慎重<rt>しんちょう</rt></ruby>な<ruby>設計<rt>せっけい</rt></ruby>が<ruby>必要<rt>ひつよう</rt></ruby>となります。",
-              "zh": "是的。因为涉及到大量实时高并发动态重算，必须进行非常严谨精细的底层架构设计。"
-            }
-          ],
+          "title": "短文 2：影响范围分段说明：3项变更内容与工数结构化表述",
+          "theme": "练习 2 · 影响范围分段说明：3项变更内容与工数结构化表述",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第23课练习 2（P43-P44）",
           "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P43-P44"
-        },
-        {
-          "pNum": 3,
-          "title": "短文 3：优先级调整提案：两阶段分期实施",
-          "theme": "优先级调整提案：两阶段分期实施",
-          "objective": "掌握如何把工期延误风险（8月末➜9月末）直率告知客户，并巧妙借由两阶段分期（Phasing）化解交付死局。",
-          "dialogue": [
-            {
-              "speaker": "田中部長",
-              "jp": "5週間の追加となると、8月末のリリース予定に遅れが出ますか。",
-              "jpWithRuby": "5<ruby>週間<rt>しゅうかん</rt></ruby>の<ruby>追加<rt>ついか</rt></ruby>となると、8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>のリリース<ruby>予定<rt>よてい</rt></ruby>に<ruby>遅れ<rt>おくれ</rt></ruby>が<ruby>出<rt>で</rt></ruby>ますか。",
-              "zh": "如果直接追加5周工期，是不是意味着8月底的既定上线计划必然会延期？"
-            },
-            {
-              "speaker": "李",
-              "jp": "はい、全量追加した場合は9月末への延期が避けられません。",
-              "jpWithRuby": "はい、<ruby>全量<rt>ぜんりょう</rt></ruby><ruby>追加<rt>ついか</rt></ruby>した<ruby>場合<rt>ばあい</rt></ruby>は9<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>への<ruby>延期<rt>えんき</rt></ruby>が<ruby>避け<rt>さけ</rt></ruby>られません。",
-              "zh": "是的，如果全量一次性塞入，整个项目的上线节点恐怕势必延误至9月底。"
-            },
-            {
-              "speaker": "田中部長",
-              "jp": "8月末のリリースは必達目標なのですが、何とかなりませんか。",
-              "jpWithRuby": "8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>のリリースは<ruby>必達<rt>ひったつ</rt></ruby><ruby>目標<rt>もくひょう</rt></ruby>なのですが、<ruby>何<rt>なん</rt></ruby>とかなりませんか。",
-              "zh": "但是8月底上线是董事会定下的必达死线，有没有什么两全其美的变通办法？"
-            },
-            {
-              "speaker": "李",
-              "jp": "そこで、優先度の調整をご提案します。フェーズ1とフェーズ2に分割する方針はいかがでしょうか。",
-              "jpWithRuby": "そこで、<ruby>優先<rt>ゆうせん</rt></ruby><ruby>度<rt>ど</rt></ruby>の<ruby>調整<rt>ちょうせい</rt></ruby>をご<ruby>提案<rt>ていあん</rt></ruby>します。フェーズ1とフェーズ2に<ruby>分割<rt>ぶんかつ</rt></ruby>する<ruby>方針<rt>ほうしん</rt></ruby>はいかがでしょうか。",
-              "zh": "为此，我建议对功能优先级进行策略性调整。建议采取拆分为‘第一阶段’与‘第二阶段’的分期上线方针，您看如何？"
-            },
-            {
-              "speaker": "李",
-              "jp": "フェーズ1は8月末に基本推奨機能を、フェーズ2は9月末に高度な最適化アルゴリズムを追加します。",
-              "jpWithRuby": "フェーズ1は8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>に<ruby>基本<rt>きほん</rt></ruby><ruby>推奨<rt>すいしょう</rt></ruby><ruby>機能<rt>きのう</rt></ruby>を、フェーズ2は9<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>に<ruby>高度<rt>こうど</rt></ruby>な<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>アルゴリズムを<ruby>追加<rt>ついか</rt></ruby>します。",
-              "zh": "在8月底的一期上线中交付基础路线推荐能力，而在9月底的二期中再无缝追加高阶动态优化算法。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "その進め方であれば8月末の本番リリース日程を死守できますね。賛成です。",
-              "jpWithRuby": "その<ruby>進め<rt>すすめ</rt></ruby><ruby>方<rt>かた</rt></ruby>であれば8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>の<ruby>本番<rt>ほんばん</rt></ruby>リリース<ruby>日程<rt>にってい</rt></ruby>を<ruby>死守<rt>ししゅ</rt></ruby>できますね。<ruby>賛成<rt>さんせい</rt></ruby>です。",
-              "zh": "如果按照这个思路推进，我们就能死守8月底的生产上线大限了。我表示赞成。"
-            }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P45-P46"
-        },
-        {
-          "pNum": 4,
-          "title": "短文 4：共识形成与敬语收尾：变更谈判结果正式确认",
-          "theme": "共识形成与敬语收尾：变更谈判结果正式确认",
-          "objective": "掌握在达成变更共识后，使用「〜フェーズ分割にて合意とさせていただきます」并承诺提交变更规格书的专业闭环。",
+          "sourcePages": "P43-P44",
           "dialogue": [
             {
               "speaker": "李",
-              "jp": "それでは、本日の変更協議の結果を整理させていただきます。",
-              "jpWithRuby": "それでは、<ruby>本日<rt>ほんじつ</rt></ruby>の<ruby>変更<rt>へんこう</rt></ruby><ruby>協議<rt>きょうぎ</rt></ruby>の<ruby>結果<rt>けっか</rt></ruby>を<ruby>整理<rt>せいり</rt></ruby>させていただきます。",
-              "zh": "那么，我来将今天有关需求变更商讨的最终结论做一下正式梳理。"
+              "jp": "それでは、影響範囲につきまして3点に分けて説明します。",
+              "jpWithRuby": "それでは、<ruby>影響<rt>えいきょう</rt></ruby><ruby>範囲<rt>はんい</rt></ruby>につきまして3<ruby>点<rt>てん</rt></ruby>に<ruby>分け<rt>わけ</rt></ruby>て<ruby>説明<rt>せつめい</rt></ruby>します。",
+              "zh": "那么，关于影响范围我分3点来进行说明。"
             },
             {
               "speaker": "田中部長",
@@ -13233,77 +13671,245 @@ window.JAPANESE_KNOWLEDGE_BASE = {
             },
             {
               "speaker": "李",
-              "jp": "ルート最適化はフェーズ分割にて実装し、フェーズ1を8月末、フェーズ2を9月末リリースとすることで合意とさせていただきます。",
-              "jpWithRuby": "ルート<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>はフェーズ<ruby>分割<rt>ぶんかつ</rt></ruby>にて<ruby>実装<rt>じっそう</rt></ruby>し、フェーズ1を8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>、フェーズ2を9<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>リリースとすることで<ruby>合意<rt>ごうい</rt></ruby>とさせていただきます。",
-              "zh": "路线优化功能将采用‘分期上线’策略进行迭代开发，双方正式达成共识：一期于8月底交付，二期于9月底交付上线。"
+              "jp": "1つ目は、ルート最適化エンジンの新規開発でございます。交通状況を考慮した最適ルートを計算するエンジンをゼロから開発する必要がございます。これには3週間を要します。",
+              "jpWithRuby": "1つ<ruby>目<rt>め</rt></ruby>は、ルート<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>エンジンの<ruby>新規<rt>しんき</rt></ruby><ruby>開発<rt>かいはつ</rt></ruby>でございます。<ruby>交通<rt>こうつう</rt></ruby><ruby>状況<rt>じょうきょう</rt></ruby>を<ruby>考慮<rt>こうりょ</rt></ruby>した<ruby>最適<rt>さいてき</rt></ruby>ルートを<ruby>計算<rt>けいさん</rt></ruby>するエンジンをゼロから<ruby>開発<rt>かいはつ</rt></ruby>する<ruby>必要<rt>ひつよう</rt></ruby>がございます。これには3<ruby>週間<rt>しゅうかん</rt></ruby>を<ruby>要し<rt>ようし</rt></ruby>ます。",
+              "zh": "第1点是路线优化引擎的新增开发。需要从零开发考虑交通状况计算最佳路线的引擎。这需要花费3周时间。"
             },
             {
-              "speaker": "田中部長",
-              "jp": "はい、その方針で決定しましょう。柔軟な提案をありがとう。",
-              "jpWithRuby": "はい、その<ruby>方針<rt>ほうしん</rt></ruby>で<ruby>決定<rt>けってい</rt></ruby>しましょう。<ruby>柔軟<rt>じゅうなん</rt></ruby>な<ruby>提案<rt>ていあん</rt></ruby>をありがとう。",
-              "zh": "好，就按这个方针定案！感谢你提出了如此灵活变通的好方案。"
+              "speaker": "山田課長",
+              "jp": "3週間ですね。",
+              "jpWithRuby": "3<ruby>週間<rt>しゅうかん</rt></ruby>ですね。",
+              "zh": "3周对吧。"
             },
             {
               "speaker": "李",
-              "jp": "ありがとうございます。今週金曜日に変更仕様書のドラフトをお送りいたします。",
-              "jpWithRuby": "ありがとうございます。<ruby>今週<rt>こんしゅう</rt></ruby><ruby>金曜<rt>きんよう</rt></ruby><ruby>日<rt>ひ</rt></ruby>に<ruby>変更<rt>へんこう</rt></ruby><ruby>仕様<rt>しよう</rt></ruby><ruby>書<rt>しょ</rt></ruby>のドラフトをお<ruby>送り<rt>おくり</rt></ruby>いたします。",
-              "zh": "非常感谢您的认可。我将在本周五前把《需求变更规格说明书（CR）》的草案呈送给各位审阅。"
+              "jp": "2つ目は、交通情報API連携機能の追加でございます。外部の交通情報サービスからデータを取得し、ルート最適化エンジンに渡す機能を実装します。これには1週間を要します。",
+              "jpWithRuby": "2つ<ruby>目<rt>め</rt></ruby>は、<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>API<ruby>連携<rt>れんけい</rt></ruby><ruby>機能<rt>きのう</rt></ruby>の<ruby>追加<rt>ついか</rt></ruby>でございます。<ruby>外部<rt>がいぶ</rt></ruby>の<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>サービスからデータを<ruby>取得<rt>しゅとく</rt></ruby>し、ルート<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>エンジンに<ruby>渡す<rt>わたす</rt></ruby><ruby>機能<rt>きのう</rt></ruby>を<ruby>実装<rt>じっそう</rt></ruby>します。これには1<ruby>週間<rt>しゅうかん</rt></ruby>を<ruby>要し<rt>ようし</rt></ruby>ます。",
+              "zh": "第2点是交通信息API联动功能的新增。实现从外部交通信息服务获取数据并传递给路线优化引擎的功能。这需要花费1周时间。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "1週間ですね。",
+              "jpWithRuby": "1<ruby>週間<rt>しゅうかん</rt></ruby>ですね。",
+              "zh": "1周对吧。"
+            },
+            {
+              "speaker": "李",
+              "jp": "3つ目は、既存配車機能への組み込みでございます。新規開発したルート最適化エンジンを、既存の配車機能と連携させる作業でございます。これには1週間を要します。",
+              "jpWithRuby": "3つ<ruby>目<rt>め</rt></ruby>は、<ruby>既存<rt>きそん</rt></ruby><ruby>配車<rt>はいしゃ</rt></ruby><ruby>機能<rt>きのう</rt></ruby>への<ruby>組み込み<rt>くみこみ</rt></ruby>でございます。<ruby>新規<rt>しんき</rt></ruby><ruby>開発<rt>かいはつ</rt></ruby>したルート<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>エンジンを、<ruby>既存<rt>きそん</rt></ruby>の<ruby>配車<rt>はいしゃ</rt></ruby><ruby>機能<rt>きのう</rt></ruby>と<ruby>連携<rt>れんけい</rt></ruby>させる<ruby>作業<rt>さぎょう</rt></ruby>でございます。これには1<ruby>週間<rt>しゅうかん</rt></ruby>を<ruby>要し<rt>ようし</rt></ruby>ます。",
+              "zh": "第3点是嵌入到现有的配车功能中。将新开发的路线优化引擎与现有的配车功能进行联动的作业。这需要花费1周时间。"
             },
             {
               "speaker": "田中部長",
-              "jp": "よろしくお願いします。",
-              "jpWithRuby": "よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
-              "zh": "拜托了，请按此推进。"
+              "jp": "合計すると5週間ですね。",
+              "jpWithRuby": "<ruby>合計<rt>ごうけい</rt></ruby>すると5<ruby>週間<rt>しゅうかん</rt></ruby>ですね。",
+              "zh": "合计起来就是5周啊。"
+            },
+            {
+              "speaker": "李",
+              "jp": "おっしゃる通りです。したがいまして、合計5週間の追加開発期間が必要となります。",
+              "jpWithRuby": "おっしゃる<ruby>通り<rt>とおり</rt></ruby>です。したがいまして、<ruby>合計<rt>ごうけい</rt></ruby>5<ruby>週間<rt>しゅうかん</rt></ruby>の<ruby>追加<rt>ついか</rt></ruby><ruby>開発<rt>かいはつ</rt></ruby><ruby>期間<rt>きかん</rt></ruby>が<ruby>必要<rt>ひつよう</rt></ruby>となります。",
+              "zh": "正如您所言。因此，总共需要5周的追加开发周期。"
             }
-          ],
+          ]
+        },
+        {
+          "pNum": 3,
+          "title": "短文 3：优先级调整提案：分期方案与效果说明",
+          "theme": "练习 3 · 优先级调整提案：分期方案与效果说明",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第23课练习 3（P45-P46）",
           "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P47-P48"
+          "sourcePages": "P45-P46",
+          "dialogue": [
+            {
+              "speaker": "李",
+              "jp": "5週間の追加開発期間を踏まえまして、優先度の調整をご提案します。",
+              "jpWithRuby": "5<ruby>週間<rt>しゅうかん</rt></ruby>の<ruby>追加<rt>ついか</rt></ruby><ruby>開発<rt>かいはつ</rt></ruby><ruby>期間<rt>きかん</rt></ruby>を<ruby>踏まえ<rt>ふまえ</rt></ruby>まして、<ruby>優先<rt>ゆうせん</rt></ruby><ruby>度<rt>ど</rt></ruby>の<ruby>調整<rt>ちょうせい</rt></ruby>をご<ruby>提案<rt>ていあん</rt></ruby>します。",
+              "zh": "鉴于需要5周的追加开发周期，我向贵司提出优先级调整方案。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "はい、どのような提案ですか。",
+              "jpWithRuby": "はい、どのような<ruby>提案<rt>ていあん</rt></ruby>ですか。",
+              "zh": "好的，是什么样的提案？"
+            },
+            {
+              "speaker": "李",
+              "jp": "フェーズを2つに分割するご提案です。フェーズ1は8月末までに、交通情報API連携と基本のルート推奨を実装します。フェーズ2は9月末までに、高度な最適化アルゴリズムを実装します。",
+              "jpWithRuby": "フェーズを2つに<ruby>分割<rt>ぶんかつ</rt></ruby>するご<ruby>提案<rt>ていあん</rt></ruby>です。フェーズ1は8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>までに、<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>API<ruby>連携<rt>れんけい</rt></ruby>と<ruby>基本<rt>きほん</rt></ruby>のルート<ruby>推奨<rt>すいしょう</rt></ruby>を<ruby>実装<rt>じっそう</rt></ruby>します。フェーズ2は9<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>までに、<ruby>高度<rt>こうど</rt></ruby>な<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>アルゴリズムを<ruby>実装<rt>じっそう</rt></ruby>します。",
+              "zh": "我们将分两期进行交付。第一期在8月底前实现交通信息API联动与基础路线推荐。第二期在9月底前实现高级优化算法。"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "つまり、8月末に基本機能、9月末に高度な機能が使えるということですね。",
+              "jpWithRuby": "つまり、8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>に<ruby>基本<rt>きほん</rt></ruby><ruby>機能<rt>きのう</rt></ruby>、9<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>に<ruby>高度<rt>こうど</rt></ruby>な<ruby>機能<rt>きのう</rt></ruby>が<ruby>使える<rt>つかえる</rt></ruby>ということですね。",
+              "zh": "也就是说，8月底能用上基本功能，9月底能用上高级功能对吧。"
+            },
+            {
+              "speaker": "李",
+              "jp": "おっしゃる通りです。この分割により、8月末には基本の機能を、9月末には高度な機能をご提供できます。",
+              "jpWithRuby": "おっしゃる<ruby>通り<rt>とおり</rt></ruby>です。この<ruby>分割<rt>ぶんかつ</rt></ruby>により、8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>には<ruby>基本<rt>きほん</rt></ruby>の<ruby>機能<rt>きのう</rt></ruby>を、9<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>には<ruby>高度<rt>こうど</rt></ruby>な<ruby>機能<rt>きのう</rt></ruby>をご<ruby>提供<rt>ていきょう</rt></ruby>できます。",
+              "zh": "正如您所言。通过此分期，8月底可提供基本功能，9月底可提供高级功能。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "なるほど。全体のリリースが延期されないのは良いですね。",
+              "jpWithRuby": "なるほど。<ruby>全体<rt>ぜんたい</rt></ruby>のリリースが<ruby>延期<rt>えんき</rt></ruby>されないのは<ruby>良い<rt>よい</rt></ruby>ですね。",
+              "zh": "原来如此。整体的上线不被延期这很好。"
+            },
+            {
+              "speaker": "李",
+              "jp": "はい。フェーズ分割により、全体のリリース延期を回避できます。優先度の調整につきまして、ご意向はいかがでしょうか。",
+              "jpWithRuby": "はい。フェーズ<ruby>分割<rt>ぶんかつ</rt></ruby>により、<ruby>全体<rt>ぜんたい</rt></ruby>のリリース<ruby>延期<rt>えんき</rt></ruby>を<ruby>回避<rt>かいひ</rt></ruby>できます。<ruby>優先<rt>ゆうせん</rt></ruby><ruby>度<rt>ど</rt></ruby>の<ruby>調整<rt>ちょうせい</rt></ruby>につきまして、ご<ruby>意向<rt>いこう</rt></ruby>はいかがでしょうか。",
+              "zh": "是的。通过分期交付，能够避免整体的上线延期。关于优先级的调整，贵司意向如何？"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "この分割で進めてください。",
+              "jpWithRuby": "この<ruby>分割<rt>ぶんかつ</rt></ruby>で<ruby>進め<rt>すすめ</rt></ruby>てください。",
+              "zh": "就按这个分期推进吧。"
+            },
+            {
+              "speaker": "李",
+              "jp": "承知しました。それでは、フェーズ分割の方針で進めさせていただきます。",
+              "jpWithRuby": "<ruby>承知<rt>しょうち</rt></ruby>しました。それでは、フェーズ<ruby>分割<rt>ぶんかつ</rt></ruby>の<ruby>方針<rt>ほうしん</rt></ruby>で<ruby>進め<rt>すすめ</rt></ruby>させていただきます。",
+              "zh": "明白了。那么，我们将按照分期交付的方针推进。"
+            }
+          ]
+        },
+        {
+          "pNum": 4,
+          "title": "短文 4：共识形成与敬语收尾：变更协商结果正式确认",
+          "theme": "练习 4 · 共识形成与敬语收尾：变更协商结果正式确认",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第23课练习 4（P47-P48）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P47-P48",
+          "dialogue": [
+            {
+              "speaker": "李",
+              "jp": "それでは、本日の変更協商の結果を整理させていただきます。",
+              "jpWithRuby": "それでは、<ruby>本日<rt>ほんじつ</rt></ruby>の<ruby>変更<rt>へんこう</rt></ruby><ruby>協商<rt>きょうしょう</rt></ruby>の<ruby>結果<rt>けっか</rt></ruby>を<ruby>整理<rt>せいり</rt></ruby>させていただきます。",
+              "zh": "那么，我来整理今天变更协商的结果。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "はい、お願いします。",
+              "jpWithRuby": "はい、お<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "好的，请讲。"
+            },
+            {
+              "speaker": "李",
+              "jp": "追加要件は、交通状況に基づき最適な配送ルートを推奨する機能ということでお間違いないでしょうか。",
+              "jpWithRuby": "<ruby>追加<rt>ついか</rt></ruby><ruby>要件<rt>ようけん</rt></ruby>は、<ruby>交通<rt>こうつう</rt></ruby><ruby>状況<rt>じょうきょう</rt></ruby>に<ruby>基づき<rt>もとづき</rt></ruby><ruby>最適<rt>さいてき</rt></ruby>な<ruby>配送<rt>はいそう</rt></ruby>ルートを<ruby>推奨<rt>すいしょう</rt></ruby>する<ruby>機能<rt>きのう</rt></ruby>ということでお<ruby>間違い<rt>まちがい</rt></ruby>ないでしょうか。",
+              "zh": "追加需求是根据交通状况推荐最佳配送路线的功能，这一点没有差错吧？"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "はい、間違いありません。",
+              "jpWithRuby": "はい、<ruby>間違い<rt>まちがい</rt></ruby>ありません。",
+              "zh": "是的，没有错。"
+            },
+            {
+              "speaker": "李",
+              "jp": "影響範囲は、ルート最適化エンジン新規開発・交通情報API連携・既存配車機能組み込みの3点で、合計5週間ということでよろしいですか。",
+              "jpWithRuby": "<ruby>影響<rt>えいきょう</rt></ruby><ruby>範囲<rt>はんい</rt></ruby>は、ルート<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>エンジン<ruby>新規<rt>しんき</rt></ruby><ruby>開発<rt>かいはつ</rt></ruby>・<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>API<ruby>連携<rt>れんけい</rt></ruby>・<ruby>既存<rt>きそん</rt></ruby><ruby>配車<rt>はいしゃ</rt></ruby><ruby>機能<rt>きのう</rt></ruby><ruby>組み込み<rt>くみこみ</rt></ruby>の3<ruby>点<rt>てん</rt></ruby>で、<ruby>合計<rt>ごうけい</rt></ruby>5<ruby>週間<rt>しゅうかん</rt></ruby>ということでよろしいですか。",
+              "zh": "影响范围是路线优化引擎新增、交通信息API联动、现有配车功能嵌入这3项，合计5周时间，这样可以吗？"
+            },
+            {
+              "speaker": "山田課長",
+              "jp": "はい、よろしいです。",
+              "jpWithRuby": "はい、よろしいです。",
+              "zh": "好的，可以。"
+            },
+            {
+              "speaker": "李",
+              "jp": "優先度調整は、フェーズ1が8月末までに基本ルート推奨を、フェーズ2が9月末までに高度な最適化アルゴリズムを実装するということで合意とさせていただきます。",
+              "jpWithRuby": "<ruby>優先<rt>ゆうせん</rt></ruby><ruby>度<rt>ど</rt></ruby><ruby>調整<rt>ちょうせい</rt></ruby>は、フェーズ1が8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>までに<ruby>基本<rt>きほん</rt></ruby>ルート<ruby>推奨<rt>すいしょう</rt></ruby>を、フェーズ2が9<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>までに<ruby>高度<rt>こうど</rt></ruby>な<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>アルゴリズムを<ruby>実装<rt>じっそう</rt></ruby>するということで<ruby>合意<rt>ごうい</rt></ruby>とさせていただきます。",
+              "zh": "优先级调整方面，确认为第1期在8月底前实现基础路线推荐，第2期在9月底前实现高级优化算法，以此达成共识。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "はい、合意です。",
+              "jpWithRuby": "はい、<ruby>合意<rt>ごうい</rt></ruby>です。",
+              "zh": "好的，达成共识。"
+            },
+            {
+              "speaker": "李",
+              "jp": "以上につきまして、この内容で合意とさせていただきます。本日は迅速にご対応いただきまして、ありがとうございました。",
+              "jpWithRuby": "<ruby>以上<rt>いじょう</rt></ruby>につきまして、この<ruby>内容<rt>ないよう</rt></ruby>で<ruby>合意<rt>ごうい</rt></ruby>とさせていただきます。<ruby>本日<rt>ほんじつ</rt></ruby>は<ruby>迅速<rt>じんそく</rt></ruby>にご<ruby>対応<rt>たいおう</rt></ruby>いただきまして、ありがとうございました。",
+              "zh": "以上各项，就以此内容达成正式共识。今天非常感谢贵司迅速高效的沟通支持。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "こちらこそ、ありがとうございました。",
+              "jpWithRuby": "こちらこそ、ありがとうございました。",
+              "zh": "我们这边也非常感谢。"
+            },
+            {
+              "speaker": "李",
+              "jp": "次回は、フェーズ1の詳細設計をご説明させていただきたく思います。それでは、引き続きよろしくお願いします。",
+              "jpWithRuby": "<ruby>次回<rt>じかい</rt></ruby>は、フェーズ1の<ruby>詳細<rt>しょうさい</rt></ruby><ruby>設計<rt>せっけい</rt></ruby>をご<ruby>説明<rt>せつめい</rt></ruby>させていただきたく<ruby>思い<rt>おもい</rt></ruby>ます。それでは、<ruby>引き続き<rt>ひきつづき</rt></ruby>よろしくお<ruby>願い<rt>ねがい</rt></ruby>します。",
+              "zh": "下次会议我想向各位说明第1期的详细设计。那么，接下来也请多多关照。"
+            }
+          ]
         },
         {
           "pNum": 5,
-          "title": "短文 5：综合复习：从变更确认到共识形成的完整谈判流程",
-          "theme": "综合复习：从变更确认到共识形成的完整谈判流程",
-          "objective": "综合演练对日软件CR变更谈判经典全套招式：受容倾听 ➜ 差异剖析 ➜ 工时拆解 ➜ 风险示警 ➜ 分期替代 ➜ 协议签署。",
+          "title": "短文 5：综合复习：从变更要求确认到共识形成的完整流程",
+          "theme": "练习 5 · 变更协商全流程综合演练",
+          "objective": "源自《对日软件需求定义分析设计场景对话训练教材配套练习》第23课练习 5（P49-P50）",
+          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
+          "sourcePages": "P49-P50",
           "dialogue": [
             {
               "speaker": "田中部長",
               "jp": "交通状況に基づいて最適な配送ルートを推奨する機能を追加したいです。",
               "jpWithRuby": "<ruby>交通<rt>こうつう</rt></ruby><ruby>状況<rt>じょうきょう</rt></ruby>に<ruby>基づい<rt>もとづい</rt></ruby>て<ruby>最適<rt>さいてき</rt></ruby>な<ruby>配送<rt>はいそう</rt></ruby>ルートを<ruby>推奨<rt>すいしょう</rt></ruby>する<ruby>機能<rt>きのう</rt></ruby>を<ruby>追加<rt>ついか</rt></ruby>したいです。",
-              "zh": "我们希望追加一套能根据实时路况动态推荐最优配送路径的智能功能。"
+              "zh": "我们想要追加根据交通状况推荐最佳配送路线的功能。"
             },
             {
               "speaker": "李",
-              "jp": "ご要望承知いたしました。外部API連携と最適化エンジンの新設で約5週間の工数が見込まれます。",
-              "jpWithRuby": "ご<ruby>要望<rt>ようぼう</rt></ruby><ruby>承知<rt>しょうち</rt></ruby>いたしました。<ruby>外部<rt>がいぶ</rt></ruby>API<ruby>連携<rt>れんけい</rt></ruby>と<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>エンジンの<ruby>新設<rt>しんせつ</rt></ruby>で<ruby>約<rt>やく</rt></ruby>5<ruby>週間<rt>しゅうかん</rt></ruby>の<ruby>工数<rt>こうすう</rt></ruby>が<ruby>見込ま<rt>みこま</rt></ruby>れます。",
-              "zh": "充分理解贵司的迫切诉求。对接外部 API 与新设优化引擎综合评估需要约5周的额外工期。"
-            },
-            {
-              "speaker": "山田課長",
-              "jp": "8月末のリリースを守るための妙案はありますか。",
-              "jpWithRuby": "8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>のリリースを<ruby>守る<rt>まもる</rt></ruby>ための<ruby>妙案<rt>みょうあん</rt></ruby>はありますか。",
-              "zh": "为了确保8月底按时上线不受影响，有什么两全其美的妙策吗？"
-            },
-            {
-              "speaker": "李",
-              "jp": "機能をフェーズ分割し、基本機能を8月末、高度機能を9月末にリリースする2段階展開をご提案します。",
-              "jpWithRuby": "<ruby>機能<rt>きのう</rt></ruby>をフェーズ<ruby>分割<rt>ぶんかつ</rt></ruby>し、<ruby>基本<rt>きほん</rt></ruby><ruby>機能<rt>きのう</rt></ruby>を8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>、<ruby>高度<rt>こうど</rt></ruby><ruby>機能<rt>きのう</rt></ruby>を9<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>にリリースする2<ruby>段階<rt>だんかい</rt></ruby><ruby>展開<rt>てんかい</rt></ruby>をご<ruby>提案<rt>ていあん</rt></ruby>します。",
-              "zh": "我们建议将该需求进行阶段性拆分，采取首期8月底交付基础功能、二期9月底追加高阶算法的两步走推进方案。"
+              "jp": "ご要望ありがとうございます。交通状況に基づき最適な配送ルートを推奨する機能ですね。",
+              "jpWithRuby": "ご<ruby>要望<rt>ようぼう</rt></ruby>ありがとうございます。<ruby>交通<rt>こうつう</rt></ruby><ruby>状況<rt>じょうきょう</rt></ruby>に<ruby>基づき<rt>もとづき</rt></ruby><ruby>最適<rt>さいてき</rt></ruby>な<ruby>配送<rt>はいそう</rt></ruby>ルートを<ruby>推奨<rt>すいしょう</rt></ruby>する<ruby>機能<rt>きのう</rt></ruby>ですね。",
+              "zh": "非常感谢您的需求提出。是根据交通状况推荐最佳配送路线的功能对吧。"
             },
             {
               "speaker": "田中部長",
-              "jp": "納期も守れて新機能も手に入る、非常に良い提案です。その案で進めてください。",
-              "jpWithRuby": "<ruby>納期<rt>のうき</rt></ruby>も<ruby>守れ<rt>まもれ</rt></ruby>て<ruby>新<rt>しん</rt></ruby><ruby>機能<rt>きのう</rt></ruby>も<ruby>手<rt>て</rt></ruby>に<ruby>入る<rt>はいる</rt></ruby>、<ruby>非常<rt>ひじょう</rt></ruby>に<ruby>良い<rt>よい</rt></ruby><ruby>提案<rt>ていあん</rt></ruby>です。その<ruby>案<rt>あん</rt></ruby>で<ruby>進め<rt>すすめ</rt></ruby>てください。",
-              "zh": "既保住了上线死线又能平稳拿到新功能，非常精彩的解决方案。就按这个方案全力执行吧！"
+              "jp": "はい、そうです。",
+              "jpWithRuby": "はい、そうです。",
+              "zh": "是的，正是如此。"
             },
             {
               "speaker": "李",
-              "jp": "ありがとうございます。変更仕様書をまとめ、着実に進行してまいります。",
-              "jpWithRuby": "ありがとうございます。<ruby>変更<rt>へんこう</rt></ruby><ruby>仕様<rt>しよう</rt></ruby><ruby>書<rt>しょ</rt></ruby>をまとめ、<ruby>着実<rt>ちゃくじつ</rt></ruby>に<ruby>進行<rt>しんこう</rt></ruby>してまいります。",
-              "zh": "非常感谢您的拍板定案。我们将迅速出具变更式样书，稳扎稳打向前推进。"
+              "jp": "それでは、影響範囲につきまして3点に分けて説明します。1つ目はルート最適化エンジンの新規開発、2つ目は交通情報API連携、3つ目は既存配車機能への組み込みで、合計5週間となります。",
+              "jpWithRuby": "それでは、<ruby>影響<rt>えいきょう</rt></ruby><ruby>範囲<rt>はんい</rt></ruby>につきまして3<ruby>点<rt>てん</rt></ruby>に<ruby>分け<rt>わけ</rt></ruby>て<ruby>説明<rt>せつめい</rt></ruby>します。1つ<ruby>目<rt>め</rt></ruby>はルート<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>エンジンの<ruby>新規<rt>しんき</rt></ruby><ruby>開発<rt>かいはつ</rt></ruby>、2つ<ruby>目<rt>め</rt></ruby>は<ruby>交通<rt>こうつう</rt></ruby><ruby>情報<rt>じょうほう</rt></ruby>API<ruby>連携<rt>れんけい</rt></ruby>、3つ<ruby>目<rt>め</rt></ruby>は<ruby>既存<rt>きそん</rt></ruby><ruby>配車<rt>はいしゃ</rt></ruby><ruby>機能<rt>きのう</rt></ruby>への<ruby>組み込み<rt>くみこみ</rt></ruby>で、<ruby>合計<rt>ごうけい</rt></ruby>5<ruby>週間<rt>しゅうかん</rt></ruby>となります。",
+              "zh": "那么，关于影响范围我分3点说明。第1项是路线优化引擎的新增开发，第2项是交通信息API联动，第3项是现有配车功能嵌入，合计为5周。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "5週間ですか。",
+              "jpWithRuby": "5<ruby>週間<rt>しゅうかん</rt></ruby>ですか。",
+              "zh": "5周是吧。"
+            },
+            {
+              "speaker": "李",
+              "jp": "5週間の追加開発期間を踏まえまして、優先度の調整をご提案します。フェーズ1は8月末までに基本ルート推奨を、フェーズ2は9月末までに高度な最適化アルゴリズムを実装するということで合意とさせていただきます。",
+              "jpWithRuby": "5<ruby>週間<rt>しゅうかん</rt></ruby>の<ruby>追加<rt>ついか</rt></ruby><ruby>開発<rt>かいはつ</rt></ruby><ruby>期間<rt>きかん</rt></ruby>を<ruby>踏まえ<rt>ふまえ</rt></ruby>まして、<ruby>優先<rt>ゆうせん</rt></ruby><ruby>度<rt>ど</rt></ruby>の<ruby>調整<rt>ちょうせい</rt></ruby>をご<ruby>提案<rt>ていあん</rt></ruby>します。フェーズ1は8<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>までに<ruby>基本<rt>きほん</rt></ruby>ルート<ruby>推奨<rt>すいしょう</rt></ruby>を、フェーズ2は9<ruby>月<rt>がつ</rt></ruby><ruby>末<rt>まつ</rt></ruby>までに<ruby>高度<rt>こうど</rt></ruby>な<ruby>最適<rt>さいてき</rt></ruby><ruby>化<rt>か</rt></ruby>アルゴリズムを<ruby>実装<rt>じっそう</rt></ruby>するということで<ruby>合意<rt>ごうい</rt></ruby>とさせていただきます。",
+              "zh": "鉴于5周的追加开发周期，我们建议调整优先级。确认为第1期在8月底前实现基础路线推荐，第2期在9月底前实现高级优化算法，以此达成共识。"
+            },
+            {
+              "speaker": "田中部長",
+              "jp": "はい、合意です。",
+              "jpWithRuby": "はい、<ruby>合意<rt>ごうい</rt></ruby>です。",
+              "zh": "好的，达成共识。"
+            },
+            {
+              "speaker": "李",
+              "jp": "本日は迅速にご対応いただきまして、ありがとうございました。次回は、フェーズ1の詳細設計をご説明させていただきたく思います。",
+              "jpWithRuby": "<ruby>本日<rt>ほんじつ</rt></ruby>は<ruby>迅速<rt>じんそく</rt></ruby>にご<ruby>対応<rt>たいおう</rt></ruby>いただきまして、ありがとうございました。<ruby>次回<rt>じかい</rt></ruby>は、フェーズ1の<ruby>詳細<rt>しょうさい</rt></ruby><ruby>設計<rt>せっけい</rt></ruby>をご<ruby>説明<rt>せつめい</rt></ruby>させていただきたく<ruby>思い<rt>おもい</rt></ruby>ます。",
+              "zh": "今天非常感谢贵司迅速高效的配合。下次会议我想向各位说明第1期的详细设计。"
             }
-          ],
-          "sourceBook": "《对日软件需求定义分析设计场景对话训练教材配套练习》",
-          "sourcePages": "P49-P50"
+          ]
         }
       ],
       "grammarPoints": [
