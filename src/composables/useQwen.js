@@ -69,10 +69,14 @@ function loadConfig() {
       if (parsed && (parsed.model === 'qwen-plus' || !parsed.model)) {
         parsed.model = 'qwen3.7-plus';
       }
+      let bUrl = (parsed.baseUrl || '/api/chat').trim();
+      if (bUrl.includes('dashscope.aliyuncs.com') || bUrl.includes('pages.dev')) {
+        bUrl = '/api/chat';
+      }
       return {
         apiKey: parsed.apiKey || '',
         model: parsed.model || 'qwen3.7-plus',
-        baseUrl: parsed.baseUrl || '/api/chat'
+        baseUrl: bUrl
       };
     }
   } catch (e) {
@@ -91,8 +95,11 @@ const isPlatformReady = ref(false);
 
 async function checkPlatformStatus() {
   try {
-    const ep = (config.value.baseUrl && config.value.baseUrl.trim()) ? config.value.baseUrl.trim() : '/api/chat';
-    const endpoint = (window.location.protocol === 'file:' && ep.startsWith('/')) ? `http://localhost:8080${ep}` : ep;
+    // 始终直接探测当前托管域名的 /api/chat 端点，不受本地任何历史脏数据干扰
+    let endpoint = '/api/chat';
+    if (window.location.protocol === 'file:') {
+      endpoint = 'http://localhost:8080/api/chat';
+    }
     const res = await fetch(endpoint, { method: 'GET' });
     if (res.ok) {
       const data = await res.json();
