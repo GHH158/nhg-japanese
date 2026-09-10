@@ -7,5 +7,4 @@ node_modules/
 .vite/
 __pycache__/
 *.pyc
-
-
+public/audio/tts_cache/

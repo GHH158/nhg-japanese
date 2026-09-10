@@ -509,7 +509,7 @@ export function useQuizGenerator() {
 - 业务领域与背景: ${scene.background}
 - 核心课文关键对白:
 ${scene.textbookText?.dialogue ? scene.textbookText.dialogue.slice(0, 5).map(t => `${t.speaker}: ${t.jp} (${t.zh})`).join('\n') : ''}
-- 语法重点: ${scene.grammarPoints ? scene.grammarPoints.map(g => g.title).join(', ') : '敬语与要件定义'}
+- 沟通重点: 敬语与需求定义及业务要件规范
 
 请基于上述内容，生成 3 道高质量题目，直接输出合法的 JSON 字符串。`;
 

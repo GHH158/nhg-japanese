@@ -1,6 +1,6 @@
 <script setup>
-import { ref, watch, computed } from 'vue';
-import { useInterviewManager } from '../composables/useInterviewManager.js';
+import { ref, computed } from 'vue';
+import { useInterviewManager, INTERVIEW_LEVELS, UNIVERSAL_TRACKS } from '../composables/useInterviewManager.js';
 import { useAudioPlayer } from '../composables/useAudioPlayer.js';
 
 const emit = defineEmits(['ask-ai', 'open-config']);
@@ -8,7 +8,9 @@ const emit = defineEmits(['ask-ai', 'open-config']);
 const { speak } = useAudioPlayer();
 const { isConfigured, isLoading, generateUniversalInterview, evaluateTurnResponse, generateFinalReport } = useInterviewManager();
 
-const selectedTrack = ref('entry'); // 'entry' | 'executive' | 'stress'
+const selectedLevel = ref('n2_n1');
+const selectedTrack = ref('entry');
+const customGoal = ref('');
 const interviewData = ref(null);
 const hasStarted = ref(false);
 const currentIndex = ref(0);
@@ -16,28 +18,10 @@ const answers = ref({});
 const evaluations = ref({});
 const isEvaluating = ref(false);
 const showZh = ref({});
-const showHint = ref({});
 const finalReport = ref(null);
 const isGeneratingReport = ref(false);
 const startError = ref('');
-
-const tracks = [
-  {
-    id: 'entry',
-    name: '👔 现场入场面试 (現場入場面接)',
-    desc: '对日外包开发经验、报联相（報連相）沟通规范、上流要件理解与自驱力'
-  },
-  {
-    id: 'executive',
-    name: '💼 上级SE/PM商务终面 (役員面接)',
-    desc: '客户心理博弈、需求边界防雷、商业ROI价值提炼与信任构建'
-  },
-  {
-    id: 'stress',
-    name: '⚡ 突发危机压力面 (トラブル対応)',
-    desc: '线上生产事故应对、客户情绪受容、分期交付协商与再发防止策'
-  }
-];
+const copySuccess = ref(false);
 
 // 开启或刷新全场景综合面试
 async function startUniversalInterview(trackId = selectedTrack.value) {
@@ -49,11 +33,10 @@ async function startUniversalInterview(trackId = selectedTrack.value) {
   answers.value = {};
   evaluations.value = {};
   showZh.value = {};
-  showHint.value = {};
   finalReport.value = null;
 
   try {
-    const data = await generateUniversalInterview(trackId);
+    const data = await generateUniversalInterview(trackId, selectedLevel.value, customGoal.value);
     interviewData.value = data;
   } catch (err) {
     console.error('生成全场景面试失败:', err);
@@ -76,8 +59,38 @@ const isAllAnswered = computed(() => {
   return interviewData.value.questions.every(q => evaluations.value[q.id]);
 });
 
-function playVoice(text) {
-  speak(text, null, null);
+function playVoice(text, voice = 'ja-JP-KeitaNeural') {
+  if (!text) return;
+  speak(text, null, null, null, voice);
+}
+
+function isZhVisible(qId) {
+  return showZh.value[qId] !== false; // 默认展开展示，清晰友好
+}
+
+function toggleZh(qId) {
+  showZh.value[qId] = !isZhVisible(qId);
+}
+
+// 快速插入推荐短语
+function handleInsertPhrase(phrase) {
+  if (!currentQuestion.value) return;
+  const qId = currentQuestion.value.id;
+  const oldText = answers.value[qId] || '';
+  answers.value[qId] = oldText ? `${oldText} ${phrase}` : phrase;
+}
+
+// 一键套用骨架
+function handleApplyTemplate(template) {
+  if (!currentQuestion.value || !template) return;
+  const qId = currentQuestion.value.id;
+  answers.value[qId] = template;
+}
+
+// 重新回答本阶段
+function handleRetryTurn(qId) {
+  delete evaluations.value[qId];
+  if (finalReport.value) finalReport.value = null;
 }
 
 // 提交单问回答
@@ -91,11 +104,12 @@ async function handleSubmitAnswer(q) {
       interviewerName: interviewData.value?.interviewer?.name,
       questionJp: q.questionJp,
       candidateAnswer: text,
-      contextInfo: `全场景实战模拟面试 - ${interviewData.value?.trackTitle}`
+      contextInfo: `全场景实战模拟对谈 - ${interviewData.value?.trackTitle}`,
+      level: selectedLevel.value
     });
     evaluations.value[q.id] = res;
 
-    // 若全部回答完毕，自动生成综合判定书
+    // 若全部回答完毕，自动生成综合判定书与速记手册
     if (currentIndex.value === interviewData.value.questions.length - 1) {
       generateReport();
     }
@@ -114,7 +128,8 @@ async function generateReport() {
       interviewer: interviewData.value?.interviewer,
       questions: interviewData.value.questions,
       answers: answers.value,
-      evaluations: evaluations.value
+      evaluations: evaluations.value,
+      level: selectedLevel.value
     });
     finalReport.value = rep;
   } catch (err) {
@@ -135,6 +150,21 @@ function handlePrev() {
     currentIndex.value--;
   }
 }
+
+// 一键复制整场面试速记手册
+function copyCheatSheet() {
+  if (!finalReport.value?.distilledCheatSheet?.length) return;
+  const textLines = finalReport.value.distilledCheatSheet.map((item, idx) => {
+    return `【${item.stage || `阶段 ${idx + 1}`}】\n💡 黄金法则: ${item.goldenRule}\n🔑 必背金句: ${item.memoryPhrase}\n⚠️ 避坑雷区: ${item.pitfall}\n`;
+  }).join('\n');
+
+  navigator.clipboard.writeText(textLines).then(() => {
+    copySuccess.value = true;
+    setTimeout(() => { copySuccess.value = false; }, 2500);
+  }).catch(() => {
+    alert('复制失败，请手动选择复制');
+  });
+}
 </script>
 
 <template>
@@ -143,10 +173,10 @@ function handlePrev() {
     <div class="battle-title-area">
       <div class="battle-main-badge">
         <span class="battle-badge-tag">👔 AI INTERVIEW COCKPIT</span>
-        <span>对日IT现场入场·全场景实战模拟面试</span>
+        <span>对日IT现场入场·全场景实战双向模拟对谈</span>
       </div>
       <p class="battle-subtitle">
-        跨越所有课文界限 · 模拟日本大手SIer与商社真实入场考核 · 纯 AI 实时动态命题与多维录用诊断
+        突破课文边界 · 覆盖 N5~N1+ 全梯级能力提升 · 真实考官发问与我方回答对谈 · 全中文多维复盘与实战金句速记
       </p>
     </div>
 
@@ -158,10 +188,10 @@ function handlePrev() {
     >
       <div style="font-size: 3.5rem; margin-bottom: 0.75rem;">👔</div>
       <h3 style="font-size: 1.35rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.5rem;">
-        纯 AI 全场景模拟面试（无需预制题目 · 实时博弈）
+        纯 AI 全场景现场双向对谈面试
       </h3>
       <p style="color: #64748b; font-size: 0.92rem; max-width: 580px; margin: 0 auto 1.5rem; line-height: 1.6;">
-        AI 面试官将模拟日本知名商社的现场总监，提供【现场入场面试】、【上级SE商务终面】与【突发危机压力面】三大路线，涵盖自己PR、需求折冲、事故应对与逆质问全流程，并出具日企标准录用判定书。
+        AI 面试官将模拟日本大手商社的现场统括总监，提供【现场入场面试】、【技术与要件定义】、【突发危机折冲】以及【学员自由定制】四大赛道，涵盖自己PR、要件折冲、事故应对与逆质问全流程，并出具日企标准录用判定书与实战速记手册。
       </p>
       <button
         class="play-full-btn"
@@ -172,72 +202,118 @@ function handlePrev() {
       </button>
     </div>
 
-    <!-- 已就绪未开始：显示考场大厅与路线选择简报卡片（点击开始后才调用 AI 生成考题） -->
+    <!-- 考场大厅：级别选择 + 赛道选择 (点击后才开始调用 AI) -->
     <div
       v-else-if="!hasStarted"
       class="battle-arena-card"
       style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem 1.75rem; text-align: center; box-shadow: var(--shadow-sm); margin-top: 1rem;"
     >
       <div style="font-size: 3.2rem; margin-bottom: 0.75rem;">👔</div>
-      <div style="display: inline-block; background: #eff6ff; color: #1e40af; font-size: 0.8rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem;">
-        对日IT现场入场 · 全场景综合实战考核
+      <div style="display: inline-block; background: #eff6ff; color: #1e40af; font-size: 0.8rem; font-weight: 700; padding: 0.25rem 0.8rem; border-radius: 9999px; margin-bottom: 0.75rem;">
+        日企现场总监 · 实战对谈面试入场大厅
       </div>
-      <h3 style="font-size: 1.4rem; font-weight: 800; color: #0f172a; margin-bottom: 0.6rem;">
-        日企现场总监 · 实战模拟面试入场大厅
+      <h3 style="font-size: 1.45rem; font-weight: 800; color: #0f172a; margin-bottom: 0.6rem;">
+        对日IT现场入场 · 全场景综合实战考核
       </h3>
-      <p style="color: #475569; font-size: 0.92rem; max-width: 620px; margin: 0 auto 1.5rem; line-height: 1.65;">
-        跨越所有课文界限，模拟日本知名商社与大手 SIer 的严苛现场入场考核。请先选择考核路线，准备好后点击【步入考场】，AI 现场总监将实时为您命题。
+      <p style="color: #475569; font-size: 0.92rem; max-width: 640px; margin: 0 auto 1.75rem; line-height: 1.65;">
+        跨越课文界限，模拟真实日本大手 SIer 现场。请先指定您的【挑战级别】并选择【面试赛道】，AI 现场总监将实时为您定制考题与作答意图指引。
       </p>
 
-      <!-- 考核路线单选卡片 -->
-      <div style="font-size: 0.88rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.75rem; text-align: left; max-width: 680px; margin-left: auto; margin-right: auto;">
-        🎯 请选择您要挑战的面试路线：
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.85rem; max-width: 680px; margin: 0 auto 1.5rem;">
-        <div
-          v-for="track in tracks"
-          :key="track.id"
-          :style="{
-            background: selectedTrack === track.id ? '#eff6ff' : '#ffffff',
-            border: selectedTrack === track.id ? '2px solid #2563eb' : '1.5px solid #e2e8f0',
-            boxShadow: selectedTrack === track.id ? '0 4px 12px rgba(37, 99, 235, 0.12)' : 'none',
-            borderRadius: '10px',
-            padding: '1rem',
-            cursor: 'pointer',
-            textAlign: 'left',
-            transition: 'all 0.2s ease',
-            position: 'relative'
-          }"
-          @click="selectedTrack = track.id"
-        >
+      <!-- 1. 目标挑战级别选择 (4 档梯度) -->
+      <div style="max-width: 720px; margin: 0 auto 1.5rem; text-align: left;">
+        <div style="font-size: 0.88rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between;">
+          <span>🎯 第一步：指定您的挑战级别：</span>
+          <span style="font-size: 0.78rem; color: #64748b;">支持从零基础小白到资深PM全梯度</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.65rem;">
           <div
-            v-if="selectedTrack === track.id"
-            style="position: absolute; top: 0.6rem; right: 0.6rem; background: #2563eb; color: white; font-size: 0.7rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 9999px;"
+            v-for="lvl in INTERVIEW_LEVELS"
+            :key="lvl.id"
+            :style="{
+              background: selectedLevel === lvl.id ? '#eff6ff' : '#ffffff',
+              border: selectedLevel === lvl.id ? '2px solid #2563eb' : '1px solid #e2e8f0',
+              boxShadow: selectedLevel === lvl.id ? '0 4px 10px rgba(37, 99, 235, 0.12)' : 'none',
+              borderRadius: '8px',
+              padding: '0.75rem 0.65rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              textAlign: 'center'
+            }"
+            @click="selectedLevel = lvl.id"
           >
-            ✓ 已选择
-          </div>
-          <div style="font-size: 0.95rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.35rem; padding-right: 2rem;">
-            {{ track.name }}
-          </div>
-          <div style="font-size: 0.8rem; color: #64748b; line-height: 1.5;">
-            {{ track.desc }}
+            <div style="font-size: 0.92rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.25rem;">
+              {{ lvl.name }}
+            </div>
+            <div style="font-size: 0.72rem; color: #64748b; line-height: 1.4;">
+              {{ lvl.shortDesc }}
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- 4 阶段全流程概述 -->
-      <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.75rem;">
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 0.85rem; font-size: 0.8rem; color: #334155;">
+      <!-- 2. 面试赛道选择 (4 大赛道) -->
+      <div style="max-width: 720px; margin: 0 auto 1.5rem; text-align: left;">
+        <div style="font-size: 0.88rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.6rem;">
+          🏢 第二步：选择实战赛道：
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem;">
+          <div
+            v-for="track in UNIVERSAL_TRACKS"
+            :key="track.id"
+            :style="{
+              background: selectedTrack === track.id ? '#eff6ff' : '#ffffff',
+              border: selectedTrack === track.id ? '2px solid #2563eb' : '1px solid #e2e8f0',
+              boxShadow: selectedTrack === track.id ? '0 4px 10px rgba(37, 99, 235, 0.12)' : 'none',
+              borderRadius: '10px',
+              padding: '0.85rem 1rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              position: 'relative'
+            }"
+            @click="selectedTrack = track.id"
+          >
+            <div
+              v-if="selectedTrack === track.id"
+              style="position: absolute; top: 0.6rem; right: 0.6rem; background: #2563eb; color: white; font-size: 0.68rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 9999px;"
+            >
+              ✓ 已选
+            </div>
+            <div style="font-size: 0.95rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.35rem; padding-right: 2rem;">
+              {{ track.name }}
+            </div>
+            <div style="font-size: 0.78rem; color: #64748b; line-height: 1.5;">
+              {{ track.desc }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 自由定制赛道输入框 -->
+        <div v-if="selectedTrack === 'custom'" style="margin-top: 0.85rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.85rem 1rem;">
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.35rem;">
+            🎯 请输入您期望模拟的目标公司或职位方向：
+          </label>
+          <input
+            v-model="customGoal"
+            type="text"
+            placeholder="例如：野村综研 对日Java微服务开发 / 乐天市场 前端架构师 / 丰田车联网 PM"
+            style="width: 100%; padding: 0.55rem 0.75rem; border: 1.5px solid #94a3b8; border-radius: 6px; font-size: 0.88rem; outline: none;"
+          />
+        </div>
+      </div>
+
+      <!-- 4 阶段全流程速览 -->
+      <div style="display: flex; justify-content: center; gap: 0.65rem; flex-wrap: wrap; margin-bottom: 1.75rem;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.45rem 0.8rem; font-size: 0.78rem; color: #334155;">
           <span style="font-weight: 700; color: #1e3a8a;">① 自己PR与对日背景</span>
         </div>
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 0.85rem; font-size: 0.8rem; color: #334155;">
-          <span style="font-weight: 700; color: #0284c7;">② 上流要件与客户心理</span>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.45rem 0.8rem; font-size: 0.78rem; color: #0284c7;">
+          <span style="font-weight: 700; color: #0284c7;">② 上流要件与客户沟通</span>
         </div>
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 0.85rem; font-size: 0.8rem; color: #334155;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.45rem 0.8rem; font-size: 0.78rem; color: #d97706;">
           <span style="font-weight: 700; color: #d97706;">③ 现场故障与边界防雷</span>
         </div>
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 0.85rem; font-size: 0.8rem; color: #334155;">
-          <span style="font-weight: 700; color: #059669;">④ 逆质问与商业价值</span>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.45rem 0.8rem; font-size: 0.78rem; color: #059669;">
+          <span style="font-weight: 700; color: #059669;">④ 逆质问与价值信赖</span>
         </div>
       </div>
 
@@ -246,16 +322,13 @@ function handlePrev() {
         style="background: #1e3a8a; color: white; padding: 0.85rem 2.4rem; font-size: 1.05rem; font-weight: 700; border-radius: 10px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.28); margin: 0 auto; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
         @click="startUniversalInterview(selectedTrack)"
       >
-        <span>🚀 步入考场 · 开始全场景模拟面试</span>
+        <span>🚀 步入考场 · 开始全场景模拟对谈</span>
       </button>
-      <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 0.75rem;">
-        💡 点击后 AI 现场总监将为您实时命制 4 阶段专属题目，考后将出具日本商社标准录用评定书
-      </div>
     </div>
 
-    <!-- 已开始面试流程交互容器 -->
+    <!-- 已开启面试对谈流程容器 -->
     <div v-else class="interview-wrapper">
-      <!-- 加载中指示（点击开始后才显示） -->
+      <!-- 加载中指示 -->
       <div
         v-if="!interviewData && isLoading"
         class="battle-arena-card"
@@ -263,10 +336,10 @@ function handlePrev() {
       >
         <div style="font-size: 2.8rem; margin-bottom: 1rem; animation: pulse 1.5s infinite;">💼</div>
         <h4 style="font-size: 1.2rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.5rem;">
-          AI 现场总监正在组装此路线全流程面试题卷...
+          AI 现场总监正在组装针对【{{ INTERVIEW_LEVELS.find(l => l.id === selectedLevel)?.name }}】的全流程面试卷...
         </h4>
         <p style="color: #64748b; font-size: 0.88rem;">
-          正在结合对日工程规范生成自己PR、上流折冲、故障应对与逆质问考题，请稍候
+          正在结合对日工程规范生成自己PR、上流折冲、故障应对与逆质问考题与作答意图指引，请稍候
         </p>
       </div>
 
@@ -280,16 +353,12 @@ function handlePrev() {
         <h4 style="font-size: 1.1rem; color: #991b1b; font-weight: 700; margin-bottom: 0.4rem;">生成面试失败</h4>
         <p style="color: #b91c1c; font-size: 0.88rem; margin-bottom: 1.25rem;">{{ startError }}</p>
         <div style="display: flex; justify-content: center; gap: 0.75rem;">
-          <button class="battle-nav-btn secondary" @click="handleResetToLounge">
-            ← 返回考场大厅
-          </button>
-          <button class="battle-nav-btn primary" @click="startUniversalInterview(selectedTrack)">
-            🔄 重新生成此路线面试
-          </button>
+          <button class="battle-nav-btn secondary" @click="handleResetToLounge">← 返回考场大厅</button>
+          <button class="battle-nav-btn primary" @click="startUniversalInterview(selectedTrack)">🔄 重新生成此路线面试</button>
         </div>
       </div>
 
-      <!-- 面试核心交互区 -->
+      <!-- 对谈核心交互区 -->
       <div v-else-if="interviewData" style="margin-top: 1rem;">
         <!-- 考官档案卡 -->
         <div
@@ -312,6 +381,9 @@ function handlePrev() {
                   <span style="background: #3b82f6; font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 600;">
                     {{ interviewData.trackTitle }}
                   </span>
+                  <span style="background: #10b981; font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 700;">
+                    {{ INTERVIEW_LEVELS.find(l => l.id === selectedLevel)?.badge }}
+                  </span>
                 </div>
                 <div style="font-size: 0.85rem; opacity: 0.92; font-style: italic;">
                   「{{ interviewData.interviewer?.greeting }}」
@@ -333,15 +405,15 @@ function handlePrev() {
                 :disabled="isLoading"
                 @click="startUniversalInterview(selectedTrack)"
               >
-                <span>{{ isLoading ? 'AI 正在命题...' : '🤖 换一套全新综合考题' }}</span>
+                <span>{{ isLoading ? 'AI 正在命题...' : '🤖 换一套全新题目' }}</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- 流程步骤指示 -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <div style="display: flex; gap: 0.4rem; overflow-x: auto;">
+        <!-- 流程步骤指示胶囊 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="display: flex; gap: 0.45rem; overflow-x: auto;">
             <button
               v-for="(q, idx) in interviewData.questions"
               :key="q.id"
@@ -352,7 +424,7 @@ function handlePrev() {
                   'chip-weakness': evaluations[q.id]
                 }
               ]"
-              style="font-size: 0.8rem; padding: 0.35rem 0.75rem; white-space: nowrap;"
+              style="font-size: 0.82rem; padding: 0.35rem 0.8rem; white-space: nowrap; display: inline-flex; align-items: center; gap: 0.35rem;"
               @click="currentIndex = idx"
             >
               <span v-if="evaluations[q.id]">✅</span>
@@ -365,92 +437,160 @@ function handlePrev() {
           </span>
         </div>
 
-        <!-- 考题主卡片 -->
-        <div
-          v-if="currentQuestion"
-          class="battle-arena-card"
-          style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-bottom: 1.25rem;"
-        >
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem;">
-            <span style="background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; font-size: 0.78rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 9999px;">
-              {{ currentQuestion.stage }}
-            </span>
-
-            <button
-              class="btn-speak-clause"
-              @click="playVoice(currentQuestion.questionJp)"
-              title="考官原声朗读"
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-              </svg>
-              <span style="font-size: 0.78rem; margin-left: 0.2rem;">听考官发问</span>
-            </button>
-          </div>
-
-          <div style="font-size: 1.15rem; font-weight: 700; color: #0f172a; line-height: 1.6; margin-bottom: 0.85rem;">
-            {{ currentQuestion.questionJp }}
-          </div>
-
-          <!-- 折叠辅助开关 -->
-          <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
-            <button
-              class="filter-chip"
-              style="font-size: 0.76rem; padding: 0.2rem 0.55rem;"
-              @click="showZh[currentQuestion.id] = !showZh[currentQuestion.id]"
-            >
-              {{ showZh[currentQuestion.id] ? '🙈 隐藏中文释义' : '👁️ 中文考题释义' }}
-            </button>
-            <button
-              class="filter-chip"
-              style="font-size: 0.76rem; padding: 0.2rem 0.55rem; background: #fffbeb; color: #92400e; border-color: #fde68a;"
-              @click="showHint[currentQuestion.id] = !showHint[currentQuestion.id]"
-            >
-              {{ showHint[currentQuestion.id] ? '🙈 隐藏考察意图' : '💡 考官考察意图与重点' }}
-            </button>
-          </div>
-
+        <!-- 对话主体：对方发问 -> 作答意图指引 -> 我方回答 -> 考官点评 -> 精华速记 -->
+        <div v-if="currentQuestion" class="dialogue-stage-wrapper">
+          <!-- 1. 考官提问气泡 (对方提问) -->
           <div
-            v-if="showZh[currentQuestion.id]"
-            style="background: #f8fafc; border-left: 3px solid #64748b; padding: 0.55rem 0.85rem; font-size: 0.88rem; color: #475569; margin-bottom: 0.85rem; border-radius: 0 6px 6px 0;"
+            class="battle-arena-card"
+            style="background: #ffffff; border: 1px solid #bfdbfe; border-left: 5px solid #2563eb; border-radius: var(--radius-lg); padding: 1.35rem 1.5rem; margin-bottom: 1rem; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.06);"
           >
-            {{ currentQuestion.questionZh }}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="font-size: 1.2rem;">💼</span>
+                <span style="font-size: 0.88rem; font-weight: 800; color: #1e3a8a;">
+                  {{ interviewData.interviewer?.name }} 现场发问
+                </span>
+                <span style="background: #eff6ff; color: #2563eb; font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 9999px; font-weight: 700;">
+                  {{ currentQuestion.stage }}
+                </span>
+              </div>
+
+              <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+                <!-- 听考官发问按钮 (接微软 EdgeTTS 神经网络纯正真人发音) -->
+                <button
+                  class="btn-voice-pill"
+                  @click="playVoice(currentQuestion.questionJp, 'ja-JP-KeitaNeural')"
+                  title="播放考官真人级发音（微软神经网络语音）"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                  </svg>
+                  <span>🔊 听考官发问</span>
+                </button>
+
+                <!-- 中文翻译切换按钮 (醒目独立按钮) -->
+                <button
+                  :class="['btn-trans-pill', { active: isZhVisible(currentQuestion.id) }]"
+                  @click="toggleZh(currentQuestion.id)"
+                  title="切换考题中文释义"
+                >
+                  <span>{{ isZhVisible(currentQuestion.id) ? '🙈 隐藏中文释义' : '🇨🇳 查看中文释义' }}</span>
+                </button>
+              </div>
+            </div>
+
+            <div style="font-size: 1.18rem; font-weight: 700; color: #0f172a; line-height: 1.65; margin-bottom: 0.5rem;">
+              {{ currentQuestion.questionJp }}
+            </div>
+
+            <!-- 考题中文释义 (默认展开展示，友好清晰) -->
+            <div
+              v-if="isZhVisible(currentQuestion.id)"
+              style="font-size: 0.9rem; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #3b82f6; padding: 0.65rem 0.95rem; border-radius: 0 8px 8px 0; margin-top: 0.65rem; line-height: 1.6;"
+            >
+              <div style="font-size: 0.78rem; font-weight: 700; color: #1e40af; margin-bottom: 0.15rem;">
+                🇨🇳 考官提问中文释义：
+              </div>
+              <div>{{ currentQuestion.questionZh }}</div>
+            </div>
           </div>
 
+          <!-- 2. 意图导航与作答脚手架 -->
           <div
-            v-if="showHint[currentQuestion.id]"
-            style="background: #fffbeb; border-left: 3px solid #f59e0b; padding: 0.55rem 0.85rem; font-size: 0.88rem; color: #92400e; margin-bottom: 1rem; border-radius: 0 6px 6px 0;"
+            class="scaffold-guide-box"
+            style="background: #fffdf5; border: 1px solid #fde68a; border-left: 5px solid #f59e0b; border-radius: var(--radius-lg); padding: 1.15rem 1.35rem; margin-bottom: 1.1rem; box-shadow: 0 2px 6px rgba(245, 158, 11, 0.06);"
           >
-            <strong>考查核心：</strong>{{ currentQuestion.intentHint }}
+            <div style="display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.65rem;">
+              <span style="font-size: 1rem; line-height: 1.4;">💡</span>
+              <div style="font-size: 0.88rem; color: #78350f; line-height: 1.55;">
+                <strong style="color: #b45309;">考官潜台词与考核目标：</strong>{{ currentQuestion.intentHint }}
+              </div>
+            </div>
+
+            <!-- 建议表达的核心业务立场清单 -->
+            <div style="background: white; border: 1px solid #fef3c7; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 0.75rem;">
+              <div style="font-size: 0.84rem; font-weight: 800; color: #92400e; margin-bottom: 0.35rem;">
+                🎯 本题作答指引（请在回答中传达以下核心意思）：
+              </div>
+              <div style="font-size: 0.85rem; color: #451a03; line-height: 1.6; white-space: pre-line;">
+                {{ currentQuestion.responseGuideZh }}
+              </div>
+            </div>
+
+            <!-- 推荐句型与填空骨架 -->
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                <span style="font-size: 0.78rem; font-weight: 700; color: #92400e;">🔤 推荐表达（点击插入）：</span>
+                <button
+                  v-for="(phrase, pIdx) in currentQuestion.keyPhrases"
+                  :key="pIdx"
+                  class="filter-chip"
+                  style="font-size: 0.75rem; padding: 0.15rem 0.55rem; background: #fffbeb; border: 1px solid #fde68a; color: #b45309; cursor: pointer;"
+                  title="点击一键插入输入框"
+                  @click="handleInsertPhrase(phrase)"
+                >
+                  + {{ phrase }}
+                </button>
+              </div>
+
+              <!-- 填空骨架 -->
+              <button
+                v-if="currentQuestion.templateScaffold"
+                class="filter-chip"
+                style="background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; font-weight: 700; font-size: 0.76rem; padding: 0.2rem 0.6rem;"
+                @click="handleApplyTemplate(currentQuestion.templateScaffold)"
+              >
+                📝 一键套用答题骨架
+              </button>
+            </div>
           </div>
 
-          <!-- 学员回答输入框 -->
-          <div style="margin-top: 1rem;">
-            <label style="display: block; font-size: 0.85rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.4rem;">
-              ✍️ 候选人现场日文应答应答（键入日语）：
-            </label>
+          <!-- 3. 我方现场回答输入区 (我方回答) -->
+          <div
+            class="battle-arena-card"
+            style="background: white; border: 1.5px solid #cbd5e1; border-radius: var(--radius-lg); padding: 1.35rem; margin-bottom: 1.25rem; box-shadow: var(--shadow-sm);"
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <label style="font-size: 0.88rem; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 0.35rem;">
+                <span>✍️ 我方现场日文应答</span>
+                <span style="font-size: 0.75rem; font-weight: normal; color: #64748b;">(请用日语输入您的现场发言)</span>
+              </label>
+              <span style="font-size: 0.78rem; color: #94a3b8;">
+                已键入 {{ (answers[currentQuestion.id] || '').length }} 字
+              </span>
+            </div>
+
             <textarea
               v-model="answers[currentQuestion.id]"
-              rows="5"
-              placeholder="ご質問いただきありがとうございます。私のこれまでの経験といたしましては…（建议先给出明确结论，再展开阐述技术/现场实例，最后落脚到客户价值）"
-              style="width: 100%; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 0.75rem; font-size: 0.95rem; line-height: 1.55; outline: none; font-family: inherit; resize: vertical;"
+              rows="4"
+              placeholder="ご質問いただきありがとうございます。私のこれまでの経験といたしましては…（可结合上方推荐表达与核心指引组织日语发言）"
+              style="width: 100%; border: 1.5px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 0.85rem; font-size: 0.95rem; line-height: 1.6; outline: none; font-family: inherit; resize: vertical; transition: border-color 0.2s;"
               :disabled="isEvaluating || evaluations[currentQuestion.id] !== undefined"
+              @focus="$event.target.style.borderColor = '#3b82f6'"
+              @blur="$event.target.style.borderColor = '#e2e8f0'"
             ></textarea>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem;">
-              <span style="font-size: 0.8rem; color: var(--text-muted);">
-                已输入 {{ (answers[currentQuestion.id] || '').length }} 字符
-              </span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+              <div>
+                <button
+                  v-if="evaluations[currentQuestion.id]"
+                  class="filter-chip"
+                  style="font-size: 0.78rem; padding: 0.25rem 0.65rem; color: #2563eb; background: #eff6ff;"
+                  @click="handleRetryTurn(currentQuestion.id)"
+                >
+                  🔄 修改回答重新提交点评
+                </button>
+              </div>
 
               <button
                 v-if="!evaluations[currentQuestion.id]"
                 class="battle-nav-btn primary"
-                style="padding: 0.55rem 1.35rem;"
+                style="padding: 0.6rem 1.4rem; font-size: 0.92rem; font-weight: 700; border-radius: 8px;"
                 :disabled="!(answers[currentQuestion.id] && answers[currentQuestion.id].trim()) || isEvaluating"
                 @click="handleSubmitAnswer(currentQuestion)"
               >
-                <span>{{ isEvaluating ? '🤖 现场总监正在深度评审...' : '🤖 提交应答并请总监深度评审' }}</span>
+                <span>{{ isEvaluating ? '🤖 现场总监正在深度评审中...' : '🎙️ 提交回答并请总监深度评审' }}</span>
               </button>
               <span v-else style="font-size: 0.85rem; color: #059669; font-weight: 700;">
                 ✅ 该阶段应答已完成评审
@@ -458,19 +598,19 @@ function handlePrev() {
             </div>
           </div>
 
-          <!-- 现场评审气泡 -->
+          <!-- 4. 考官现场回馈气泡与 100% 简体中文深度复盘 -->
           <div
             v-if="evaluations[currentQuestion.id]"
             class="ai-review-report-card"
-            style="margin-top: 1.5rem; background: #ffffff; border: 2px solid #bfdbfe; border-radius: 12px; padding: 1.25rem; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);"
+            style="background: #ffffff; border: 2px solid #bfdbfe; border-radius: var(--radius-lg); padding: 1.4rem; margin-bottom: 1.25rem; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08);"
           >
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; padding-bottom: 0.6rem; border-bottom: 1px solid #e2e8f0;">
-              <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0;">
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
                 <span
                   :style="{
-                    fontSize: '1rem',
+                    fontSize: '0.95rem',
                     fontWeight: '800',
-                    padding: '0.25rem 0.75rem',
+                    padding: '0.25rem 0.8rem',
                     borderRadius: '9999px',
                     background: evaluations[currentQuestion.id].grade === 'S' ? '#d1fae5' : (evaluations[currentQuestion.id].grade === 'A' ? '#dbeafe' : '#fef3c7'),
                     color: evaluations[currentQuestion.id].grade === 'S' ? '#065f46' : (evaluations[currentQuestion.id].grade === 'A' ? '#1e40af' : '#92400e')
@@ -478,44 +618,74 @@ function handlePrev() {
                 >
                   {{ evaluations[currentQuestion.id].gradeBadge || `【${evaluations[currentQuestion.id].grade} 级】` }}
                 </span>
-                <span style="font-size: 0.95rem; font-weight: 700; color: #1e3a8a;">考官现场回馈</span>
+                <span style="font-size: 0.95rem; font-weight: 700; color: #1e3a8a;">考官现场回馈与深度复盘</span>
+              </div>
+              <span style="font-size: 0.78rem; color: #64748b;">评语全中文呈现</span>
+            </div>
+
+            <!-- 考官现场第一反应（纯中文语录气泡） -->
+            <div style="font-size: 0.95rem; font-weight: 600; color: #1e293b; background: #eff6ff; border-left: 4px solid #2563eb; padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; margin-bottom: 1rem; line-height: 1.6;">
+              <strong>考官现场直观评价：</strong>「{{ evaluations[currentQuestion.id].reaction }}」
+            </div>
+
+            <!-- 3 维度全中文严谨诊断网格 -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; margin-bottom: 1.1rem;">
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem;">
+                <div style="font-size: 0.82rem; font-weight: 700; color: #1e40af; margin-bottom: 0.35rem;">🧐 敬语规范度：</div>
+                <div style="font-size: 0.85rem; color: #334155; line-height: 1.55;">{{ evaluations[currentQuestion.id].feedback?.politeness }}</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem;">
+                <div style="font-size: 0.82rem; font-weight: 700; color: #059669; margin-bottom: 0.35rem;">💼 相手目线与情商：</div>
+                <div style="font-size: 0.85rem; color: #334155; line-height: 1.55;">{{ evaluations[currentQuestion.id].feedback?.eq }}</div>
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem;">
+                <div style="font-size: 0.82rem; font-weight: 700; color: #d97706; margin-bottom: 0.35rem;">🛡️ 逻辑与闭环落地：</div>
+                <div style="font-size: 0.85rem; color: #334155; line-height: 1.55;">{{ evaluations[currentQuestion.id].feedback?.logic }}</div>
               </div>
             </div>
 
-            <div style="font-size: 0.95rem; font-weight: 600; color: #1e293b; background: #eff6ff; border-left: 3px solid #3b82f6; padding: 0.6rem 0.85rem; border-radius: 0 6px 6px 0; margin-bottom: 0.85rem;">
-              「{{ evaluations[currentQuestion.id].reaction }}」
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.75rem; margin-bottom: 1rem;">
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem;">
-                <div style="font-size: 0.8rem; font-weight: 700; color: #1e40af; margin-bottom: 0.25rem;">🧐 敬语规范度：</div>
-                <div style="font-size: 0.84rem; color: #334155; line-height: 1.5;">{{ evaluations[currentQuestion.id].feedback?.politeness }}</div>
-              </div>
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem;">
-                <div style="font-size: 0.8rem; font-weight: 700; color: #059669; margin-bottom: 0.25rem;">💼 相手目线与情商：</div>
-                <div style="font-size: 0.84rem; color: #334155; line-height: 1.5;">{{ evaluations[currentQuestion.id].feedback?.eq }}</div>
-              </div>
-              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem;">
-                <div style="font-size: 0.8rem; font-weight: 700; color: #d97706; margin-bottom: 0.25rem;">🛡️ 逻辑与闭环落地：</div>
-                <div style="font-size: 0.84rem; color: #334155; line-height: 1.5;">{{ evaluations[currentQuestion.id].feedback?.logic }}</div>
-              </div>
-            </div>
-
-            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 0.85rem 1rem;">
+            <!-- 考官示范大师级满分日文范例 -->
+            <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 0.9rem 1.1rem; margin-bottom: 1rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                <span style="font-size: 0.85rem; font-weight: 800; color: #065f46;">💎 考官示范大师级满分日文表达：</span>
-                <button class="btn-speak-clause" @click="playVoice(evaluations[currentQuestion.id].masterpiece)" title="朗读范例">
+                <span style="font-size: 0.88rem; font-weight: 800; color: #065f46;">💎 考官示范满分日文表达：</span>
+                <button class="btn-model-voice-pill" @click="playVoice(evaluations[currentQuestion.id].masterpiece, 'ja-JP-KeitaNeural')" title="朗读范例">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                     <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
                   </svg>
+                  <span style="margin-left: 0.2rem;">听示范</span>
                 </button>
               </div>
-              <div style="font-size: 0.98rem; font-weight: 600; color: #064e3b; line-height: 1.6; margin-bottom: 0.4rem;">
+              <div style="font-size: 1.02rem; font-weight: 700; color: #064e3b; line-height: 1.6; margin-bottom: 0.45rem;">
                 {{ evaluations[currentQuestion.id].masterpiece }}
               </div>
-              <div style="font-size: 0.8rem; color: #047857; line-height: 1.5;">
+              <div style="font-size: 0.82rem; color: #047857; line-height: 1.55;">
                 <strong>亮点点拨：</strong>{{ evaluations[currentQuestion.id].masterpieceHighlights }}
+              </div>
+            </div>
+
+            <!-- 5. 核心干货速记卡 (方便记忆) -->
+            <div
+              v-if="evaluations[currentQuestion.id].memoryPhrase || evaluations[currentQuestion.id].goldenRule"
+              style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 0.85rem 1rem;"
+            >
+              <div style="font-size: 0.84rem; font-weight: 800; color: #92400e; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.35rem;">
+                <span>📌 本阶段核心干货提炼速记卡</span>
+                <span style="font-size: 0.72rem; font-weight: normal; color: #b45309;">(方便记忆与背诵)</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.6rem;">
+                <div v-if="evaluations[currentQuestion.id].goldenRule" style="font-size: 0.82rem; color: #78350f;">
+                  <strong>💡 黄金法则:</strong> {{ evaluations[currentQuestion.id].goldenRule }}
+                </div>
+                <div v-if="evaluations[currentQuestion.id].memoryPhrase" style="font-size: 0.82rem; color: #1e3a8a;">
+                  <strong>🔑 必背金句:</strong>
+                  <span style="font-weight: 700; color: #1e40af; cursor: pointer; text-decoration: underline;" @click="playVoice(evaluations[currentQuestion.id].memoryPhrase)" title="点击发音">
+                    {{ evaluations[currentQuestion.id].memoryPhrase }} 🔊
+                  </span>
+                </div>
+                <div v-if="evaluations[currentQuestion.id].pitfall" style="font-size: 0.82rem; color: #991b1b;">
+                  <strong>⚠️ 避坑雷区:</strong> {{ evaluations[currentQuestion.id].pitfall }}
+                </div>
               </div>
             </div>
           </div>
@@ -538,7 +708,7 @@ function handlePrev() {
           </div>
         </div>
 
-        <!-- 最终日本商社录用判定书 (综合面接カルテ) -->
+        <!-- 最终日本商社录用判定书 + 实战速记手册 -->
         <div
           v-if="isAllAnswered"
           class="battle-scorecard-card"
@@ -576,7 +746,7 @@ function handlePrev() {
           </div>
 
           <!-- 考官寄语与复盘 -->
-          <div v-if="finalReport" style="text-align: left; max-width: 640px; margin: 0 auto 1.75rem; background: white; border: 1px solid #bbf7d0; border-radius: 10px; padding: 1.25rem;">
+          <div v-if="finalReport" style="text-align: left; max-width: 640px; margin: 0 auto 1.5rem; background: white; border: 1px solid #bbf7d0; border-radius: 10px; padding: 1.25rem;">
             <div style="font-size: 0.9rem; font-weight: 800; color: #065f46; margin-bottom: 0.4rem;">💬 考官综合总评：</div>
             <p style="font-size: 0.88rem; color: #334155; line-height: 1.6; margin: 0 0 1rem;">
               {{ finalReport.overallVerdict }}
@@ -593,19 +763,60 @@ function handlePrev() {
             </ul>
           </div>
 
+          <!-- 实战速记卡片集 (Cheat Sheet) -->
+          <div
+            v-if="finalReport?.distilledCheatSheet?.length"
+            style="text-align: left; max-width: 640px; margin: 0 auto 1.5rem; background: #fffdf5; border: 1px solid #fde68a; border-radius: 10px; padding: 1.15rem;"
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+              <div style="font-size: 0.9rem; font-weight: 800; color: #92400e;">
+                📚 本场面试实战金句与速记宝典 (可背诵积累)
+              </div>
+              <button
+                class="filter-chip"
+                style="font-size: 0.75rem; padding: 0.2rem 0.6rem; background: white; border: 1px solid #f59e0b; color: #b45309;"
+                @click="copyCheatSheet"
+              >
+                {{ copySuccess ? '✅ 已复制全部' : '📋 一键复制速记卡' }}
+              </button>
+            </div>
+
+            <div
+              v-for="(item, itmIdx) in finalReport.distilledCheatSheet"
+              :key="itmIdx"
+              style="background: white; border: 1px solid #fef3c7; border-radius: 8px; padding: 0.75rem; margin-bottom: 0.6rem;"
+            >
+              <div style="font-size: 0.82rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.25rem;">
+                {{ item.stage || `阶段 ${itmIdx + 1}` }}
+              </div>
+              <div style="font-size: 0.82rem; color: #334155; margin-bottom: 0.2rem;">
+                <strong>💡 黄金法则:</strong> {{ item.goldenRule }}
+              </div>
+              <div style="font-size: 0.84rem; color: #065f46; font-weight: 600; margin-bottom: 0.2rem;">
+                <strong>🔑 必背金句:</strong> {{ item.memoryPhrase }}
+                <button class="btn-mini-voice" style="margin-left: 0.4rem;" @click="playVoice(item.memoryPhrase, 'ja-JP-KeitaNeural')" title="朗读金句">
+                  🔊 听发音
+                </button>
+              </div>
+              <div style="font-size: 0.8rem; color: #991b1b;">
+                <strong>⚠️ 避坑雷区:</strong> {{ item.pitfall }}
+              </div>
+            </div>
+          </div>
+
           <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
             <button class="battle-nav-btn secondary" @click="handleResetToLounge">
               ← 返回考场大厅
             </button>
             <button class="battle-nav-btn" style="background: white; border: 1px solid #cbd5e1;" @click="startUniversalInterview(selectedTrack)">
-              🔄 重新模考此路线
+              🔄 重新模考此赛道
             </button>
             <button
               class="play-full-btn"
               style="background: #1e3a8a; color: white;"
-              @click="startUniversalInterview(selectedTrack === 'entry' ? 'executive' : (selectedTrack === 'executive' ? 'stress' : 'entry'))"
+              @click="startUniversalInterview(selectedTrack === 'entry' ? 'technical' : (selectedTrack === 'technical' ? 'stress' : 'entry'))"
             >
-              👔 挑战下一路线面试
+              👔 挑战下一赛道面试
             </button>
           </div>
         </div>
@@ -618,5 +829,93 @@ function handlePrev() {
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.6; transform: scale(0.95); }
+}
+
+.btn-voice-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #eff6ff;
+  border: 1.5px solid #93c5fd;
+  color: #1e40af;
+  border-radius: 8px;
+  padding: 0.42rem 0.9rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.08);
+}
+.btn-voice-pill:hover {
+  background: #dbeafe;
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+.btn-trans-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #334155;
+  border-radius: 8px;
+  padding: 0.42rem 0.9rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+.btn-trans-pill:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+.btn-trans-pill.active {
+  background: #f1f5f9;
+  border-color: #64748b;
+  color: #0f172a;
+}
+
+.btn-model-voice-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+  border-radius: 6px;
+  padding: 0.32rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.btn-model-voice-pill:hover {
+  background: #d1fae5;
+  border-color: #34d399;
+}
+
+.btn-mini-voice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #166534;
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-mini-voice:hover {
+  background: #dcfce7;
+  border-color: #4ade80;
 }
 </style>

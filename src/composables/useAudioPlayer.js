@@ -131,7 +131,15 @@ export function useAudioPlayer() {
           });
         });
       } else {
-        speakTTS(text, () => {
+        // 动态实时生成微软 EdgeTTS 神经网络音频接口 (/api/tts)
+        const cleanText = text.replace(/<rt>.*?<\/rt>/g, '').replace(/<[^>]+>/g, '').trim();
+        const voice = preferredVoice || 'ja-JP-KeitaNeural';
+        const ttsUrl = `/api/tts?text=${encodeURIComponent(cleanText)}&voice=${encodeURIComponent(voice)}`;
+        const ttsAudio = new Audio(ttsUrl);
+        ttsAudio.playbackRate = state.playbackRate;
+        audioInstance = ttsAudio;
+
+        ttsAudio.onended = () => {
           currentRepeat++;
           if (currentRepeat < maxRepeat) {
             loopTimer = setTimeout(playOnce, 450);
@@ -139,7 +147,27 @@ export function useAudioPlayer() {
             stop();
             if (onFinished) onFinished();
           }
-        }, 'ja-JP', preferredVoice);
+        };
+
+        ttsAudio.onerror = () => {
+          // 平滑回退到浏览器本地 speechSynthesis
+          speakTTS(cleanText, () => {
+            currentRepeat++;
+            if (currentRepeat < maxRepeat) {
+              loopTimer = setTimeout(playOnce, 450);
+            } else {
+              stop();
+              if (onFinished) onFinished();
+            }
+          }, 'ja-JP', voice);
+        };
+
+        ttsAudio.play().catch(() => {
+          speakTTS(cleanText, () => {
+            stop();
+            if (onFinished) onFinished();
+          }, 'ja-JP', voice);
+        });
       }
     };
 

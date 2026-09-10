@@ -35,7 +35,7 @@ watch(() => audioState.currentTurnId, (newTurnId) => {
 const showFurigana = ref(true);
 const searchQuery = ref('');
 const currentSceneIndex = ref(0);
-const activeNavTab = ref('all'); // 'all' | 'textbook' | 'practice' | 'grammar' | 'vocab' | 'quiz'
+const activeNavTab = ref('all'); // 'all' | 'textbook' | 'practice' | 'vocab' | 'quiz_scene' | 'interview_scene'
 const activePassageIndex = ref(0);
 
 // 教材背诵演练模式与过滤
@@ -187,10 +187,6 @@ function handlePlayVocabAudio(v, idx, e) {
   speak(v.audio || v.kanji, audioUrl);
 }
 
-function handlePlayGrammarAudio(text, e) {
-  if (e) e.stopPropagation();
-  speak(text);
-}
 
 // 一键揭晓教材全部挖空
 function toggleAllTbCloze() {
@@ -314,13 +310,6 @@ function toggleAllPCloze() {
           </svg>
           <span>📝 配套短文</span>
           <span class="counter-pill">{{ currentScene.practiceTexts?.length || 5 }}篇</span>
-        </button>
-        <button :class="['tab-btn', { active: activeNavTab === 'grammar' }]" @click="activeNavTab = 'grammar'">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-          </svg>
-          <span>📚 深度语法</span>
         </button>
         <button :class="['tab-btn', { active: activeNavTab === 'vocab' }]" @click="activeNavTab = 'vocab'">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -598,70 +587,6 @@ function toggleAllPCloze() {
         </div>
       </section>
 
-      <!-- 模块 3：深度语法图鉴 -->
-      <section
-        v-if="activeNavTab === 'all' || activeNavTab === 'grammar'"
-        id="section-grammar"
-        class="module-section"
-      >
-        <div class="section-header">
-          <h3 class="section-title">📚 深度语法图鉴：对日IT沟通策略与敬语</h3>
-        </div>
-        <div class="grammar-cards-container">
-          <div
-            v-for="gp in currentScene.grammarPoints"
-            :key="gp.id"
-            class="grammar-card-interactive"
-            style="background: white; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow-sm);"
-          >
-            <div class="grammar-header">
-              <div>
-                <div class="grammar-meta" style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.35rem;">
-                  <span class="grammar-badge" style="background: #eff6ff; color: var(--primary); border: 1px solid #bfdbfe; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 700;">{{ gp.badge }}</span>
-                  <span class="grammar-level" style="font-size: 0.75rem; color: var(--text-muted);">{{ gp.level }}</span>
-                </div>
-                <h3 class="grammar-title" style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.75rem;">{{ gp.title }}</h3>
-              </div>
-            </div>
-
-            <div class="formula-box" style="background: #f8fafc; border-left: 3px solid var(--primary-light); padding: 0.6rem 0.85rem; border-radius: 0 6px 6px 0; margin-bottom: 0.85rem;">
-              <div class="formula-label" style="font-size: 0.75rem; font-weight: 700; color: #475569;">接续与语法公式</div>
-              <div class="formula-text" style="font-size: 0.92rem; font-weight: 600; color: #1e3a8a;">{{ gp.formula }}</div>
-            </div>
-
-            <div class="concept-box" style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
-              {{ gp.concept }}
-            </div>
-
-            <!-- 实战例句 -->
-            <div v-if="gp.businessExamples && gp.businessExamples.length" class="examples-subcard" style="background: #f8fafc; border-radius: 8px; padding: 1rem; border: 1px solid #e2e8f0;">
-              <div class="subcard-title" style="font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                对日商务实战地道例句
-              </div>
-              <div class="eg-list">
-                <div
-                  v-for="(eg, egIdx) in gp.businessExamples"
-                  :key="egIdx"
-                  class="eg-item"
-                  style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px dashed #e2e8f0;"
-                >
-                  <div style="flex: 1;">
-                    <div class="eg-content-jp" style="font-size: 1.02rem; font-weight: 600; color: #0f172a; line-height: 1.6;" v-html="eg.jpWithRuby || eg.jp"></div>
-                    <div class="eg-content-zh" style="font-size: 0.84rem; color: #64748b; margin-top: 0.2rem;">{{ eg.zh }}</div>
-                  </div>
-                  <button class="btn-speak-clause" @click="handlePlayGrammarAudio(eg.audio || eg.jp, $event)" title="朗读例句">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-                      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <!-- 模块 4：智能 3D 词汇闪卡 -->
       <section

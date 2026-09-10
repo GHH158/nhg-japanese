@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useAudioPlayer } from '../composables/useAudioPlayer.js';
 import { useMastery } from '../composables/useMastery.js';
 import { useQwen } from '../composables/useQwen.js';
@@ -126,7 +126,38 @@ function handleClozeClick(e) {
   }
 }
 
+// 实时监测输入内容：打字时实时计算匹配度并高亮已输入字词，但全对前绝不泄露标准范例
+watch(userInput, (newVal) => {
+  const text = (newVal || '').trim();
+  if (!text) {
+    diffResult.value = null;
+    isStandardRevealed.value = false;
+    return;
+  }
+
+  // 只要有输入，实时计算 Diff、匹配率与视觉高亮（实时监测面板立即呈现）
+  const res = computeJapaneseDiff(text, props.turn.jp, props.turn.jpWithRuby);
+  diffResult.value = res;
+
+  // 如果全部输对（100%），自动揭晓标准范例原句并标记熟练
+  if (res.score === 100) {
+    isStandardRevealed.value = true;
+    markMastered(props.turnId, true);
+  }
+});
+
+// 切换台词时重置状态
+watch(() => props.turnId, () => {
+  userInput.value = '';
+  diffResult.value = null;
+  isStandardRevealed.value = false;
+  aiReviewResult.value = null;
+});
+
 function handleCheckDiff() {
+  if (!userInput.value.trim()) {
+    return;
+  }
   const res = computeJapaneseDiff(userInput.value, props.turn.jp, props.turn.jpWithRuby);
   diffResult.value = res;
   isStandardRevealed.value = true;
@@ -270,10 +301,11 @@ async function handleAiReview() {
               v-model="userInput"
               class="user-jp-input"
               rows="2"
-              placeholder="请在此输入日语对白（敲击回车或点击核对即实时比对）..."
-              @keydown.enter.prevent="handleCheckDiff"
+              placeholder="请在此输入日语对白（全部输对将自动通过，或点击「核对」查看）..."
+              @keydown.enter.ctrl="handleCheckDiff"
+              @keydown.enter.meta="handleCheckDiff"
             ></textarea>
-            <button class="btn-submit-check" @click="handleCheckDiff" title="核对答案">
+            <button class="btn-submit-check" @click="handleCheckDiff" title="核对答案 (可按 Ctrl/Cmd+Enter)">
               <span>核对 ⚡</span>
             </button>
           </div>
@@ -328,8 +360,9 @@ async function handleAiReview() {
               v-model="userInput"
               class="user-rp-input"
               rows="2"
-              placeholder="在此输入您的日文发言（支持回车提交，或点击AI导师深度点评）..."
-              @keydown.enter.prevent="handleCheckDiff"
+              placeholder="在此输入您的日文发言（全部输对将自动通过，或点击下方提交核对）..."
+              @keydown.enter.ctrl="handleCheckDiff"
+              @keydown.enter.meta="handleCheckDiff"
             ></textarea>
             <div class="rp-input-actions">
               <button class="btn-rp-submit-check" @click="handleCheckDiff">
