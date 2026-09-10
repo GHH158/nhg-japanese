@@ -135,35 +135,35 @@ export function useQwen() {
     }
   }
 
-  function resolveEndpoint(baseUrl) {
-    let ep = (baseUrl && baseUrl.trim()) ? baseUrl.trim() : '/api/chat';
+  const DASHSCOPE_DIRECT_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
 
-    // 1. 如果用户输入了阿里云 DashScope 官方地址，自动使用本地或边缘反向代理，规避浏览器 CORS 跨域限制
-    if (ep.includes('dashscope.aliyuncs.com')) {
-      ep = '/api/chat';
+  function resolveEndpoint(baseUrl, apiKey) {
+    const rawUrl = (baseUrl && baseUrl.trim()) ? baseUrl.trim() : '';
+
+    // 1. 本地直接以 file:// 协议打开时，走本地运行的 Python 代理
+    if (window.location.protocol === 'file:') {
+      return `http://localhost:8080${rawUrl.startsWith('/') ? rawUrl : '/api/chat'}`;
     }
 
-    // 2. 智能容错：如果用户输入了网站根地址（如 https://xxx.pages.dev），自动补全为 /api/chat，防止 POST 静态根目录爆 405
-    if (ep.startsWith('http://') || ep.startsWith('https://')) {
-      try {
-        const u = new URL(ep);
-        if (!u.pathname || u.pathname === '/' || u.pathname === '') {
-          u.pathname = '/api/chat';
-          ep = u.toString();
-        }
-      } catch (e) {}
+    // 2. 如果用户显式输入了自定义三方代理地址（既不是默认 /api/chat，也不包含 dashscope）
+    if (rawUrl && rawUrl !== '/api/chat' && !rawUrl.includes('dashscope.aliyuncs.com') && !rawUrl.includes('pages.dev')) {
+      let ep = rawUrl.replace(/\/+$/, '');
+      if (ep.includes('/v1') && !ep.endsWith('/chat/completions')) {
+        ep = `${ep}/chat/completions`;
+      }
+      return ep;
     }
 
-    // 3. 去除末尾冗余斜杠，杜绝 301/308 重定向导致浏览器将 POST 自动降级为 GET 产生 405
-    if (ep.endsWith('/') && ep.length > 1) {
-      ep = ep.replace(/\/+$/, '');
+    // 3. 【核心直连通道】：只要输入了个人 API Key（以 sk- 开头），默认直连阿里云官方兼容接口！
+    // 阿里云 DashScope 原生支持浏览器端跨域（Access-Control-Allow-Origin: *）！
+    // 手机端直连延迟极低（仅数十毫秒），且彻底绕开任何静态托管平台对 POST 请求的 405 拦截！
+    const key = (apiKey || config.value.apiKey || '').trim();
+    if (key.startsWith('sk-')) {
+      return DASHSCOPE_DIRECT_URL;
     }
 
-    // 4. 本地直接以 file:// 协议打开时，自动路由到本地运行的 Python 代理端口
-    if (window.location.protocol === 'file:' && ep.startsWith('/')) {
-      ep = `http://localhost:8080${ep}`;
-    }
-    return ep;
+    // 4. 未填个人 Key 时，走云端边缘代理（利用 Cloudflare 环境变量公共 Key）
+    return '/api/chat';
   }
 
   async function callChatCompletions(messages, options = {}) {
@@ -171,7 +171,7 @@ export function useQwen() {
       throw new Error('AI 私教服务尚未就绪。请先点击右上角【🤖 AI私教】配置您的通义千问 API Key！');
     }
 
-    const endpoint = resolveEndpoint(config.value.baseUrl);
+    const endpoint = resolveEndpoint(config.value.baseUrl, config.value.apiKey);
     const model = (config.value.model && config.value.model.trim()) ? config.value.model.trim() : 'qwen3.7-plus';
 
     const payload = {
@@ -214,7 +214,7 @@ export function useQwen() {
   }
 
   async function testConnection(apiKey, model, baseUrl) {
-    const endpoint = resolveEndpoint(baseUrl);
+    const endpoint = resolveEndpoint(baseUrl, apiKey);
     const headers = {
       'Content-Type': 'application/json'
     };

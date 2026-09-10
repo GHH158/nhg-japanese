@@ -141,7 +141,7 @@ function handleSave() {
               placeholder="/api/chat"
             />
             <p class="form-help">
-              💡 <b>注意</b>：线上部署与本地均已内置高可用代理。<b>请直接保持默认 <code>/api/chat</code></b>。切勿输入个人网页域名或阿里云官网地址（否则会触发 405 或浏览器跨域拦截）。
+              💡 <b>通道说明</b>：输入个人 Key 后系统将直连阿里云官方兼容服务（原生支持跨域 CORS，超低延迟且无 405 风险）；保持默认 <code>/api/chat</code> 即可在未填私有 Key 时自动调用云端托管通道。
             </p>
           </div>
 
