@@ -16,6 +16,7 @@ const { speak } = useAudioPlayer();
 const { isConfigured, isLoading, generateSceneInterview, evaluateTurnResponse, generateFinalReport } = useInterviewManager();
 
 const interviewData = ref(null);
+const hasStarted = ref(false);
 const currentIndex = ref(0);
 const answers = ref({});
 const evaluations = ref({});
@@ -29,6 +30,7 @@ const startError = ref('');
 // 启动或刷新当前课的 AI 面试
 async function startInterview() {
   if (!isConfigured.value) return;
+  hasStarted.value = true;
   startError.value = '';
   currentIndex.value = 0;
   answers.value = {};
@@ -40,21 +42,24 @@ async function startInterview() {
   try {
     const data = await generateSceneInterview(props.scene);
     interviewData.value = data;
-    // 自动播放考官开场问候
-    if (data?.questions?.[0]?.questionJp) {
-      // 可以在用户交互后再播放
-    }
   } catch (err) {
     console.error('生成单课面试失败:', err);
     startError.value = err.message || '生成面试题目失败，请检查网络或配置';
   }
 }
 
+function handleResetToBrief() {
+  hasStarted.value = false;
+  interviewData.value = null;
+  startError.value = '';
+}
+
+// 切换场景时仅重置状态，不自动请求 AI 生成题目
 watch(() => props.scene.id, () => {
-  if (isConfigured.value) {
-    startInterview();
-  }
-}, { immediate: true });
+  hasStarted.value = false;
+  interviewData.value = null;
+  startError.value = '';
+});
 
 const currentQuestion = computed(() => {
   return interviewData.value?.questions?.[currentIndex.value] || null;
@@ -151,7 +156,45 @@ function handlePrev() {
       </button>
     </div>
 
-    <!-- 已配置状态但尚未加载出题目 -->
+    <!-- 已就绪未开始：显示考前简报卡片（点击后才开始准备考题） -->
+    <div
+      v-else-if="!hasStarted"
+      class="battle-arena-card"
+      style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem 1.75rem; text-align: center; box-shadow: var(--shadow-sm);"
+    >
+      <div style="font-size: 3.2rem; margin-bottom: 0.75rem;">🎙️</div>
+      <div style="display: inline-block; background: #eff6ff; color: #1e40af; font-size: 0.8rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem;">
+        第 {{ props.scene.id }} 场景 · 现场角色扮演面试
+      </div>
+      <h3 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.6rem;">
+        {{ props.scene.title }}
+      </h3>
+      <p style="color: #475569; font-size: 0.92rem; max-width: 580px; margin: 0 auto 1.5rem; line-height: 1.65;">
+        {{ props.scene.background || '结合本课业务对话、需求确认、边界防雷与商务礼仪，由 AI 考官对您发起实战多轮提问。' }}
+      </p>
+
+      <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.75rem;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.82rem; color: #334155; text-align: left;">
+          <span style="font-weight: 700; color: #1e3a8a;">① 初动破冰</span>：自介与对日开发背景
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.82rem; color: #334155; text-align: left;">
+          <span style="font-weight: 700; color: #0284c7;">② 式样确认</span>：下钻探寻客户本音
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.82rem; color: #334155; text-align: left;">
+          <span style="font-weight: 700; color: #059669;">③ 现场折冲</span>：相手目线化解危机
+        </div>
+      </div>
+
+      <button
+        class="play-full-btn"
+        style="background: #1e3a8a; color: white; padding: 0.8rem 2.2rem; font-size: 1.05rem; font-weight: 700; border-radius: 8px; box-shadow: 0 4px 12px rgba(30, 58, 138, 0.25); margin: 0 auto; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
+        @click="startInterview"
+      >
+        <span>🚀 开始本课模拟面试</span>
+      </button>
+    </div>
+
+    <!-- 加载中指示（点击开始后才显示） -->
     <div
       v-else-if="!interviewData && isLoading"
       class="battle-arena-card"
@@ -175,9 +218,14 @@ function handlePrev() {
       <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚠️</div>
       <h4 style="font-size: 1.1rem; color: #991b1b; font-weight: 700; margin-bottom: 0.4rem;">生成面试失败</h4>
       <p style="color: #b91c1c; font-size: 0.88rem; margin-bottom: 1.25rem;">{{ startError }}</p>
-      <button class="battle-nav-btn primary" @click="startInterview">
-        🔄 重新生成本课面试
-      </button>
+      <div style="display: flex; justify-content: center; gap: 0.75rem;">
+        <button class="battle-nav-btn secondary" @click="handleResetToBrief">
+          ← 返回简报
+        </button>
+        <button class="battle-nav-btn primary" @click="startInterview">
+          🔄 重新生成考题
+        </button>
+      </div>
     </div>
 
     <!-- 主面试舞台 -->
@@ -207,14 +255,23 @@ function handlePrev() {
             </div>
           </div>
 
-          <button
-            class="play-full-btn"
-            style="background: white; color: #1e3a8a; font-size: 0.82rem; border: none;"
-            :disabled="isLoading"
-            @click="startInterview"
-          >
-            <span>{{ isLoading ? 'AI 正在重新命制...' : '🤖 换一套本课 AI 新面试' }}</span>
-          </button>
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+              <button
+                class="battle-nav-btn"
+                style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 0.82rem; padding: 0.45rem 0.85rem;"
+                @click="handleResetToBrief"
+              >
+                ← 返回考前简报
+              </button>
+              <button
+                class="play-full-btn"
+                style="background: white; color: #1e3a8a; font-size: 0.82rem; border: none;"
+                :disabled="isLoading"
+                @click="startInterview"
+              >
+                <span>{{ isLoading ? 'AI 正在重新命制...' : '🤖 换一套本课 AI 新面试' }}</span>
+              </button>
+            </div>
         </div>
       </div>
 
@@ -452,6 +509,9 @@ function handlePrev() {
         </div>
 
         <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+          <button class="battle-nav-btn secondary" @click="handleResetToBrief">
+            ← 返回考前简报
+          </button>
           <button class="battle-nav-btn" style="background: white; border: 1px solid #cbd5e1;" @click="startInterview">
             🔄 重新由 AI 出一套本课新题
           </button>

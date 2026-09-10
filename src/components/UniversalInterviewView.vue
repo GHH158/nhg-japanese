@@ -10,6 +10,7 @@ const { isConfigured, isLoading, generateUniversalInterview, evaluateTurnRespons
 
 const selectedTrack = ref('entry'); // 'entry' | 'executive' | 'stress'
 const interviewData = ref(null);
+const hasStarted = ref(false);
 const currentIndex = ref(0);
 const answers = ref({});
 const evaluations = ref({});
@@ -41,6 +42,7 @@ const tracks = [
 // 开启或刷新全场景综合面试
 async function startUniversalInterview(trackId = selectedTrack.value) {
   if (!isConfigured.value) return;
+  hasStarted.value = true;
   selectedTrack.value = trackId;
   startError.value = '';
   currentIndex.value = 0;
@@ -59,11 +61,11 @@ async function startUniversalInterview(trackId = selectedTrack.value) {
   }
 }
 
-watch(isConfigured, (val) => {
-  if (val && !interviewData.value) {
-    startUniversalInterview();
-  }
-}, { immediate: true });
+function handleResetToLounge() {
+  hasStarted.value = false;
+  interviewData.value = null;
+  startError.value = '';
+}
 
 const currentQuestion = computed(() => {
   return interviewData.value?.questions?.[currentIndex.value] || null;
@@ -170,30 +172,94 @@ function handlePrev() {
       </button>
     </div>
 
-    <!-- 已配置状态：面试路线选择工具条 -->
-    <div v-else class="interview-wrapper">
-      <div class="battle-toolbar" style="margin-bottom: 1.25rem;">
-        <div style="font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 0.5rem;">
-          🎯 请选择实战面试路线（点击即由 AI 重新动态命题）：
-        </div>
-        <div class="battle-mode-group" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <button
-            v-for="track in tracks"
-            :key="track.id"
-            :class="['battle-mode-btn', { active: selectedTrack === track.id }]"
-            :disabled="isLoading"
-            @click="startUniversalInterview(track.id)"
+    <!-- 已就绪未开始：显示考场大厅与路线选择简报卡片（点击开始后才调用 AI 生成考题） -->
+    <div
+      v-else-if="!hasStarted"
+      class="battle-arena-card"
+      style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem 1.75rem; text-align: center; box-shadow: var(--shadow-sm); margin-top: 1rem;"
+    >
+      <div style="font-size: 3.2rem; margin-bottom: 0.75rem;">👔</div>
+      <div style="display: inline-block; background: #eff6ff; color: #1e40af; font-size: 0.8rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; margin-bottom: 0.75rem;">
+        对日IT现场入场 · 全场景综合实战考核
+      </div>
+      <h3 style="font-size: 1.4rem; font-weight: 800; color: #0f172a; margin-bottom: 0.6rem;">
+        日企现场总监 · 实战模拟面试入场大厅
+      </h3>
+      <p style="color: #475569; font-size: 0.92rem; max-width: 620px; margin: 0 auto 1.5rem; line-height: 1.65;">
+        跨越所有课文界限，模拟日本知名商社与大手 SIer 的严苛现场入场考核。请先选择考核路线，准备好后点击【步入考场】，AI 现场总监将实时为您命题。
+      </p>
+
+      <!-- 考核路线单选卡片 -->
+      <div style="font-size: 0.88rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.75rem; text-align: left; max-width: 680px; margin-left: auto; margin-right: auto;">
+        🎯 请选择您要挑战的面试路线：
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.85rem; max-width: 680px; margin: 0 auto 1.5rem;">
+        <div
+          v-for="track in tracks"
+          :key="track.id"
+          :style="{
+            background: selectedTrack === track.id ? '#eff6ff' : '#ffffff',
+            border: selectedTrack === track.id ? '2px solid #2563eb' : '1.5px solid #e2e8f0',
+            boxShadow: selectedTrack === track.id ? '0 4px 12px rgba(37, 99, 235, 0.12)' : 'none',
+            borderRadius: '10px',
+            padding: '1rem',
+            cursor: 'pointer',
+            textAlign: 'left',
+            transition: 'all 0.2s ease',
+            position: 'relative'
+          }"
+          @click="selectedTrack = track.id"
+        >
+          <div
+            v-if="selectedTrack === track.id"
+            style="position: absolute; top: 0.6rem; right: 0.6rem; background: #2563eb; color: white; font-size: 0.7rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 9999px;"
           >
+            ✓ 已选择
+          </div>
+          <div style="font-size: 0.95rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.35rem; padding-right: 2rem;">
             {{ track.name }}
-          </button>
+          </div>
+          <div style="font-size: 0.8rem; color: #64748b; line-height: 1.5;">
+            {{ track.desc }}
+          </div>
         </div>
       </div>
 
-      <!-- 加载中指示 -->
+      <!-- 4 阶段全流程概述 -->
+      <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.75rem;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 0.85rem; font-size: 0.8rem; color: #334155;">
+          <span style="font-weight: 700; color: #1e3a8a;">① 自己PR与对日背景</span>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 0.85rem; font-size: 0.8rem; color: #334155;">
+          <span style="font-weight: 700; color: #0284c7;">② 上流要件与客户心理</span>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 0.85rem; font-size: 0.8rem; color: #334155;">
+          <span style="font-weight: 700; color: #d97706;">③ 现场故障与边界防雷</span>
+        </div>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 0.85rem; font-size: 0.8rem; color: #334155;">
+          <span style="font-weight: 700; color: #059669;">④ 逆质问与商业价值</span>
+        </div>
+      </div>
+
+      <button
+        class="play-full-btn"
+        style="background: #1e3a8a; color: white; padding: 0.85rem 2.4rem; font-size: 1.05rem; font-weight: 700; border-radius: 10px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.28); margin: 0 auto; display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer;"
+        @click="startUniversalInterview(selectedTrack)"
+      >
+        <span>🚀 步入考场 · 开始全场景模拟面试</span>
+      </button>
+      <div style="font-size: 0.78rem; color: #94a3b8; margin-top: 0.75rem;">
+        💡 点击后 AI 现场总监将为您实时命制 4 阶段专属题目，考后将出具日本商社标准录用评定书
+      </div>
+    </div>
+
+    <!-- 已开始面试流程交互容器 -->
+    <div v-else class="interview-wrapper">
+      <!-- 加载中指示（点击开始后才显示） -->
       <div
         v-if="!interviewData && isLoading"
         class="battle-arena-card"
-        style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 3.5rem 1.5rem; text-align: center;"
+        style="background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 3.5rem 1.5rem; text-align: center; margin-top: 1rem;"
       >
         <div style="font-size: 2.8rem; margin-bottom: 1rem; animation: pulse 1.5s infinite;">💼</div>
         <h4 style="font-size: 1.2rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.5rem;">
@@ -208,18 +274,23 @@ function handlePrev() {
       <div
         v-else-if="startError"
         class="battle-arena-card"
-        style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-lg); padding: 2rem 1.5rem; text-align: center;"
+        style="background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-lg); padding: 2rem 1.5rem; text-align: center; margin-top: 1rem;"
       >
         <div style="font-size: 2rem; margin-bottom: 0.5rem;">⚠️</div>
         <h4 style="font-size: 1.1rem; color: #991b1b; font-weight: 700; margin-bottom: 0.4rem;">生成面试失败</h4>
         <p style="color: #b91c1c; font-size: 0.88rem; margin-bottom: 1.25rem;">{{ startError }}</p>
-        <button class="battle-nav-btn primary" @click="startUniversalInterview(selectedTrack)">
-          🔄 重新生成此路线面试
-        </button>
+        <div style="display: flex; justify-content: center; gap: 0.75rem;">
+          <button class="battle-nav-btn secondary" @click="handleResetToLounge">
+            ← 返回考场大厅
+          </button>
+          <button class="battle-nav-btn primary" @click="startUniversalInterview(selectedTrack)">
+            🔄 重新生成此路线面试
+          </button>
+        </div>
       </div>
 
       <!-- 面试核心交互区 -->
-      <div v-else-if="interviewData">
+      <div v-else-if="interviewData" style="margin-top: 1rem;">
         <!-- 考官档案卡 -->
         <div
           class="scenario-bubble-card"
@@ -248,14 +319,23 @@ function handlePrev() {
               </div>
             </div>
 
-            <button
-              class="play-full-btn"
-              style="background: white; color: #1e3a8a; font-size: 0.82rem; border: none;"
-              :disabled="isLoading"
-              @click="startUniversalInterview(selectedTrack)"
-            >
-              <span>{{ isLoading ? 'AI 正在命题...' : '🤖 换一套全新综合考题' }}</span>
-            </button>
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+              <button
+                class="battle-nav-btn"
+                style="background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3); font-size: 0.82rem; padding: 0.45rem 0.85rem;"
+                @click="handleResetToLounge"
+              >
+                ← 返回考场大厅
+              </button>
+              <button
+                class="play-full-btn"
+                style="background: white; color: #1e3a8a; font-size: 0.82rem; border: none;"
+                :disabled="isLoading"
+                @click="startUniversalInterview(selectedTrack)"
+              >
+                <span>{{ isLoading ? 'AI 正在命题...' : '🤖 换一套全新综合考题' }}</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -514,6 +594,9 @@ function handlePrev() {
           </div>
 
           <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+            <button class="battle-nav-btn secondary" @click="handleResetToLounge">
+              ← 返回考场大厅
+            </button>
             <button class="battle-nav-btn" style="background: white; border: 1px solid #cbd5e1;" @click="startUniversalInterview(selectedTrack)">
               🔄 重新模考此路线
             </button>
