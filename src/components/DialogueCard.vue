@@ -81,10 +81,30 @@ const clozeHtml = computed(() => {
   return generateClozeHtml(props.turn.jpWithRuby || props.turn.jp, keyTerms.value);
 });
 
-// 默写 / 角色扮演
+// 默写 / 角色扮演 / 听写
 const userInput = ref('');
 const diffResult = ref(null);
 const isStandardRevealed = ref(false);
+
+// 听音听写专属控制状态
+const dictationRate = ref(1.0);
+const isZhHintRevealed = ref(false);
+
+function handlePlayDictationAudio() {
+  if (isCurrentlyPlaying.value) {
+    stop();
+  } else {
+    const audioTarget = props.turn._isCustom ? null : props.audioUrl;
+    speak(props.turn.jp, audioTarget, props.turnId, null, spkMeta.value.voice, dictationRate.value);
+  }
+}
+
+function toggleDictationSpeed() {
+  dictationRate.value = dictationRate.value === 1.0 ? 0.8 : 1.0;
+  if (isCurrentlyPlaying.value) {
+    handlePlayDictationAudio();
+  }
+}
 
 // AI 诊断
 const aiReviewResult = ref(null);
@@ -152,6 +172,7 @@ watch(() => props.turnId, () => {
   diffResult.value = null;
   isStandardRevealed.value = false;
   aiReviewResult.value = null;
+  isZhHintRevealed.value = false;
 });
 
 function handleCheckDiff() {
@@ -408,6 +429,119 @@ async function handleAiReview() {
               🏆 资深对日IT总监 · 5维度实战诊断报告
             </div>
             <div class="markdown-body" v-html="renderMarkdown(aiReviewResult)"></div>
+          </div>
+        </div>
+      </template>
+
+      <!-- 模式 5：听音听写模式 (Dictation) -->
+      <template v-else-if="mode === 'dictation'">
+        <div class="dictation-panel-box">
+          <!-- 听写音频控制条 -->
+          <div class="dictation-audio-bar">
+            <div class="dictation-audio-left">
+              <button
+                class="btn-dictation-audio-main"
+                :class="{ 'playing': isCurrentlyPlaying }"
+                @click="handlePlayDictationAudio"
+                title="播放/停止课文原音 (快捷键: Ctrl+Space)"
+              >
+                <span class="audio-icon">{{ isCurrentlyPlaying ? '🔊' : '▶️' }}</span>
+                <span class="audio-text">{{ isCurrentlyPlaying ? '正在播音...' : '播放原音' }}</span>
+                <span class="audio-shortcut-tip">Ctrl+Space</span>
+              </button>
+
+              <button
+                class="btn-dictation-speed"
+                @click="toggleDictationSpeed"
+                :title="dictationRate === 0.8 ? '当前为0.8x慢速，点击切换为1.0x正常语速' : '当前为1.0x正常语速，点击切换为0.8x慢速磨耳朵'"
+              >
+                <span>{{ dictationRate === 0.8 ? '🐢 0.8x 慢速' : '⚡ 1.0x 原速' }}</span>
+              </button>
+            </div>
+
+            <div class="dictation-audio-right">
+              <button
+                class="btn-dictation-hint"
+                @click="isZhHintRevealed = !isZhHintRevealed"
+                title="偷瞄中文释义提示"
+              >
+                <span>{{ isZhHintRevealed ? '🙈 隐藏中文提示' : '💡 偷瞄中文提示' }}</span>
+              </button>
+
+              <button
+                class="btn-skip-input"
+                @click="isStandardRevealed = !isStandardRevealed"
+                title="直接揭晓标准日文范例"
+              >
+                {{ isStandardRevealed ? '隐藏范例 🙈' : '直接揭晓 👁️' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- 偷瞄中文提示展示区 -->
+          <div v-if="isZhHintRevealed" class="dictation-zh-hint">
+            <span class="hint-label">中文大意：</span>{{ turn.zh }}
+          </div>
+
+          <!-- 输入区 -->
+          <div class="input-field-wrap" style="margin-top: 0.6rem;">
+            <textarea
+              v-model="userInput"
+              class="user-jp-input dictation-input"
+              rows="2"
+              placeholder="🎧 边听边输入日文对白（Ctrl+Space 播放/重播，Ctrl+Enter 核对）..."
+              @keydown.ctrl.space.prevent="handlePlayDictationAudio"
+              @keydown.meta.space.prevent="handlePlayDictationAudio"
+              @keydown.ctrl.enter.prevent="handleCheckDiff"
+              @keydown.meta.enter.prevent="handleCheckDiff"
+            ></textarea>
+            <button
+              class="btn-submit-check btn-dictation-check"
+              @click="handleCheckDiff"
+              title="核对答案 (可按 Ctrl/Cmd+Enter)"
+            >
+              <span>核对 ⚡</span>
+            </button>
+          </div>
+
+          <!-- 实时监测与核对结果面板 -->
+          <div v-if="diffResult" class="check-result-panel" style="margin-top: 0.75rem;">
+            <div class="check-score-bar">
+              <span :class="['check-score-badge', diffResult.scoreBadgeClass]">
+                <span class="score-num">{{ diffResult.score }}%</span> 听写准确率
+              </span>
+              <span class="check-score-tip" v-html="diffResult.tipHtml"></span>
+            </div>
+            <div class="diff-box">
+              <div class="diff-line diff-user-row">
+                <span class="diff-label">您的听写：</span>
+                <span class="user-diff-content" v-html="diffResult.userDiffHtml"></span>
+              </div>
+              <div v-if="isStandardRevealed" class="diff-line diff-standard-row">
+                <span class="diff-label">标准范例：</span>
+                <span class="standard-diff-content" v-html="turn.jpWithRuby || turn.jp"></span>
+                <button class="btn-speak-standard" @click="handlePlayDictationAudio">🔊 听原声</button>
+              </div>
+              <div v-if="isStandardRevealed && !isZhHintRevealed" class="diff-line diff-zh-row" style="margin-top: 0.25rem; font-size: 0.85rem; color: #475569;">
+                <span class="diff-label">中文翻译：</span>
+                <span>{{ turn.zh }}</span>
+              </div>
+            </div>
+            <div class="prompt-action-bar" style="margin-top: 0.75rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button class="btn-prompt-pass" @click="markMastered(turnId, true)">👍 听写全对（标记熟练）</button>
+              <button class="btn-prompt-retry" @click="toggleWeakness(turnId)">🔄 听力模糊（加入生疏本）</button>
+            </div>
+          </div>
+          <div v-else-if="isStandardRevealed" class="diff-box" style="margin-top: 0.75rem; padding: 0.75rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">
+            <div class="diff-line diff-standard-row">
+              <span class="diff-label" style="font-weight: 700; color: #166534;">标准范例：</span>
+              <span class="standard-diff-content" v-html="turn.jpWithRuby || turn.jp"></span>
+              <button class="btn-speak-standard" @click="handlePlayDictationAudio">🔊 听原声</button>
+            </div>
+            <div class="diff-line diff-zh-row" style="margin-top: 0.35rem; font-size: 0.85rem; color: #166534;">
+              <span class="diff-label" style="font-weight: 700; color: #166534;">中文翻译：</span>
+              <span>{{ turn.zh }}</span>
+            </div>
           </div>
         </div>
       </template>

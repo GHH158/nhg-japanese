@@ -33,7 +33,7 @@ export function useAudioPlayer() {
     state.currentTurnId = null;
   }
 
-  function speakTTS(text, onFinished = null, lang = 'ja-JP', preferredVoice = null) {
+  function speakTTS(text, onFinished = null, lang = 'ja-JP', preferredVoice = null, customRate = null) {
     if (!('speechSynthesis' in window)) {
       if (onFinished) onFinished();
       return;
@@ -42,7 +42,7 @@ export function useAudioPlayer() {
     const cleanText = text.replace(/<rt>.*?<\/rt>/g, '').replace(/<[^>]+>/g, '');
     const utter = new SpeechSynthesisUtterance(cleanText);
     utter.lang = lang;
-    utter.rate = state.playbackRate;
+    utter.rate = customRate || state.playbackRate;
 
     const voices = window.speechSynthesis.getVoices();
     if (preferredVoice) {
@@ -63,18 +63,19 @@ export function useAudioPlayer() {
     window.speechSynthesis.speak(utter);
   }
 
-  function speak(text, audioUrl = null, turnId = null, onFinished = null, preferredVoice = null) {
+  function speak(text, audioUrl = null, turnId = null, onFinished = null, preferredVoice = null, customRate = null) {
     stop();
     state.isPlaying = true;
     state.currentTurnId = turnId;
 
     let currentRepeat = 0;
     const maxRepeat = state.repeatCount;
+    const effectiveRate = customRate || state.playbackRate;
 
     const playOnce = () => {
       if (audioUrl) {
         const audio = new Audio(audioUrl);
-        audio.playbackRate = state.playbackRate;
+        audio.playbackRate = effectiveRate;
         audioInstance = audio;
 
         audio.onended = () => {
@@ -91,7 +92,7 @@ export function useAudioPlayer() {
           // 降级使用云端 TTS 接口
           const ttsUrl = `/api/tts?text=${encodeURIComponent(text)}&voice=${encodeURIComponent(preferredVoice || 'ja-JP-NanamiNeural')}`;
           const ttsAudio = new Audio(ttsUrl);
-          ttsAudio.playbackRate = state.playbackRate;
+          ttsAudio.playbackRate = effectiveRate;
           audioInstance = ttsAudio;
 
           ttsAudio.onended = () => {
@@ -113,14 +114,14 @@ export function useAudioPlayer() {
                 stop();
                 if (onFinished) onFinished();
               }
-            }, 'ja-JP', preferredVoice);
+            }, 'ja-JP', preferredVoice, effectiveRate);
           };
 
           ttsAudio.play().catch(() => {
             speakTTS(text, () => {
               stop();
               if (onFinished) onFinished();
-            });
+            }, 'ja-JP', preferredVoice, effectiveRate);
           });
         };
 
@@ -128,7 +129,7 @@ export function useAudioPlayer() {
           speakTTS(text, () => {
             stop();
             if (onFinished) onFinished();
-          });
+          }, 'ja-JP', preferredVoice, effectiveRate);
         });
       } else {
         // 动态实时生成微软 EdgeTTS 神经网络音频接口 (/api/tts)
@@ -136,7 +137,7 @@ export function useAudioPlayer() {
         const voice = preferredVoice || 'ja-JP-KeitaNeural';
         const ttsUrl = `/api/tts?text=${encodeURIComponent(cleanText)}&voice=${encodeURIComponent(voice)}`;
         const ttsAudio = new Audio(ttsUrl);
-        ttsAudio.playbackRate = state.playbackRate;
+        ttsAudio.playbackRate = effectiveRate;
         audioInstance = ttsAudio;
 
         ttsAudio.onended = () => {
@@ -159,14 +160,14 @@ export function useAudioPlayer() {
               stop();
               if (onFinished) onFinished();
             }
-          }, 'ja-JP', voice);
+          }, 'ja-JP', voice, effectiveRate);
         };
 
         ttsAudio.play().catch(() => {
           speakTTS(cleanText, () => {
             stop();
             if (onFinished) onFinished();
-          }, 'ja-JP', voice);
+          }, 'ja-JP', voice, effectiveRate);
         });
       }
     };

@@ -35,16 +35,16 @@ watch(() => audioState.currentTurnId, (newTurnId) => {
 const showFurigana = ref(true);
 const searchQuery = ref('');
 const currentSceneIndex = ref(0);
-const activeNavTab = ref('all'); // 'all' | 'textbook' | 'practice' | 'vocab' | 'quiz_scene' | 'interview_scene'
+const activeNavTab = ref('all'); // 'all' | 'textbook' | 'dictation' | 'practice' | 'vocab' | 'quiz_scene' | 'interview_scene'
 const activePassageIndex = ref(0);
 
 // 教材背诵演练模式与过滤
-const tbMode = ref('full'); // 'full' | 'cloze' | 'prompt' | 'roleplay'
+const tbMode = ref('full'); // 'full' | 'cloze' | 'prompt' | 'roleplay' | 'dictation'
 const tbFilter = ref('all'); // 'all' | 'weakness' | 'unmastered'
 const isTbClozeRevealed = ref(false);
 
 // 练习短文背诵演练模式与过滤
-const pMode = ref('full'); // 'full' | 'cloze' | 'prompt' | 'roleplay'
+const pMode = ref('full'); // 'full' | 'cloze' | 'prompt' | 'roleplay' | 'dictation'
 const pFilter = ref('all'); // 'all' | 'weakness' | 'unmastered'
 const isPClozeRevealed = ref(false);
 
@@ -152,6 +152,97 @@ function handlePlayFullPassage() {
     speakerVoice: t.speakerVoice
   }));
   startWalkman(playlist, 0);
+}
+
+// 全局复制反馈与提示
+const toastMessage = ref('');
+let toastTimer = null;
+
+function showToast(msg) {
+  toastMessage.value = msg;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toastMessage.value = '';
+  }, 2400);
+}
+
+// 格式化课文/短文对话文本供剪贴板使用
+function formatDialogueText(title, turns) {
+  const header = `【${title}】`;
+  const body = turns.map(t => {
+    const spk = t.speaker ? `${t.speaker}：` : '';
+    const jp = (t.jp || '').replace(/<[^>]+>/g, '').trim();
+    const zh = (t.zh || '').replace(/<[^>]+>/g, '').trim();
+    return `${spk}${jp}\n译：${zh}`;
+  }).join('\n\n');
+  return `${header}\n\n${body}\n`;
+}
+
+// 兼容安全的剪贴板复制工具函数
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (e) {
+      console.warn('Clipboard writeText failed, fallback to execCommand:', e);
+    }
+  }
+  const el = document.createElement('textarea');
+  el.value = text;
+  el.setAttribute('readonly', '');
+  el.style.position = 'fixed';
+  el.style.left = '-9999px';
+  el.style.top = '-9999px';
+  document.body.appendChild(el);
+  el.select();
+  let ok = false;
+  try {
+    ok = document.execCommand('copy');
+  } catch (err) {
+    console.error('execCommand copy failed:', err);
+  }
+  document.body.removeChild(el);
+  return ok;
+}
+
+// 一键复制核心课文
+const tbCopySuccess = ref(false);
+async function handleCopyTextbook() {
+  const scene = currentScene.value;
+  if (!scene) return;
+  const title = `第 ${scene.sceneNumber} 课 · ${scene.title} · 核心课文`;
+  const text = formatDialogueText(title, tbTurns.value);
+  const ok = await copyTextToClipboard(text);
+  if (ok) {
+    tbCopySuccess.value = true;
+    showToast(`📋 已复制《第 ${scene.sceneNumber} 课 · ${scene.title}》核心课文及翻译！`);
+    setTimeout(() => {
+      tbCopySuccess.value = false;
+    }, 2000);
+  } else {
+    alert('复制失败，请检查浏览器剪贴板权限！');
+  }
+}
+
+// 一键复制当前配套短文
+const pCopySuccess = ref(false);
+async function handleCopyPassage() {
+  const scene = currentScene.value;
+  const p = currentPassage.value;
+  if (!scene || !p) return;
+  const title = `第 ${scene.sceneNumber} 课 · ${scene.title} · 短文${p.pNum}（${p.title}）`;
+  const text = formatDialogueText(title, passageTurns.value);
+  const ok = await copyTextToClipboard(text);
+  if (ok) {
+    pCopySuccess.value = true;
+    showToast(`📋 已复制《短文${p.pNum}：${p.title}》及翻译！`);
+    setTimeout(() => {
+      pCopySuccess.value = false;
+    }, 2000);
+  } else {
+    alert('复制失败，请检查浏览器剪贴板权限！');
+  }
 }
 
 // 唤起随身听 / 停止播放
@@ -301,6 +392,14 @@ function toggleAllPCloze() {
           </svg>
           <span>📘 核心课文</span>
         </button>
+        <button :class="['tab-btn', { active: activeNavTab === 'dictation' }]" @click="activeNavTab = 'dictation'; tbMode = 'dictation'">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+          <span>✍️ 课文听写</span>
+          <span class="counter-pill" style="background:#ecfdf5;color:#047857;border-color:#a7f3d0;">精听盲写</span>
+        </button>
         <button :class="['tab-btn', { active: activeNavTab === 'practice' }]" @click="activeNavTab = 'practice'">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -357,7 +456,7 @@ function toggleAllPCloze() {
 
       <!-- 模块 1：教材核心课文精读区 -->
       <section
-        v-if="activeNavTab === 'all' || activeNavTab === 'textbook'"
+        v-if="activeNavTab === 'all' || activeNavTab === 'textbook' || activeNavTab === 'dictation'"
         id="section-textbook"
         class="module-section"
       >
@@ -380,6 +479,20 @@ function toggleAllPCloze() {
           </div>
 
           <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <!-- 一键复制本篇课文及翻译 -->
+            <button
+              class="play-full-btn copy-btn"
+              :class="{ 'copied': tbCopySuccess }"
+              title="一键复制本篇核心课文日文与中文翻译到剪贴板"
+              @click="handleCopyTextbook"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>{{ tbCopySuccess ? '✅ 已复制课文' : '📋 一键复制课文' }}</span>
+            </button>
+
             <!-- 课文校对工作台入口 -->
             <button
               class="play-full-btn"
@@ -423,6 +536,9 @@ function toggleAllPCloze() {
               <button :class="['drill-mode-btn', { active: tbMode === 'roleplay' }]" @click="tbMode = 'roleplay'">
                 <span>🎭 模拟开会</span>
               </button>
+              <button :class="['drill-mode-btn', { active: tbMode === 'dictation' }]" @click="tbMode = 'dictation'">
+                <span>✍️ 听音听写</span>
+              </button>
             </div>
             <div class="drill-extra">
               <button
@@ -448,6 +564,11 @@ function toggleAllPCloze() {
                 <span>背熟: <strong>{{ tbMasteredCount }}</strong>/<span>{{ tbTurns.length }}</span></span>
               </div>
             </div>
+          </div>
+
+          <div v-if="tbMode === 'dictation'" class="dictation-mode-banner">
+            <span class="dictation-banner-badge">🎧 听音听写特训</span>
+            <span class="dictation-banner-desc">日文及中文已隐藏。先点击【▶️ 播放原音】精听对白（支持 0.8x 慢速精听），再在输入框中精准听写。全部输对或核对后揭晓标准答案！</span>
           </div>
 
           <!-- 对话流 -->
@@ -476,14 +597,28 @@ function toggleAllPCloze() {
       >
         <div class="section-header">
           <h3 class="section-title">📝 配套练习：5篇短文拓展闯关</h3>
-          <button
-            class="play-full-btn"
-            style="background: white; color: #1e3a8a; border: 1px solid #cbd5e1;"
-            title="校对本课配套练习短文内容"
-            @click="handleOpenCorrection()"
-          >
-            <span>✏️ 校对短文内容</span>
-          </button>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+            <button
+              class="play-full-btn copy-btn"
+              :class="{ 'copied': pCopySuccess }"
+              title="一键复制当前所选练习短文日文与中文翻译到剪贴板"
+              @click="handleCopyPassage"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>{{ pCopySuccess ? '✅ 已复制短文' : '📋 复制当前短文' }}</span>
+            </button>
+            <button
+              class="play-full-btn"
+              style="background: white; color: #1e3a8a; border: 1px solid #cbd5e1;"
+              title="校对本课配套练习短文内容"
+              @click="handleOpenCorrection()"
+            >
+              <span>✏️ 校对短文内容</span>
+            </button>
+          </div>
         </div>
 
         <div class="practice-container-card">
@@ -509,20 +644,36 @@ function toggleAllPCloze() {
                 <div class="passage-title-text">{{ currentPassage.title }}</div>
                 <div class="passage-focus-text">{{ currentPassage.theme }} · {{ currentPassage.objective }}</div>
               </div>
-              <button
-                class="play-full-btn"
-                :class="{ active: audioState.isPlaying && audioState.isWalkmanActive }"
-                @click="handlePlayFullPassage"
-                :title="audioState.isPlaying && audioState.isWalkmanActive ? '停止当前连续播报' : '朗读该篇短文（多角色拟真连播）'"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polygon v-if="!(audioState.isPlaying && audioState.isWalkmanActive)" points="5 3 19 12 5 21 5 3"></polygon>
-                  <rect v-if="audioState.isPlaying && audioState.isWalkmanActive" x="6" y="4" width="4" height="16"></rect>
-                  <rect v-if="audioState.isPlaying && audioState.isWalkmanActive" x="14" y="4" width="4" height="16"></rect>
-                </svg>
-                <span>{{ audioState.isPlaying && audioState.isWalkmanActive ? '停止播报' : '连播本篇短文' }}</span>
-                <span class="voice-badge-tag">🎙️ 拟真配音</span>
-              </button>
+              <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <!-- 一键复制本篇短文及翻译 -->
+                <button
+                  class="play-full-btn copy-btn"
+                  :class="{ 'copied': pCopySuccess }"
+                  title="一键复制本篇短文日文与中文翻译到剪贴板"
+                  @click="handleCopyPassage"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                  <span>{{ pCopySuccess ? '✅ 已复制短文' : '📋 一键复制短文' }}</span>
+                </button>
+
+                <button
+                  class="play-full-btn"
+                  :class="{ active: audioState.isPlaying && audioState.isWalkmanActive }"
+                  @click="handlePlayFullPassage"
+                  :title="audioState.isPlaying && audioState.isWalkmanActive ? '停止当前连续播报' : '朗读该篇短文（多角色拟真连播）'"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon v-if="!(audioState.isPlaying && audioState.isWalkmanActive)" points="5 3 19 12 5 21 5 3"></polygon>
+                    <rect v-if="audioState.isPlaying && audioState.isWalkmanActive" x="6" y="4" width="4" height="16"></rect>
+                    <rect v-if="audioState.isPlaying && audioState.isWalkmanActive" x="14" y="4" width="4" height="16"></rect>
+                  </svg>
+                  <span>{{ audioState.isPlaying && audioState.isWalkmanActive ? '停止播报' : '连播本篇短文' }}</span>
+                  <span class="voice-badge-tag">🎙️ 拟真配音</span>
+                </button>
+              </div>
             </div>
 
             <div class="sentence-container">
@@ -540,6 +691,9 @@ function toggleAllPCloze() {
                   </button>
                   <button :class="['drill-mode-btn', { active: pMode === 'roleplay' }]" @click="pMode = 'roleplay'">
                     <span>🎭 模拟开会</span>
+                  </button>
+                  <button :class="['drill-mode-btn', { active: pMode === 'dictation' }]" @click="pMode = 'dictation'">
+                    <span>✍️ 听音听写</span>
                   </button>
                 </div>
                 <div class="drill-extra">
@@ -566,6 +720,11 @@ function toggleAllPCloze() {
                     <span>背熟: <strong>{{ pMasteredCount }}</strong>/<span>{{ passageTurns.length }}</span></span>
                   </div>
                 </div>
+              </div>
+
+              <div v-if="pMode === 'dictation'" class="dictation-mode-banner">
+                <span class="dictation-banner-badge">🎧 短文听写特训</span>
+                <span class="dictation-banner-desc">先听原音，盲写日文。支持 0.8x 慢速精听，可偷瞄中文提示，核对即出逐字差异！</span>
               </div>
 
               <!-- 短文对话流 -->
@@ -717,5 +876,12 @@ function toggleAllPCloze() {
       @close="isCorrectionModalOpen = false"
       @saved="isCorrectionModalOpen = false"
     />
+
+    <!-- 全局轻量复制 Toast 提示 -->
+    <transition name="toast-fade">
+      <div v-if="toastMessage" class="global-copy-toast">
+        {{ toastMessage }}
+      </div>
+    </transition>
   </div>
 </template>
